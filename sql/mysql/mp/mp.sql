@@ -36,7 +36,8 @@ CREATE TABLE mp_material
     update_time  DATETIME COMMENT '最后更新时间',
     creator      VARCHAR(255) COMMENT '创建者，目前使用 SysUser 的 id 编号',
     updater      VARCHAR(255) COMMENT '更新者，目前使用 SysUser 的 id 编号',
-    deleted      TINYINT(1) DEFAULT 0 COMMENT '是否删除'
+    deleted      TINYINT(1) DEFAULT 0 COMMENT '是否删除',
+    tenant_id   BIGINT comment '租户id'
 ) comment = '公众号素材';
 
 drop table if exists mp_menu;
@@ -67,7 +68,8 @@ CREATE TABLE mp_menu
     update_time            DATETIME COMMENT '最后更新时间',
     creator                VARCHAR(255) COMMENT '创建者，目前使用 SysUser 的 id 编号',
     updater                VARCHAR(255) COMMENT '更新者，目前使用 SysUser 的 id 编号',
-    deleted                TINYINT(1) DEFAULT 0 COMMENT '是否删除'
+    deleted                TINYINT(1) DEFAULT 0 COMMENT '是否删除',
+    tenant_id   BIGINT comment '租户id'
 ) COMMENT ='公众号菜单';
 
 drop table if exists mp_user;
@@ -109,7 +111,8 @@ CREATE TABLE mp_tag
     update_time DATETIME COMMENT '最后更新时间',
     creator     VARCHAR(255) COMMENT '创建者，目前使用 SysUser 的 id 编号',
     updater     VARCHAR(255) COMMENT '更新者，目前使用 SysUser 的 id 编号',
-    deleted     TINYINT(1) DEFAULT 0 COMMENT '是否删除'
+    deleted     TINYINT(1) DEFAULT 0 COMMENT '是否删除',
+    tenant_id   BIGINT comment '租户id'
 ) COMMENT ='公众号标签';
 
 drop table if exists mp_message;
@@ -152,7 +155,8 @@ CREATE TABLE mp_message
     update_time     DATETIME COMMENT '最后更新时间',
     creator         VARCHAR(255) COMMENT '创建者，目前使用 SysUser 的 id 编号',
     updater         VARCHAR(255) COMMENT '更新者，目前使用 SysUser 的 id 编号',
-    deleted         TINYINT(1) DEFAULT 0 COMMENT '是否删除'
+    deleted         TINYINT(1) DEFAULT 0 COMMENT '是否删除',
+    tenant_id   BIGINT comment '租户id'
 ) COMMENT ='公众号消息';
 
 drop table if exists mp_auto_reply;
@@ -184,5 +188,6 @@ CREATE TABLE mp_auto_reply
     update_time DATETIME COMMENT '最后更新时间',
     creator VARCHAR(255) COMMENT '创建者，目前使用 SysUser 的 id 编号',
     updater VARCHAR(255) COMMENT '更新者，目前使用 SysUser 的 id 编号',
-    deleted TINYINT(1) DEFAULT 0 COMMENT '是否删除'
+    deleted TINYINT(1) DEFAULT 0 COMMENT '是否删除',
+    tenant_id   BIGINT comment '租户id'
 ) COMMENT ='公众号消息自动回复';
