@@ -386,3 +386,22 @@ CREATE TABLE IF NOT EXISTS `trade_brokerage_withdraw`
     PRIMARY KEY (`id`)
 ) COMMENT '佣金提现';
 
+DROP TABLE IF EXISTS `trade_cart`;
+CREATE TABLE `trade_cart`
+(
+    `id`          bigint   NOT NULL AUTO_INCREMENT,
+    `user_id`     bigint   NOT NULL,
+    `spu_id`      bigint   NOT NULL,
+    `sku_id`      bigint   NOT NULL,
+    `count`       int      NOT NULL,
+    `selected`    bit      NOT NULL,
+    `creator`             varchar(255)           DEFAULT '',
+    `create_time`         datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `updater`             varchar(255)           DEFAULT '',
+    `update_time`         datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    `deleted`             bit      NOT NULL DEFAULT FALSE,
+    `tenant_id`      bigint   NOT NULL DEFAULT '0',
+    PRIMARY KEY (`id`)
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8mb4 COMMENT ='购物车的商品信息';
+
