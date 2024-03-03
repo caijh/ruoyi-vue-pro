@@ -194,7 +194,7 @@ CREATE TABLE pay_transfer
 drop table if exists pay_wallet;
 CREATE TABLE pay_wallet
 (
-    id             BIGINT PRIMARY KEY COMMENT '编号',
+    id             BIGINT AUTO_INCREMENT COMMENT '编号',
     user_id        BIGINT COMMENT '用户 id',
     user_type      INT COMMENT '用户类型',
     balance        INT COMMENT '余额，单位分',
@@ -206,7 +206,8 @@ CREATE TABLE pay_wallet
     creator        varchar(255) comment '创建者，目前使用 SysUser 的 id 编号',
     updater        varchar(255) comment '更新者，目前使用 SysUser 的 id 编号',
     deleted        tinyint(1) default 0 comment '是否删除',
-    tenant_id      BIGINT comment '租户id'
+    tenant_id      BIGINT comment '租户id',
+    primary key(`id`)
 ) comment = '会员钱包';
 
 drop table if exists pay_wallet_recharge;

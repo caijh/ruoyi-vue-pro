@@ -154,7 +154,7 @@ CREATE TABLE member_tag
 drop table if exists member_address;
 CREATE TABLE member_address
 (
-    id             BIGINT PRIMARY KEY COMMENT '编号',
+    id             BIGINT PRIMARY KEY AUTO_INCREMENT COMMENT '编号',
     user_id        BIGINT COMMENT '用户编号',
     name           VARCHAR(255) COMMENT '收件人名称',
     mobile         VARCHAR(255) COMMENT '手机号',
@@ -165,7 +165,8 @@ CREATE TABLE member_address
     update_time    DATETIME COMMENT '最后更新时间',
     creator        VARCHAR(255) COMMENT '创建者，目前使用 SysUser 的 id 编号',
     updater        VARCHAR(255) COMMENT '更新者，目前使用 SysUser 的 id 编号',
-    deleted        TINYINT(1) DEFAULT 0 COMMENT '是否删除'
+    deleted        TINYINT(1) DEFAULT 0 COMMENT '是否删除',
+    tenant_id   BIGINT comment '租户id'
 ) COMMENT ='用户收件地址';
 
 drop table if exists member_user;
