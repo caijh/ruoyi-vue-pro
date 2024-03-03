@@ -310,3 +310,74 @@ CREATE TABLE `trade_order_item`
     PRIMARY KEY (`id`)
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4 COMMENT ='交易订单项 DO';
+
+DROP TABLE IF EXISTS `trade_brokerage_user`;
+CREATE TABLE IF NOT EXISTS `trade_brokerage_user`
+(
+    `id`                bigint   NOT NULL AUTO_INCREMENT,
+    `bind_user_id`      bigint   NOT NULL,
+    `bind_user_time`    varchar(255),
+    `brokerage_enabled` bit(1)      NOT NULL,
+    `brokerage_time`    varchar(255),
+    `price`             int      NOT NULL,
+    `frozen_price`      int      NOT NULL,
+    `creator`           varchar(255)           DEFAULT '',
+    `create_time`       datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `updater`           varchar(255),
+    `update_time`       datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    `deleted`           bit      NOT NULL DEFAULT FALSE,
+    `tenant_id`         bigint   NOT NULL DEFAULT '0',
+    PRIMARY KEY (`id`)
+) COMMENT '分销用户';
+
+
+DROP TABLE IF EXISTS `trade_brokerage_record`;
+CREATE TABLE IF NOT EXISTS `trade_brokerage_record`
+(
+    `id`            int      NOT NULL AUTO_INCREMENT,
+    `user_id`       bigint   NOT NULL,
+    `biz_id`        varchar(255)  NOT NULL,
+    `biz_type`      varchar(255)  NOT NULL,
+    `title`         varchar(255)  NOT NULL,
+    `price`         int      NOT NULL,
+    `total_price`   int      NOT NULL,
+    `description`   varchar(255)  NOT NULL,
+    `status`        varchar(255)  NOT NULL,
+    `frozen_days`   int      NOT NULL,
+    `unfreeze_time` varchar(255),
+    `creator`       varchar(255)           DEFAULT '',
+    `create_time`   datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `updater`       varchar(255)           DEFAULT '',
+    `update_time`   datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    `deleted`       bit      NOT NULL DEFAULT FALSE,
+    `tenant_id`      bigint   NOT NULL DEFAULT '0',
+    PRIMARY KEY (`id`)
+) COMMENT '佣金记录';
+
+DROP TABLE IF EXISTS `trade_brokerage_withdraw`;
+CREATE TABLE IF NOT EXISTS `trade_brokerage_withdraw`
+(
+    `id`                  int      NOT NULL AUTO_INCREMENT,
+    `user_id`             bigint   NOT NULL,
+    `price`               int      NOT NULL,
+    `fee_price`           int      NOT NULL,
+    `total_price`         int      NOT NULL,
+    `type`                varchar(255)  NOT NULL,
+    `name`                varchar(255),
+    `account_no`          varchar(255),
+    `bank_name`           varchar(255),
+    `bank_address`        varchar(255),
+    `account_qr_code_url` varchar(255),
+    `status`              varchar(255)  NOT NULL,
+    `audit_reason`        varchar(255),
+    `audit_time`          varchar(255),
+    `remark`              varchar(255),
+    `creator`             varchar(255)           DEFAULT '',
+    `create_time`         datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `updater`             varchar(255)           DEFAULT '',
+    `update_time`         datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    `deleted`             bit      NOT NULL DEFAULT FALSE,
+    `tenant_id`      bigint   NOT NULL DEFAULT '0',
+    PRIMARY KEY (`id`)
+) COMMENT '佣金提现';
+
