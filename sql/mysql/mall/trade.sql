@@ -22,7 +22,12 @@ CREATE TABLE `trade_config`
     `brokerage_withdraw_fee_percent` INT        NOT NULL COMMENT '用户提现手续费百分比',
     `brokerage_frozen_days`          INT        NOT NULL COMMENT '佣金冻结时间(天)',
     `brokerage_withdraw_types`       TEXT       NOT NULL COMMENT '提现方式',
-
+    create_time               DATETIME COMMENT '创建时间',
+    update_time               DATETIME COMMENT '最后更新时间',
+    creator                   VARCHAR(255) COMMENT '创建者，目前使用 SysUser 的 id 编号',
+    updater                   VARCHAR(255) COMMENT '更新者，目前使用 SysUser 的 id 编号',
+    deleted                   TINYINT(1) DEFAULT 0 COMMENT '是否删除',
+    tenant_id                 BIGINT comment '租户id',
     PRIMARY KEY (`id`)
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4 comment = '交易中心配置';
