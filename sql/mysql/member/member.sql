@@ -84,7 +84,8 @@ CREATE TABLE member_experience_record
     update_time      DATETIME COMMENT '最后更新时间',
     creator          VARCHAR(255) COMMENT '创建者，目前使用 SysUser 的 id 编号',
     updater          VARCHAR(255) COMMENT '更新者，目前使用 SysUser 的 id 编号',
-    deleted          TINYINT(1) DEFAULT 0 COMMENT '是否删除'
+    deleted          TINYINT(1) DEFAULT 0 COMMENT '是否删除',
+    tenant_id        BIGINT comment '租户id'
 ) COMMENT ='会员经验记录';
 
 drop table if exists member_point_record;
