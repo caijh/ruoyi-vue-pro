@@ -109,7 +109,7 @@ CREATE TABLE member_point_record
 drop table if exists member_sign_in_config;
 CREATE TABLE member_sign_in_config
 (
-    id          BIGINT PRIMARY KEY COMMENT '规则自增主键',
+    id          BIGINT PRIMARY KEY AUTO_INCREMENT COMMENT '规则自增主键',
     day         INT COMMENT '签到第 x 天',
     point       INT COMMENT '奖励积分',
     experience  INT COMMENT '奖励经验',
