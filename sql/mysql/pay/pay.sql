@@ -213,7 +213,7 @@ CREATE TABLE pay_wallet
 drop table if exists pay_wallet_recharge;
 CREATE TABLE pay_wallet_recharge
 (
-    id                 BIGINT PRIMARY KEY COMMENT '编号',
+    id                 BIGINT PRIMARY KEY AUTO_INCREMENT COMMENT '编号',
     wallet_id          BIGINT COMMENT '钱包编号',
     total_price        INT COMMENT '用户实际到账余额',
     pay_price          INT COMMENT '实际支付金额',

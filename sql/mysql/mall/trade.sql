@@ -405,3 +405,17 @@ CREATE TABLE `trade_cart`
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4 COMMENT ='购物车的商品信息';
 
+DROP TABLE IF EXISTS `trade_order_log`;
+CREATE TABLE `trade_order_log`
+(
+    `id`            bigint       NOT NULL AUTO_INCREMENT COMMENT '编号',
+    `user_id`       bigint       NOT NULL COMMENT '用户编号，关联 AdminUserDO 的 id 字段或者 MemberUserDO 的 id 字段',
+    `user_type`     int          NOT NULL COMMENT '用户类型，枚举 UserTypeEnum',
+    `order_id`      bigint       NOT NULL COMMENT '订单号，关联 TradeOrderDO 的 id',
+    `before_status` int          NOT NULL COMMENT '操作前状态',
+    `after_status`  int          NOT NULL COMMENT '操作后状态',
+    `operate_type`  int          NOT NULL COMMENT '操作类型，TradeOrderOperateTypeEnum',
+    `content`       varchar(255) NOT NULL COMMENT '订单日志信息',
+    PRIMARY KEY (`id`)
+) ENGINE = InnoDB
+  DEFAULT charset = utf8mb4 COMMENT ='订单日志';
