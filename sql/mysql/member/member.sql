@@ -126,7 +126,7 @@ CREATE TABLE member_sign_in_config
 drop table if exists member_sign_in_record;
 CREATE TABLE member_sign_in_record
 (
-    id          BIGINT PRIMARY KEY COMMENT '编号',
+    id          BIGINT PRIMARY KEY AUTO_INCREMENT COMMENT '编号',
     user_id     BIGINT COMMENT '签到用户',
     day         INT COMMENT '第几天签到',
     point       INT COMMENT '签到的积分',
