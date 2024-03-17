@@ -52,7 +52,7 @@ public class FileConfigServiceImpl implements FileConfigService {
     @Getter
     private final LoadingCache<Long, FileClient> clientCache = buildAsyncReloadingCache(Duration.ofSeconds(10L),
             new CacheLoader<>() {
-
+                @NonNull
                 @Override
                 public FileClient load(@NonNull Long id) {
                     FileConfigDO config = Objects.equals(CACHE_MASTER_ID, id) ?
