@@ -18,6 +18,7 @@ import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
@@ -50,10 +51,10 @@ public class FileConfigServiceImpl implements FileConfigService {
      */
     @Getter
     private final LoadingCache<Long, FileClient> clientCache = buildAsyncReloadingCache(Duration.ofSeconds(10L),
-            new CacheLoader<Long, FileClient>() {
+            new CacheLoader<>() {
 
                 @Override
-                public FileClient load(Long id) {
+                public FileClient load(@NonNull Long id) {
                     FileConfigDO config = Objects.equals(CACHE_MASTER_ID, id) ?
                             fileConfigMapper.selectByMaster() : fileConfigMapper.selectById(id);
                     if (config != null) {
