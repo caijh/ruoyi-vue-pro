@@ -40,6 +40,10 @@ public class AdminServerConfiguration {
     @Value("${spring.boot.admin.client.password:admin}")
     private String password;
 
+    // 新增：注入允许的 frame 嵌入域名
+    @Value("${spring.boot.admin.frame-ancestors:'self'}")
+    private String frameAncestors;
+
     /**
      * Spring Boot Admin 专用的 InMemoryUserDetailsManager
      * 使用内存存储，与系统用户隔离
@@ -100,6 +104,14 @@ public class AdminServerConfiguration {
                                 adminSeverContextPath + "/instances", // Admin Client 注册端点忽略 CSRF
                                 adminSeverContextPath + "/actuator/**" // Actuator 端点忽略 CSRF
                         )
+                )// 修正后的 headers 配置（替换原来报错的代码）
+                .headers(headers -> headers
+                        // 关键修正：传入合法的基础 CSP 指令，而非空字符串
+                        .contentSecurityPolicy(csp -> csp.policyDirectives(
+                                "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; frame-ancestors " + frameAncestors )
+                        )
+                        .frameOptions(frame -> frame.sameOrigin()) // 显式设置 X-Frame-Options 为 SAMEORIGIN
+                        .cacheControl(cache -> cache.disable()) // 禁用缓存，避免旧配置生效
                 );
         return httpSecurity.build();
     }
