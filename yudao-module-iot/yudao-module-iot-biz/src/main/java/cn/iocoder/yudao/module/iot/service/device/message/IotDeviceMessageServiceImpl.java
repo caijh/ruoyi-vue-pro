@@ -95,6 +95,9 @@ public class IotDeviceMessageServiceImpl implements IotDeviceMessageService {
         if (messageDO.getData() != null) {
             messageDO.setData(JsonUtils.toJsonString(messageDO.getData()));
         }
+        if (messageDO.getTs() == null) {
+            messageDO.setTs(System.currentTimeMillis());
+        }
         try {
             deviceMessageMapper.insert(messageDO);
         } catch (Exception ex) {

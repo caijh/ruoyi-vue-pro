@@ -38,7 +38,7 @@
         USING device_message
         TAGS (#{deviceId})
         VALUES (
-            NOW, #{id}, #{reportTime}, #{tenantId},  #{serverId},
+            #{ts}, #{id}, #{reportTime}, #{tenantId},  #{serverId},
             #{upstream}, #{reply}, #{identifier}, #{requestId}, #{method}, 
             #{params}, #{data}, #{code}, #{msg}
         )

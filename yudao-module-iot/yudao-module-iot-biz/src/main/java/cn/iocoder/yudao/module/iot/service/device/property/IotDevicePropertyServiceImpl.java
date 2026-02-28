@@ -179,7 +179,9 @@ public class IotDevicePropertyServiceImpl implements IotDevicePropertyService {
             log.error("[saveDeviceProperty][消息({}) 没有合法的属性]", message);
         } else {
             // 2.1 保存设备属性【数据】
-            devicePropertyMapper.insert(device, properties, LocalDateTimeUtil.toEpochMilli(message.getReportTime()));
+            devicePropertyMapper.insert(device, properties,
+                    System.currentTimeMillis(),
+                    LocalDateTimeUtil.toEpochMilli(message.getReportTime()));
 
             // 2.2 保存设备属性【日志】
             Map<String, IotDevicePropertyDO> properties2 = convertMap(properties.entrySet(), Map.Entry::getKey, entry ->
