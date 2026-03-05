@@ -112,7 +112,7 @@ public class ${table.className}ServiceImpl implements ${table.className}Service 
                 create${simpleClassName}(BeanUtils.toBean(importItem, ${saveReqVOClass}.class));
                 successCount.incrementAndGet();
             } catch (Exception ex) {
-                failureRows.put(currentIndex, ex.getMessage());
+                failureRows.put(currentIndex, resolveImportFailureMessage(ex));
             }
         });
         return ${sceneEnum.prefixClass}${table.className}ImportRespVO.builder()
@@ -120,6 +120,17 @@ public class ${table.className}ServiceImpl implements ${table.className}Service 
                 .failureCount(failureRows.size())
                 .failureRows(failureRows)
                 .build();
+    }
+
+    /**
+     * 仅返回根因异常信息，避免把 MyBatis 长堆栈直接暴露给前端。
+     */
+    private String resolveImportFailureMessage(Exception ex) {
+        Throwable root = ex;
+        while (root.getCause() != null && root.getCause() != root) {
+            root = root.getCause();
+        }
+        return root.getMessage() != null ? root.getMessage() : ex.getMessage();
     }
 
     @Override
