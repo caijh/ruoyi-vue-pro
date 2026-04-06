@@ -19,8 +19,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 
-import java.util.List;
-
 import static cn.iocoder.yudao.framework.common.exception.util.ServiceExceptionUtil.exception;
 import static cn.iocoder.yudao.module.mes.enums.ErrorCodeConstants.*;
 
@@ -95,11 +93,6 @@ public class MesProCardServiceImpl implements MesProCardService {
     @Override
     public PageResult<MesProCardDO> getCardPage(MesProCardPageReqVO pageReqVO) {
         return cardMapper.selectPage(pageReqVO);
-    }
-
-    @Override
-    public List<MesProCardDO> getCardSimpleList() {
-        return cardMapper.selectList();
     }
 
     @Override
