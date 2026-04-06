@@ -150,11 +150,6 @@ public class MesProTaskServiceImpl implements MesProTaskService {
     }
 
     @Override
-    public List<MesProTaskDO> getTaskListByWorkOrderId(Long workOrderId) {
-        return taskMapper.selectListByWorkOrderId(workOrderId);
-    }
-
-    @Override
     public List<MesProTaskDO> getTaskListByWorkOrderIds(Collection<Long> workOrderIds) {
         if (CollUtil.isEmpty(workOrderIds)) {
             return Collections.emptyList();

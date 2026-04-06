@@ -122,18 +122,6 @@ public class MesProTaskController {
         return success(new PageResult<>(buildTaskRespVOList(pageResult.getList()), pageResult.getTotal()));
     }
 
-    @GetMapping("/simple-list")
-    @Operation(summary = "获得生产任务精简列表", description = "主要用于前端的下拉选项")
-    public CommonResult<List<MesProTaskRespVO>> getTaskSimpleList(
-            @RequestParam(value = "workOrderId", required = false) Long workOrderId) {
-        List<MesProTaskDO> list = taskService.getTaskListByWorkOrderId(workOrderId);
-        return success(convertList(list, task -> new MesProTaskRespVO()
-                .setId(task.getId()).setCode(task.getCode()).setName(task.getName())
-                .setWorkOrderId(task.getWorkOrderId()).setWorkstationId(task.getWorkstationId())
-                .setRouteId(task.getRouteId()).setProcessId(task.getProcessId())
-                .setItemId(task.getItemId()).setStatus(task.getStatus())));
-    }
-
     @GetMapping("/gantt-list")
     @Operation(summary = "获得甘特图任务列表", description = "后端组装工单=project + 任务=task 列表")
     @PreAuthorize("@ss.hasPermission('mes:pro-task:query')")
