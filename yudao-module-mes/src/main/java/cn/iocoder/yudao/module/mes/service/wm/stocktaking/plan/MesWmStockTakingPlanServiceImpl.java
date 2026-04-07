@@ -121,11 +121,6 @@ public class MesWmStockTakingPlanServiceImpl implements MesWmStockTakingPlanServ
         return stockTakingPlanMapper.selectPage(pageReqVO);
     }
 
-    @Override
-    public List<MesWmStockTakingPlanDO> getStockTakingPlanListByStatus(Integer status) {
-        return stockTakingPlanMapper.selectListByStatus(status);
-    }
-
     private void validatePlanCodeUnique(Long id, String code) {
         MesWmStockTakingPlanDO plan = stockTakingPlanMapper.selectByCode(code);
         if (plan == null) {
