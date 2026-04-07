@@ -112,15 +112,6 @@ public class MesWmArrivalNoticeController {
         return success(true);
     }
 
-    @GetMapping("/simple-list")
-    @Operation(summary = "获得到货通知单精简列表")
-    @Parameter(name = "status", description = "状态", example = "2")
-    public CommonResult<List<MesWmArrivalNoticeRespVO>> getArrivalNoticeSimpleList(
-            @RequestParam(value = "status", required = false) Integer status) {
-        List<MesWmArrivalNoticeDO> list = arrivalNoticeService.getArrivalNoticeListByStatus(status);
-        return success(buildRespVOList(list));
-    }
-
     // ==================== 拼接 VO ====================
 
     private List<MesWmArrivalNoticeRespVO> buildRespVOList(List<MesWmArrivalNoticeDO> list) {
