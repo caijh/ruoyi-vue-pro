@@ -159,14 +159,6 @@ public class MesWmArrivalNoticeServiceImpl implements MesWmArrivalNoticeService 
     }
 
     @Override
-    public List<MesWmArrivalNoticeDO> getArrivalNoticeListByStatus(Integer status) {
-        if (status == null) {
-            return arrivalNoticeMapper.selectList();
-        }
-        return arrivalNoticeMapper.selectListByStatus(status);
-    }
-
-    @Override
     public void validateArrivalNoticeAndLineExists(Long noticeId, Long lineId) {
         // 1. 校验通知单存在
         MesWmArrivalNoticeDO notice = arrivalNoticeMapper.selectById(noticeId);

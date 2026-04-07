@@ -117,14 +117,6 @@ public interface MesWmArrivalNoticeService {
     void validateArrivalNoticeAndLineExists(Long noticeId, Long lineId);
 
     /**
-     * 按状态获得到货通知单列表
-     *
-     * @param status 状态
-     * @return 到货通知单列表
-     */
-    List<MesWmArrivalNoticeDO> getArrivalNoticeListByStatus(Integer status);
-
-    /**
      * 查询指定供应商的到货通知单数量
      *
      * @param vendorId 供应商编号
