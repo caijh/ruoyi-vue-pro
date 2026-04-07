@@ -19,6 +19,7 @@ public interface MesWmSalesNoticeMapper extends BaseMapperX<MesWmSalesNoticeDO> 
                 .likeIfPresent(MesWmSalesNoticeDO::getNoticeName, reqVO.getNoticeName())
                 .likeIfPresent(MesWmSalesNoticeDO::getSalesOrderCode, reqVO.getSalesOrderCode())
                 .eqIfPresent(MesWmSalesNoticeDO::getClientId, reqVO.getClientId())
+                .eqIfPresent(MesWmSalesNoticeDO::getStatus, reqVO.getStatus())
                 .orderByDesc(MesWmSalesNoticeDO::getId));
     }
 

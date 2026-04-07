@@ -24,4 +24,7 @@ public class MesWmSalesNoticePageReqVO extends PageParam {
     @Schema(description = "客户编号", example = "1")
     private Long clientId;
 
+    @Schema(description = "状态", example = "3")
+    private Integer status;
+
 }
