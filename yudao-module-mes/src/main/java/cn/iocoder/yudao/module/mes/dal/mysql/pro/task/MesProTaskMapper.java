@@ -28,6 +28,7 @@ public interface MesProTaskMapper extends BaseMapperX<MesProTaskDO> {
                 .eqIfPresent(MesProTaskDO::getProcessId, reqVO.getProcessId())
                 .eqIfPresent(MesProTaskDO::getWorkstationId, reqVO.getWorkstationId())
                 .eqIfPresent(MesProTaskDO::getStatus, reqVO.getStatus())
+                .inIfPresent(MesProTaskDO::getStatus, reqVO.getStatuses())
                 .betweenIfPresent(MesProTaskDO::getCreateTime, reqVO.getCreateTime())
                 .orderByDesc(MesProTaskDO::getId));
     }
