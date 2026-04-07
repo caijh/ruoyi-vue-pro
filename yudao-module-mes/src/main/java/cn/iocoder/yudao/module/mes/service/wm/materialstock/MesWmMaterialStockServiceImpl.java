@@ -185,4 +185,34 @@ public class MesWmMaterialStockServiceImpl implements MesWmMaterialStockService 
         }
     }
 
+    @Override
+    public MesWmMaterialStockDO validateSelectedStock(Long materialStockId,
+                                                      Long itemId,
+                                                      Long batchId,
+                                                      String batchCode,
+                                                      Long warehouseId,
+                                                      Long locationId,
+                                                      Long areaId,
+                                                      BigDecimal quantity) {
+        // 1. 校验库存记录必须存在
+        if (materialStockId == null) {
+            throw exception(WM_MATERIAL_STOCK_REQUIRED);
+        }
+        MesWmMaterialStockDO stock = validateMaterialStockExists(materialStockId);
+        // 2. 校验库存记录的物料、批次、仓库、库区、库位等信息与前端选择的一致，避免串单或越权提交
+        if (ObjUtil.notEqual(stock.getItemId(), itemId)
+                || ObjUtil.notEqual(stock.getBatchId(), batchId)
+                || (batchCode != null && ObjUtil.notEqual(stock.getBatchCode(), batchCode))
+                || ObjUtil.notEqual(stock.getWarehouseId(), warehouseId)
+                || ObjUtil.notEqual(stock.getLocationId(), locationId)
+                || ObjUtil.notEqual(stock.getAreaId(), areaId)) {
+            throw exception(WM_MATERIAL_STOCK_SELECTION_MISMATCH);
+        }
+        // 3. 校验库存数量充足（如果前端传了 quantity，则必须保证库存数量 >= quantity）
+        if (quantity != null && stock.getQuantity() != null && stock.getQuantity().compareTo(quantity) < 0) {
+            throw exception(WM_MATERIAL_STOCK_INSUFFICIENT);
+        }
+        return stock;
+    }
+
 }

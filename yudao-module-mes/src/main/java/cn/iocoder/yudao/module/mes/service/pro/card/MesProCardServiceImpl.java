@@ -7,6 +7,7 @@ import cn.iocoder.yudao.framework.common.util.object.ObjectUtils;
 import cn.iocoder.yudao.module.mes.controller.admin.pro.card.vo.MesProCardPageReqVO;
 import cn.iocoder.yudao.module.mes.controller.admin.pro.card.vo.MesProCardSaveReqVO;
 import cn.iocoder.yudao.module.mes.dal.dataobject.pro.card.MesProCardDO;
+import cn.iocoder.yudao.module.mes.dal.dataobject.pro.workorder.MesProWorkOrderDO;
 import cn.iocoder.yudao.module.mes.dal.mysql.pro.card.MesProCardMapper;
 import cn.iocoder.yudao.module.mes.enums.pro.MesProWorkOrderStatusEnum;
 import cn.iocoder.yudao.module.mes.enums.wm.BarcodeBizTypeEnum;
@@ -171,9 +172,12 @@ public class MesProCardServiceImpl implements MesProCardService {
         // 校验编码唯一
         validateCardCodeUnique(reqVO.getId(), reqVO.getCode());
         // 校验工单存在
-        workOrderService.validateWorkOrderExists(reqVO.getWorkOrderId());
+        MesProWorkOrderDO workOrder = workOrderService.validateWorkOrderConfirmed(reqVO.getWorkOrderId());
         // 校验物料存在
         itemService.validateItemExists(reqVO.getItemId());
+        if (ObjUtil.notEqual(workOrder.getProductId(), reqVO.getItemId())) {
+            throw exception(PRO_WORK_ORDER_PRODUCT_MISMATCH);
+        }
     }
 
 }

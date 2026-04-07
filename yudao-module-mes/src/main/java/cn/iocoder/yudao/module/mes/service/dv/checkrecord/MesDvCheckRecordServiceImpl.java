@@ -10,6 +10,7 @@ import cn.iocoder.yudao.module.mes.dal.dataobject.dv.checkplan.MesDvCheckPlanSub
 import cn.iocoder.yudao.module.mes.dal.dataobject.dv.checkrecord.MesDvCheckRecordDO;
 import cn.iocoder.yudao.module.mes.dal.dataobject.dv.checkrecord.MesDvCheckRecordLineDO;
 import cn.iocoder.yudao.module.mes.enums.dv.MesDvCheckRecordStatusEnum;
+import cn.iocoder.yudao.module.mes.enums.dv.MesDvCheckPlanTypeEnum;
 import cn.iocoder.yudao.module.mes.enums.dv.MesDvCheckResultEnum;
 import cn.iocoder.yudao.module.mes.dal.mysql.dv.checkrecord.MesDvCheckRecordMapper;
 import cn.iocoder.yudao.module.mes.service.dv.checkplan.MesDvCheckPlanService;
@@ -36,6 +37,7 @@ import static cn.iocoder.yudao.module.mes.enums.ErrorCodeConstants.*;
 @Service
 @Validated
 public class MesDvCheckRecordServiceImpl implements MesDvCheckRecordService {
+
 
     @Resource
     private MesDvCheckRecordMapper checkRecordMapper;
@@ -162,7 +164,7 @@ public class MesDvCheckRecordServiceImpl implements MesDvCheckRecordService {
         machineryService.validateMachineryExists(reqVO.getMachineryId());
         // 校验点检计划是否存在
         if (reqVO.getPlanId() != null) {
-            checkPlanService.validateCheckPlanExists(reqVO.getPlanId());
+            checkPlanService.validateCheckPlanExistsAndType(reqVO.getPlanId(), MesDvCheckPlanTypeEnum.CHECK.getType());
         }
         // 校验点检人是否存在
         if (reqVO.getUserId() != null) {

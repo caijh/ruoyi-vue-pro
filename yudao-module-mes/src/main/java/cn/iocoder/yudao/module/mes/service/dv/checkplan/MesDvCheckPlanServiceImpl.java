@@ -149,6 +149,15 @@ public class MesDvCheckPlanServiceImpl implements MesDvCheckPlanService {
         return plan;
     }
 
+    @Override
+    public MesDvCheckPlanDO validateCheckPlanExistsAndType(Long id, Integer type) {
+        MesDvCheckPlanDO plan = doValidateCheckPlanExists(id);
+        if (ObjUtil.notEqual(plan.getType(), type)) {
+            throw exception(DV_CHECK_PLAN_TYPE_MISMATCH);
+        }
+        return plan;
+    }
+
     private void validateCheckPlanCodeUnique(Long id, String code) {
         MesDvCheckPlanDO plan = checkPlanMapper.selectByCode(code);
         if (plan == null) {

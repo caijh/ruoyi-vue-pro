@@ -46,6 +46,14 @@ public interface MesProFeedbackService {
     MesProFeedbackDO getFeedback(Long id);
 
     /**
+     * 校验生产报工存在
+     *
+     * @param id 编号
+     * @return 生产报工
+     */
+    MesProFeedbackDO validateFeedbackExists(Long id);
+
+    /**
      * 获得生产报工分页
      *
      * @param pageReqVO 分页查询

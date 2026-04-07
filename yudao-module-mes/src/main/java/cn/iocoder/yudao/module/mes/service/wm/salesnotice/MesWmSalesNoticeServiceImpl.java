@@ -111,7 +111,8 @@ public class MesWmSalesNoticeServiceImpl implements MesWmSalesNoticeService {
         return salesNoticeMapper.selectByIds(ids);
     }
 
-    private MesWmSalesNoticeDO validateSalesNoticeExists(Long id) {
+    @Override
+    public MesWmSalesNoticeDO validateSalesNoticeExists(Long id) {
         MesWmSalesNoticeDO notice = salesNoticeMapper.selectById(id);
         if (notice == null) {
             throw exception(WM_SALES_NOTICE_NOT_EXISTS);

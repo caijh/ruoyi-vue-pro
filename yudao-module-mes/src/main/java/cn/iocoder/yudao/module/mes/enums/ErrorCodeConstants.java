@@ -91,6 +91,7 @@ public interface ErrorCodeConstants {
     ErrorCode MD_PRODUCT_BOM_NOT_EXISTS = new ErrorCode(1_040_107_000, "产品BOM不存在");
     ErrorCode MD_PRODUCT_BOM_SELF_REFERENCE = new ErrorCode(1_040_107_001, "产品不能作为自身的BOM物料");
     ErrorCode MD_PRODUCT_BOM_CIRCULAR = new ErrorCode(1_040_107_002, "BOM物料存在闭环，无法新增");
+    ErrorCode MD_PRODUCT_BOM_ITEM_INVALID = new ErrorCode(1_040_107_003, "选择的 BOM 物料不属于当前产品");
 
     // ========== MES 基础数据-产品SOP（1-040-108-000） ==========
     ErrorCode MD_PRODUCT_SOP_NOT_EXISTS = new ErrorCode(1_040_108_000, "产品SOP不存在");
@@ -167,6 +168,7 @@ public interface ErrorCodeConstants {
     ErrorCode DV_CHECK_PLAN_NO_MACHINERY = new ErrorCode(1_040_302_003, "启用方案时，至少需要关联一台设备");
     ErrorCode DV_CHECK_PLAN_NO_SUBJECT = new ErrorCode(1_040_302_004, "启用方案时，至少需要关联一个点检保养项目");
     ErrorCode DV_CHECK_PLAN_NOT_ENABLED = new ErrorCode(1_040_302_005, "点检保养方案未启用，不允许停用");
+    ErrorCode DV_CHECK_PLAN_TYPE_MISMATCH = new ErrorCode(1_040_302_006, "点检保养方案类型与当前业务不匹配");
     // ========== MES 设备管理-点检方案设备（1-040-302-100） ==========
     ErrorCode DV_CHECK_PLAN_MACHINERY_NOT_EXISTS = new ErrorCode(1_040_302_100, "点检保养方案设备不存在");
     ErrorCode DV_CHECK_PLAN_MACHINERY_DUPLICATE = new ErrorCode(1_040_302_101, "该设备已关联到当前方案，请勿重复添加");
@@ -241,11 +243,17 @@ public interface ErrorCodeConstants {
     ErrorCode PRO_WORK_ORDER_NOT_PREPARE = new ErrorCode(1_040_502_002, "只有草稿状态的工单才能执行此操作");
     ErrorCode PRO_WORK_ORDER_NOT_CONFIRMED = new ErrorCode(1_040_502_003, "只有已确认状态的工单才能执行此操作");
     ErrorCode PRO_WORK_ORDER_HAS_CHILDREN = new ErrorCode(1_040_502_004, "存在子工单，无法删除");
+    ErrorCode PRO_WORK_ORDER_PRODUCT_MISMATCH = new ErrorCode(1_040_502_005, "当前产品物料与生产工单产品不一致");
     ErrorCode PRO_WORK_ORDER_BOM_NOT_EXISTS = new ErrorCode(1_040_502_100, "生产工单BOM不存在");
 
     // ========== MES 生产管理-生产任务（1-040-503-000） ==========
     ErrorCode PRO_TASK_NOT_EXISTS = new ErrorCode(1_040_503_000, "生产任务不存在");
     ErrorCode PRO_TASK_ALREADY_FINISHED = new ErrorCode(1_040_503_001, "生产任务已完成或已取消，不能继续操作");
+    ErrorCode PRO_TASK_WORK_ORDER_MISMATCH = new ErrorCode(1_040_503_002, "生产任务不属于当前生产工单");
+    ErrorCode PRO_TASK_WORKSTATION_MISMATCH = new ErrorCode(1_040_503_003, "生产任务不属于当前工作站");
+    ErrorCode PRO_TASK_ROUTE_PROCESS_MISMATCH = new ErrorCode(1_040_503_004, "生产任务与当前工艺路线或工序不一致");
+    ErrorCode PRO_TASK_ITEM_MISMATCH = new ErrorCode(1_040_503_005, "生产任务产品与当前产品物料不一致");
+    ErrorCode PRO_WORKSTATION_PROCESS_MISMATCH = new ErrorCode(1_040_503_006, "工作站所属工序与当前工序不一致");
     // ========== MES 生产管理-生产任务投料（1-040-503-100） ==========
     ErrorCode PRO_TASK_ISSUE_NOT_EXISTS = new ErrorCode(1_040_503_100, "生产任务投料记录不存在");
 
@@ -399,6 +407,8 @@ public interface ErrorCodeConstants {
     ErrorCode WM_TRANSACTION_RELATED_NOT_EXISTS = new ErrorCode(1_040_703_010, "关联的库存事务不存在");
     ErrorCode WM_TRANSACTION_LIST_EMPTY = new ErrorCode(1_040_703_011, "库存事务列表不能为空");
     ErrorCode WM_TRANSACTION_BATCH_NOT_EXISTS = new ErrorCode(1_040_703_012, "批次记录不存在");
+    ErrorCode WM_MATERIAL_STOCK_REQUIRED = new ErrorCode(1_040_703_013, "库存记录不能为空");
+    ErrorCode WM_MATERIAL_STOCK_SELECTION_MISMATCH = new ErrorCode(1_040_703_014, "库存记录与提交的物料、批次或库位信息不一致");
 
     // ========== MES 仓库管理-到货通知单（1-040-704-000） ==========
     ErrorCode WM_ARRIVAL_NOTICE_NOT_EXISTS = new ErrorCode(1_040_704_000, "到货通知单不存在");
@@ -408,6 +418,7 @@ public interface ErrorCodeConstants {
     ErrorCode WM_ARRIVAL_NOTICE_STATUS_NOT_PENDING_RECEIPT = new ErrorCode(1_040_704_004, "只有待入库状态才允许完成");
     ErrorCode WM_ARRIVAL_NOTICE_IQC_PENDING = new ErrorCode(1_040_704_005, "存在待检验行，无法审批通过");
     ErrorCode WM_ARRIVAL_NOTICE_NO_LINE = new ErrorCode(1_040_704_006, "至少需要一条行项目");
+    ErrorCode WM_ARRIVAL_NOTICE_VENDOR_MISMATCH = new ErrorCode(1_040_704_007, "到货通知单的供应商与当前单据不一致");
     ErrorCode WM_ARRIVAL_NOTICE_LINE_NOT_EXISTS = new ErrorCode(1_040_704_100, "到货通知单行不存在");
     ErrorCode WM_ARRIVAL_NOTICE_LINE_NOT_MATCH = new ErrorCode(1_040_704_101, "到货通知单行不属于指定的到货通知单");
 
@@ -444,6 +455,8 @@ public interface ErrorCodeConstants {
     ErrorCode WM_OUTSOURCE_ISSUE_LINE_NOT_EXISTS = new ErrorCode(1_040_707_100, "外协发料单行不存在");
     ErrorCode WM_OUTSOURCE_ISSUE_LINE_ITEM_NOT_IN_BOM = new ErrorCode(1_040_707_101, "发料单行对应的物料不在当前工单的 BOM 列表中");
     ErrorCode WM_OUTSOURCE_ISSUE_DETAIL_NOT_EXISTS = new ErrorCode(1_040_707_200, "外协发料单明细不存在");
+    ErrorCode WM_OUTSOURCE_ISSUE_DETAIL_LINE_NOT_MATCH = new ErrorCode(1_040_707_201, "拣货明细不属于指定的外协发料单");
+    ErrorCode WM_OUTSOURCE_ISSUE_DETAIL_ITEM_MISMATCH = new ErrorCode(1_040_707_202, "拣货明细的物料与外协发料单行的物料不一致");
     ErrorCode WM_OUTSOURCE_ISSUE_WORK_ORDER_TYPE_INVALID = new ErrorCode(1_040_707_008, "工单类型不是外协（代工）类型");
 
     // ========== MES 仓库管理-生产领料出库单（1-040-708-000） ==========
@@ -459,6 +472,7 @@ public interface ErrorCodeConstants {
     ErrorCode WM_PRODUCT_ISSUE_CODE_DUPLICATE = new ErrorCode(1_040_708_102, "领料出库单编码已存在");
     ErrorCode WM_PRODUCT_ISSUE_DETAIL_NOT_EXISTS = new ErrorCode(1_040_708_200, "生产领料出库单明细不存在");
     ErrorCode WM_PRODUCT_ISSUE_DETAIL_ITEM_MISMATCH = new ErrorCode(1_040_708_201, "拣货明细的物料与领料单行的物料不一致");
+    ErrorCode WM_PRODUCT_ISSUE_DETAIL_LINE_NOT_MATCH = new ErrorCode(1_040_708_202, "拣货明细不属于指定的领料出库单");
 
     // ========== MES 仓库管理-生产入库单（1-040-709-000） ==========
     ErrorCode WM_PRODUCT_PRODUCE_NOT_EXISTS = new ErrorCode(1_040_709_000, "生产入库单不存在");
@@ -501,6 +515,8 @@ public interface ErrorCodeConstants {
     ErrorCode WM_RETURN_ISSUE_DETAIL_QUANTITY_INVALID = new ErrorCode(1_040_710_201, "退料明细数量必须大于0");
     ErrorCode WM_RETURN_ISSUE_DETAIL_QUANTITY_EXCEED = new ErrorCode(1_040_710_202, "退料明细总数量不能超过退料单行数量");
     ErrorCode WM_RETURN_ISSUE_CODE_DUPLICATE = new ErrorCode(1_040_710_203, "退料单编码已存在");
+    ErrorCode WM_RETURN_ISSUE_DETAIL_LINE_NOT_MATCH = new ErrorCode(1_040_710_204, "退料明细不属于指定的退料单");
+    ErrorCode WM_RETURN_ISSUE_DETAIL_ITEM_MISMATCH = new ErrorCode(1_040_710_205, "退料明细的物料与退料单行的物料不一致");
 
     // ========== MES 仓库管理-供应商退货单（1-040-711-000） ==========
     ErrorCode WM_RETURN_VENDOR_NOT_EXISTS = new ErrorCode(1_040_711_000, "供应商退货单不存在");
@@ -514,6 +530,7 @@ public interface ErrorCodeConstants {
     ErrorCode WM_RETURN_VENDOR_LINE_NOT_EXISTS = new ErrorCode(1_040_711_100, "供应商退货单行不存在");
     ErrorCode WM_RETURN_VENDOR_DETAIL_NOT_EXISTS = new ErrorCode(1_040_711_200, "供应商退货单明细不存在");
     ErrorCode WM_RETURN_VENDOR_DETAIL_QUANTITY_INVALID = new ErrorCode(1_040_711_201, "退货明细数量必须大于 0");
+    ErrorCode WM_RETURN_VENDOR_DETAIL_LINE_NOT_MATCH = new ErrorCode(1_040_711_202, "拣货明细不属于指定的供应商退货单");
 
     // ========== MES 仓库管理-产品收货单（1-040-712-000） ==========
     ErrorCode WM_PRODUCT_RECPT_NOT_EXISTS = new ErrorCode(1_040_712_000, "产品收货单不存在");
@@ -588,6 +605,8 @@ public interface ErrorCodeConstants {
     ErrorCode WM_PRODUCT_SALES_DETAIL_NOT_EXISTS = new ErrorCode(1_040_714_012, "销售出库明细不存在");
     ErrorCode WM_PRODUCT_SALES_STOCK_INSUFFICIENT = new ErrorCode(1_040_714_013, "库存不足，无法拣货");
     ErrorCode WM_PRODUCT_SALES_LINE_QUANTITY_INVALID = new ErrorCode(1_040_714_014, "出库数量必须大于 0");
+    ErrorCode WM_PRODUCT_SALES_DETAIL_LINE_NOT_MATCH = new ErrorCode(1_040_714_015, "拣货明细不属于指定的销售出库单");
+    ErrorCode WM_PRODUCT_SALES_DETAIL_ITEM_MISMATCH = new ErrorCode(1_040_714_016, "拣货明细的物料与销售出库单行的物料不一致");
 
     // ========== MES 仓库管理-杂项出库单（1-040-715-000） ==========
     ErrorCode WM_MISC_ISSUE_NOT_EXISTS = new ErrorCode(1_040_715_000, "杂项出库单不存在");
@@ -616,6 +635,8 @@ public interface ErrorCodeConstants {
     ErrorCode WM_SALES_NOTICE_CODE_DUPLICATE = new ErrorCode(1_040_720_001, "通知单编号重复");
     ErrorCode WM_SALES_NOTICE_STATUS_NOT_ALLOW_DELETE = new ErrorCode(1_040_720_002, "单据状态不允许删除");
     ErrorCode WM_SALES_NOTICE_STATUS_NOT_ALLOW_UPDATE = new ErrorCode(1_040_720_003, "单据状态不允许修改");
+    ErrorCode WM_SALES_NOTICE_STATUS_NOT_APPROVED = new ErrorCode(1_040_720_004, "发货通知单不是待出库状态");
+    ErrorCode WM_SALES_NOTICE_CLIENT_MISMATCH = new ErrorCode(1_040_720_005, "发货通知单的客户与当前单据不一致");
     ErrorCode WM_SALES_NOTICE_LINE_NOT_EXISTS = new ErrorCode(1_040_720_010, "发货通知单行不存在");
     ErrorCode WM_SALES_NOTICE_LINE_EMPTY = new ErrorCode(1_040_720_011, "发货通知单行为空，不能提交");
 

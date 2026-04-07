@@ -8,6 +8,7 @@ import cn.iocoder.yudao.module.mes.controller.admin.qc.ipqc.vo.MesQcIpqcPageReqV
 import cn.iocoder.yudao.module.mes.controller.admin.qc.ipqc.vo.MesQcIpqcSaveReqVO;
 import cn.iocoder.yudao.module.mes.dal.dataobject.md.workstation.MesMdWorkstationDO;
 import cn.iocoder.yudao.module.mes.dal.dataobject.pro.route.MesProRouteProductDO;
+import cn.iocoder.yudao.module.mes.dal.dataobject.pro.task.MesProTaskDO;
 import cn.iocoder.yudao.module.mes.dal.dataobject.pro.workorder.MesProWorkOrderDO;
 import cn.iocoder.yudao.module.mes.dal.dataobject.pro.feedback.MesProFeedbackDO;
 import cn.iocoder.yudao.module.mes.dal.dataobject.qc.defectrecord.MesQcDefectRecordDO;
@@ -23,6 +24,7 @@ import cn.iocoder.yudao.module.mes.service.md.workstation.MesMdWorkstationServic
 import cn.iocoder.yudao.module.mes.service.pro.feedback.MesProFeedbackService;
 import cn.iocoder.yudao.module.mes.service.pro.route.MesProRouteProcessService;
 import cn.iocoder.yudao.module.mes.service.pro.route.MesProRouteProductService;
+import cn.iocoder.yudao.module.mes.service.pro.task.MesProTaskService;
 import cn.iocoder.yudao.module.mes.service.pro.workorder.MesProWorkOrderService;
 import cn.iocoder.yudao.module.mes.service.qc.defectrecord.MesQcDefectRecordService;
 import cn.iocoder.yudao.module.mes.service.qc.template.MesQcTemplateItemService;
@@ -76,6 +78,9 @@ public class MesQcIpqcServiceImpl implements MesQcIpqcService {
     @Resource
     @Lazy
     private MesProRouteProcessService routeProcessService;
+    @Resource
+    @Lazy
+    private MesProTaskService taskService;
 
     @Resource
     private AdminUserApi adminUserApi;
@@ -136,7 +141,37 @@ public class MesQcIpqcServiceImpl implements MesQcIpqcService {
         // 校验工位、检测人员存在
         MesMdWorkstationDO workstation = workstationService.validateWorkstationExists(reqVO.getWorkstationId());
         adminUserApi.validateUser(reqVO.getInspectorUserId());
+        // 校验工单存在
+        MesProWorkOrderDO workOrder = workOrderService.validateWorkOrderConfirmed(reqVO.getWorkOrderId());
+        if (reqVO.getItemId() != null && ObjUtil.notEqual(reqVO.getItemId(), workOrder.getProductId())) {
+            throw exception(PRO_WORK_ORDER_PRODUCT_MISMATCH);
+        }
+        if (reqVO.getProcessId() != null && ObjUtil.notEqual(workstation.getProcessId(), reqVO.getProcessId())) {
+            throw exception(PRO_WORKSTATION_PROCESS_MISMATCH);
+        }
+        // 校验任务关系（如果指定了任务）
+        if (reqVO.getTaskId() != null) {
+            MesProTaskDO task = taskService.validateTaskNotFinished(reqVO.getTaskId());
+            validateTaskRelation(task, workstation, workOrder, reqVO);
+        }
         return workstation;
+    }
+
+    private void validateTaskRelation(MesProTaskDO task, MesMdWorkstationDO workstation,
+                                      MesProWorkOrderDO workOrder, MesQcIpqcSaveReqVO reqVO) {
+        if (ObjUtil.notEqual(task.getWorkOrderId(), workOrder.getId())) {
+            throw exception(PRO_TASK_WORK_ORDER_MISMATCH);
+        }
+        if (ObjUtil.notEqual(task.getWorkstationId(), workstation.getId())) {
+            throw exception(PRO_TASK_WORKSTATION_MISMATCH);
+        }
+        Long expectedProcessId = reqVO.getProcessId() != null ? reqVO.getProcessId() : workstation.getProcessId();
+        if (expectedProcessId != null && ObjUtil.notEqual(task.getProcessId(), expectedProcessId)) {
+            throw exception(PRO_TASK_ROUTE_PROCESS_MISMATCH);
+        }
+        if (ObjUtil.notEqual(task.getItemId(), workOrder.getProductId())) {
+            throw exception(PRO_TASK_ITEM_MISMATCH);
+        }
     }
 
     @Override
@@ -238,8 +273,8 @@ public class MesQcIpqcServiceImpl implements MesQcIpqcService {
             return null;
         }
         if (Objects.equals(sourceDocType, MesBizTypeConstants.PRO_FEEDBACK)) {
-            MesProFeedbackDO feedback = feedbackService.getFeedback(sourceDocId);
-            return feedback != null ? feedback.getCode() : null;
+            MesProFeedbackDO feedback = feedbackService.validateFeedbackExists(sourceDocId);
+            return feedback.getCode();
         }
         return null;
     }

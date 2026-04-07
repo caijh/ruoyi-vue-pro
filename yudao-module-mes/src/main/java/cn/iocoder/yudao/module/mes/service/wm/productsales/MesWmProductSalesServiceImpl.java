@@ -9,6 +9,7 @@ import cn.iocoder.yudao.framework.common.util.object.ObjectUtils;
 import cn.iocoder.yudao.module.mes.controller.admin.wm.productsales.vo.MesWmProductSalesPageReqVO;
 import cn.iocoder.yudao.module.mes.controller.admin.wm.productsales.vo.MesWmProductSalesSaveReqVO;
 import cn.iocoder.yudao.module.mes.controller.admin.wm.productsales.vo.MesWmProductSalesShippingReqVO;
+import cn.iocoder.yudao.module.mes.dal.dataobject.wm.salesnotice.MesWmSalesNoticeDO;
 import cn.iocoder.yudao.module.mes.dal.dataobject.wm.productsales.MesWmProductSalesDO;
 import cn.iocoder.yudao.module.mes.dal.dataobject.wm.productsales.MesWmProductSalesDetailDO;
 import cn.iocoder.yudao.module.mes.dal.dataobject.wm.productsales.MesWmProductSalesLineDO;
@@ -16,8 +17,10 @@ import cn.iocoder.yudao.module.mes.dal.mysql.wm.productsales.MesWmProductSalesMa
 import cn.iocoder.yudao.module.mes.enums.MesBizTypeConstants;
 import cn.iocoder.yudao.module.mes.enums.wm.MesWmProductSalesStatusEnum;
 import cn.iocoder.yudao.module.mes.enums.wm.MesWmQualityStatusEnum;
+import cn.iocoder.yudao.module.mes.enums.wm.MesWmSalesNoticeStatusEnum;
 import cn.iocoder.yudao.module.mes.enums.wm.MesWmTransactionTypeEnum;
 import cn.iocoder.yudao.module.mes.service.md.client.MesMdClientService;
+import cn.iocoder.yudao.module.mes.service.wm.salesnotice.MesWmSalesNoticeService;
 import cn.iocoder.yudao.module.mes.service.wm.transaction.MesWmTransactionService;
 import cn.iocoder.yudao.module.mes.service.wm.transaction.dto.MesWmTransactionSaveReqDTO;
 import jakarta.annotation.Resource;
@@ -52,6 +55,9 @@ public class MesWmProductSalesServiceImpl implements MesWmProductSalesService {
 
     @Resource
     private MesMdClientService clientService;
+
+    @Resource
+    private MesWmSalesNoticeService salesNoticeService;
 
     @Resource
     private MesWmTransactionService wmTransactionService;
@@ -262,6 +268,16 @@ public class MesWmProductSalesServiceImpl implements MesWmProductSalesService {
         validateCodeUnique(id, reqVO.getCode());
         // 校验客户存在
         clientService.validateClientExists(reqVO.getClientId());
+        // 校验发货通知单
+        if (reqVO.getNoticeId() != null) {
+            MesWmSalesNoticeDO notice = salesNoticeService.validateSalesNoticeExists(reqVO.getNoticeId());
+            if (ObjUtil.notEqual(notice.getStatus(), MesWmSalesNoticeStatusEnum.APPROVED.getStatus())) {
+                throw exception(WM_SALES_NOTICE_STATUS_NOT_APPROVED);
+            }
+            if (ObjUtil.notEqual(notice.getClientId(), reqVO.getClientId())) {
+                throw exception(WM_SALES_NOTICE_CLIENT_MISMATCH);
+            }
+        }
     }
 
     private MesWmProductSalesDO validateProductSalesExists(Long id) {

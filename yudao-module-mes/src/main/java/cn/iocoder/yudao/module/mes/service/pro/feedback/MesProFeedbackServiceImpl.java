@@ -4,11 +4,13 @@ import cn.hutool.core.util.ObjUtil;
 import cn.hutool.core.util.ObjectUtil;
 import cn.iocoder.yudao.framework.common.pojo.PageResult;
 import cn.iocoder.yudao.framework.common.util.object.BeanUtils;
+import cn.iocoder.yudao.module.mes.dal.dataobject.md.workstation.MesMdWorkstationDO;
 import cn.iocoder.yudao.module.mes.controller.admin.pro.feedback.vo.MesProFeedbackPageReqVO;
 import cn.iocoder.yudao.module.mes.controller.admin.pro.feedback.vo.MesProFeedbackSaveReqVO;
 import cn.iocoder.yudao.module.mes.dal.dataobject.pro.feedback.MesProFeedbackDO;
 import cn.iocoder.yudao.module.mes.dal.dataobject.pro.route.MesProRouteProcessDO;
 import cn.iocoder.yudao.module.mes.dal.dataobject.pro.task.MesProTaskDO;
+import cn.iocoder.yudao.module.mes.dal.dataobject.pro.workorder.MesProWorkOrderDO;
 import cn.iocoder.yudao.module.mes.dal.dataobject.wm.itemconsume.MesWmItemConsumeDO;
 import cn.iocoder.yudao.module.mes.dal.dataobject.wm.productproduce.MesWmProductProduceDO;
 import cn.iocoder.yudao.module.mes.dal.dataobject.wm.productproduce.MesWmProductProduceLineDO;
@@ -219,7 +221,8 @@ public class MesProFeedbackServiceImpl implements MesProFeedbackService {
 
     // ==================== 校验方法 ====================
 
-    private MesProFeedbackDO validateFeedbackExists(Long id) {
+    @Override
+    public MesProFeedbackDO validateFeedbackExists(Long id) {
         MesProFeedbackDO feedback = feedbackMapper.selectById(id);
         if (feedback == null) {
             throw exception(PRO_FEEDBACK_NOT_EXISTS);
@@ -251,7 +254,10 @@ public class MesProFeedbackServiceImpl implements MesProFeedbackService {
      */
     private MesProTaskDO validateFeedbackData(MesProFeedbackSaveReqVO reqVO) {
         // 1. 校验工作站存在
-        workstationService.validateWorkstationExists(reqVO.getWorkstationId());
+        MesMdWorkstationDO workstation = workstationService.validateWorkstationExists(reqVO.getWorkstationId());
+        if (ObjUtil.notEqual(workstation.getProcessId(), reqVO.getProcessId())) {
+            throw exception(PRO_WORKSTATION_PROCESS_MISMATCH);
+        }
 
         // 2.1 校验工艺路线 + 工序配置有效
         MesProRouteProcessDO routeProcess = routeProcessService.getRouteProcessByRouteIdAndProcessId(
@@ -277,10 +283,32 @@ public class MesProFeedbackServiceImpl implements MesProFeedbackService {
         }
 
         // 3. 校验工单已确认
-        workOrderService.validateWorkOrderConfirmed(reqVO.getWorkOrderId());
+        MesProWorkOrderDO workOrder = workOrderService.validateWorkOrderConfirmed(reqVO.getWorkOrderId());
+        if (ObjUtil.notEqual(workOrder.getProductId(), reqVO.getItemId())) {
+            throw exception(PRO_WORK_ORDER_PRODUCT_MISMATCH);
+        }
 
         // 4. 校验任务存在且未终态（已完成/已取消），并返回任务用于冗余 itemId
-        return taskService.validateTaskNotFinished(reqVO.getTaskId());
+        MesProTaskDO task = taskService.validateTaskNotFinished(reqVO.getTaskId());
+        validateTaskRelation(task, workstation, workOrder, reqVO);
+        return task;
+    }
+
+    private void validateTaskRelation(MesProTaskDO task, MesMdWorkstationDO workstation,
+                                      MesProWorkOrderDO workOrder, MesProFeedbackSaveReqVO reqVO) {
+        if (ObjUtil.notEqual(task.getWorkOrderId(), workOrder.getId())) {
+            throw exception(PRO_TASK_WORK_ORDER_MISMATCH);
+        }
+        if (ObjUtil.notEqual(task.getWorkstationId(), workstation.getId())) {
+            throw exception(PRO_TASK_WORKSTATION_MISMATCH);
+        }
+        if (ObjUtil.notEqual(task.getRouteId(), reqVO.getRouteId())
+                || ObjUtil.notEqual(task.getProcessId(), reqVO.getProcessId())) {
+            throw exception(PRO_TASK_ROUTE_PROCESS_MISMATCH);
+        }
+        if (ObjUtil.notEqual(task.getItemId(), reqVO.getItemId())) {
+            throw exception(PRO_TASK_ITEM_MISMATCH);
+        }
     }
 
     @Override

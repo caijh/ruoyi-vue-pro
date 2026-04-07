@@ -10,6 +10,7 @@ import cn.iocoder.yudao.module.mes.dal.dataobject.dv.maintenrecord.MesDvMaintenR
 import cn.iocoder.yudao.module.mes.dal.dataobject.dv.maintenrecord.MesDvMaintenRecordLineDO;
 import cn.iocoder.yudao.module.mes.dal.mysql.dv.maintenrecord.MesDvMaintenRecordMapper;
 import cn.iocoder.yudao.module.mes.enums.dv.MesDvMaintenRecordStatusEnum;
+import cn.iocoder.yudao.module.mes.enums.dv.MesDvCheckPlanTypeEnum;
 import cn.iocoder.yudao.module.mes.service.dv.checkplan.MesDvCheckPlanService;
 import cn.iocoder.yudao.module.mes.service.dv.machinery.MesDvMachineryService;
 import jakarta.annotation.Resource;
@@ -100,7 +101,7 @@ public class MesDvMaintenRecordServiceImpl implements MesDvMaintenRecordService 
         machineryService.validateMachineryExists(reqVO.getMachineryId());
         // 校验保养计划是否存在
         if (reqVO.getPlanId() != null) {
-            checkPlanService.validateCheckPlanExists(reqVO.getPlanId());
+            checkPlanService.validateCheckPlanExistsAndType(reqVO.getPlanId(), MesDvCheckPlanTypeEnum.MAINTENANCE.getType());
         }
     }
 

@@ -40,6 +40,14 @@ public interface MesWmSalesNoticeService {
     void deleteSalesNotice(Long id);
 
     /**
+     * 校验发货通知单存在
+     *
+     * @param id 编号
+     * @return 发货通知单
+     */
+    MesWmSalesNoticeDO validateSalesNoticeExists(Long id);
+
+    /**
      * 获得发货通知单
      *
      * @param id 编号
