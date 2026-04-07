@@ -64,14 +64,8 @@ public class MesWmOutsourceReceiptServiceImpl implements MesWmOutsourceReceiptSe
 
     @Override
     public Long createOutsourceReceipt(MesWmOutsourceReceiptSaveReqVO createReqVO) {
-        // 校验编码唯一
-        validateCodeUnique(null, createReqVO.getCode());
-        // 校验供应商存在
-        vendorService.validateVendorExists(createReqVO.getVendorId());
-        // 校验外协工单存在
-        if (createReqVO.getWorkOrderId() != null) {
-            workOrderService.validateWorkOrderExists(createReqVO.getWorkOrderId());
-        }
+        // 校验数据
+        validateOutsourceReceiptSaveData(null, createReqVO);
 
         // 插入
         MesWmOutsourceReceiptDO receipt = BeanUtils.toBean(createReqVO, MesWmOutsourceReceiptDO.class);
@@ -84,14 +78,8 @@ public class MesWmOutsourceReceiptServiceImpl implements MesWmOutsourceReceiptSe
     public void updateOutsourceReceipt(MesWmOutsourceReceiptSaveReqVO updateReqVO) {
         // 校验存在 + 草稿状态
         validateOutsourceReceiptExistsAndDraft(updateReqVO.getId());
-        // 校验编码唯一
-        validateCodeUnique(updateReqVO.getId(), updateReqVO.getCode());
-        // 校验供应商存在
-        vendorService.validateVendorExists(updateReqVO.getVendorId());
-        // 校验外协工单存在
-        if (updateReqVO.getWorkOrderId() != null) {
-            workOrderService.validateWorkOrderExists(updateReqVO.getWorkOrderId());
-        }
+        // 校验数据
+        validateOutsourceReceiptSaveData(updateReqVO.getId(), updateReqVO);
 
         // 更新
         MesWmOutsourceReceiptDO updateObj = BeanUtils.toBean(updateReqVO, MesWmOutsourceReceiptDO.class);
@@ -315,6 +303,17 @@ public class MesWmOutsourceReceiptServiceImpl implements MesWmOutsourceReceiptSe
             throw exception(WM_OUTSOURCE_RECEIPT_STATUS_NOT_PREPARE);
         }
         return receipt;
+    }
+
+    private void validateOutsourceReceiptSaveData(Long id, MesWmOutsourceReceiptSaveReqVO reqVO) {
+        // 校验编码唯一
+        validateCodeUnique(id, reqVO.getCode());
+        // 校验供应商存在
+        vendorService.validateVendorExists(reqVO.getVendorId());
+        // 校验外协工单存在
+        if (reqVO.getWorkOrderId() != null) {
+            workOrderService.validateWorkOrderConfirmed(reqVO.getWorkOrderId());
+        }
     }
 
     private void validateCodeUnique(Long id, String code) {

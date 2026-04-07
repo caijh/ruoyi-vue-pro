@@ -262,7 +262,7 @@ public class MesWmOutsourceIssueServiceImpl implements MesWmOutsourceIssueServic
             vendorService.validateVendorExists(saveReqVO.getVendorId());
         }
         // 校验工单存在且类型为外协（代工）
-        MesProWorkOrderDO workOrder = workOrderService.validateWorkOrderExists(saveReqVO.getWorkOrderId());
+        MesProWorkOrderDO workOrder = workOrderService.validateWorkOrderConfirmed(saveReqVO.getWorkOrderId());
         if (ObjUtil.notEqual(workOrder.getType(), MesProWorkOrderTypeEnum.OUTSOURCE.getType())) {
             throw exception(WM_OUTSOURCE_ISSUE_WORK_ORDER_TYPE_INVALID);
         }
