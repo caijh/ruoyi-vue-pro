@@ -289,7 +289,7 @@ public class MesWmReturnIssueServiceImpl implements MesWmReturnIssueService {
      */
     private void validateReturnIssueSaveData(MesWmReturnIssueSaveReqVO reqVO) {
         validateCodeUnique(reqVO.getId(), reqVO.getCode());
-        workOrderService.validateWorkOrderExists(reqVO.getWorkOrderId());
+        workOrderService.validateWorkOrderConfirmed(reqVO.getWorkOrderId());
         if (reqVO.getWorkstationId() != null) {
             workstationService.validateWorkstationExists(reqVO.getWorkstationId());
         }
