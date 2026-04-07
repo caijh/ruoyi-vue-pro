@@ -138,16 +138,6 @@ public class MesWmPackageServiceImpl implements MesWmPackageService {
     }
 
     @Override
-    public List<MesWmPackageDO> getChildablePackageList() {
-        return packageMapper.selectChildableList();
-    }
-
-    @Override
-    public List<MesWmPackageDO> getPackageSimpleList() {
-        return packageMapper.selectList();
-    }
-
-    @Override
     public List<Long> getPackageAndDescendantIds(Long packageId) {
         List<Long> result = CollUtil.newArrayList(packageId);
         // 使用广度优先搜索 (BFS) 按层批量查询所有子孙箱 ID
