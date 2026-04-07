@@ -111,14 +111,6 @@ public class MesWmSalesNoticeServiceImpl implements MesWmSalesNoticeService {
         return salesNoticeMapper.selectByIds(ids);
     }
 
-    @Override
-    public List<MesWmSalesNoticeDO> getSalesNoticeListByStatus(Integer status) {
-        if (status == null) {
-            return salesNoticeMapper.selectList();
-        }
-        return salesNoticeMapper.selectListByStatus(status);
-    }
-
     private MesWmSalesNoticeDO validateSalesNoticeExists(Long id) {
         MesWmSalesNoticeDO notice = salesNoticeMapper.selectById(id);
         if (notice == null) {

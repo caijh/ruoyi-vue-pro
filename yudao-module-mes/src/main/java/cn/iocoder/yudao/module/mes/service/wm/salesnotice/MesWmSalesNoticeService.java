@@ -80,12 +80,4 @@ public interface MesWmSalesNoticeService {
         return convertMap(getSalesNoticeList(ids), MesWmSalesNoticeDO::getId);
     }
 
-    /**
-     * 按状态获得发货通知单列表
-     *
-     * @param status 状态
-     * @return 发货通知单列表
-     */
-    List<MesWmSalesNoticeDO> getSalesNoticeListByStatus(Integer status);
-
 }
