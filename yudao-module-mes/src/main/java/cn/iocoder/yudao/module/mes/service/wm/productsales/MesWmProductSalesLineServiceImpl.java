@@ -3,6 +3,7 @@ package cn.iocoder.yudao.module.mes.service.wm.productsales;
 import cn.iocoder.yudao.framework.common.util.collection.CollectionUtils;
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.StrUtil;
+import cn.hutool.core.util.ObjUtil;
 import cn.iocoder.yudao.framework.common.util.object.BeanUtils;
 import cn.iocoder.yudao.module.mes.controller.admin.wm.productsales.vo.line.MesWmProductSalesLinePageReqVO;
 import cn.iocoder.yudao.module.mes.controller.admin.wm.productsales.vo.line.MesWmProductSalesLineSaveReqVO;
@@ -14,6 +15,8 @@ import cn.iocoder.yudao.module.mes.enums.wm.MesWmQualityStatusEnum;
 import cn.iocoder.yudao.module.mes.service.md.item.MesMdItemService;
 import cn.iocoder.yudao.module.mes.service.wm.batch.MesWmBatchService;
 import cn.iocoder.yudao.module.mes.dal.dataobject.wm.batch.MesWmBatchDO;
+import cn.iocoder.yudao.module.mes.dal.dataobject.wm.salesnotice.MesWmSalesNoticeLineDO;
+import cn.iocoder.yudao.module.mes.service.wm.salesnotice.MesWmSalesNoticeLineService;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Lazy;
@@ -26,7 +29,7 @@ import java.util.Objects;
 
 import static cn.iocoder.yudao.framework.common.exception.util.ServiceExceptionUtil.exception;
 import static cn.iocoder.yudao.framework.common.util.collection.CollectionUtils.convertList;
-import static cn.iocoder.yudao.module.mes.enums.ErrorCodeConstants.WM_PRODUCT_SALES_LINE_NOT_EXISTS;
+import static cn.iocoder.yudao.module.mes.enums.ErrorCodeConstants.*;
 
 /**
  * MES 销售出库单行 Service 实现类
@@ -49,6 +52,9 @@ public class MesWmProductSalesLineServiceImpl implements MesWmProductSalesLineSe
     @Resource
     @Lazy
     private MesWmProductSalesService productSalesService;
+    @Resource
+    @Lazy
+    private MesWmSalesNoticeLineService salesNoticeLineService;
 
     @Override
     public Long createProductSalesLine(MesWmProductSalesLineSaveReqVO createReqVO) {
@@ -143,11 +149,53 @@ public class MesWmProductSalesLineServiceImpl implements MesWmProductSalesLineSe
      */
     private void validateLineSaveData(MesWmProductSalesLineSaveReqVO reqVO) {
         // 校验主单存在且为草稿状态
-        productSalesService.validateProductSalesExistsAndDraft(reqVO.getSalesId());
+        MesWmProductSalesDO sales = productSalesService.validateProductSalesExistsAndDraft(reqVO.getSalesId());
         // 校验物料存在
         itemService.validateItemExistsAndEnable(reqVO.getItemId());
+        // 校验关联发货通知单行（存在性 + 归属 + 字段一致性）
+        validateSalesNoticeLine(sales, reqVO);
         // 根据 batchCode 解析 batchId
         fillBatchId(reqVO);
+    }
+
+    /**
+     * 校验发货通知单行
+     *
+     * @param sales 出库单
+     * @param reqVO 出库行请求
+     */
+    private void validateSalesNoticeLine(MesWmProductSalesDO sales, MesWmProductSalesLineSaveReqVO reqVO) {
+        Long noticeLineId = reqVO.getNoticeLineId();
+        // 情况一：如果出库单关联了发货通知单，则必须关联发货通知单行
+        if (sales.getNoticeId() != null) {
+            if (noticeLineId == null) {
+                throw exception(WM_PRODUCT_SALES_LINE_SALES_NOTICE_LINE_REQUIRED);
+            }
+            MesWmSalesNoticeLineDO noticeLine = salesNoticeLineService.validateSalesNoticeLineExists(
+                    noticeLineId, sales.getNoticeId());
+            // 校验关键字段一致性：物料、数量、批次号、OQC 检验标识
+            if (ObjUtil.notEqual(reqVO.getItemId(), noticeLine.getItemId())) {
+                throw exception(WM_PRODUCT_SALES_LINE_NOTICE_LINE_ITEM_MISMATCH);
+            }
+            if (noticeLine.getQuantity() != null && reqVO.getQuantity() != null
+                    && reqVO.getQuantity().compareTo(noticeLine.getQuantity()) != 0) {
+                throw exception(WM_PRODUCT_SALES_LINE_NOTICE_LINE_QUANTITY_MISMATCH);
+            }
+            if (StrUtil.isNotBlank(noticeLine.getBatchCode())
+                    && ObjUtil.notEqual(reqVO.getBatchCode(), noticeLine.getBatchCode())) {
+                throw exception(WM_PRODUCT_SALES_LINE_NOTICE_LINE_BATCH_MISMATCH);
+            }
+            if (noticeLine.getOqcCheckFlag() != null
+                    && ObjUtil.notEqual(reqVO.getOqcCheckFlag(), noticeLine.getOqcCheckFlag())) {
+                throw exception(WM_PRODUCT_SALES_LINE_NOTICE_LINE_OQC_MISMATCH);
+            }
+            return;
+        }
+
+        // 情况二：如果出库单没有关联发货通知单，则不允许关联发货通知单行
+        if (noticeLineId != null) {
+            throw exception(WM_PRODUCT_SALES_LINE_SALES_NOTICE_LINE_NOT_ALLOWED);
+        }
     }
 
     @Override

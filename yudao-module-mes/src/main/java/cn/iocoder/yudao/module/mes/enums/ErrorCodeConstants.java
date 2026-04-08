@@ -619,6 +619,18 @@ public interface ErrorCodeConstants {
     ErrorCode WM_PRODUCT_SALES_LINE_QUANTITY_INVALID = new ErrorCode(1_040_714_014, "出库数量必须大于 0");
     ErrorCode WM_PRODUCT_SALES_DETAIL_LINE_NOT_MATCH = new ErrorCode(1_040_714_015, "拣货明细不属于指定的销售出库单");
     ErrorCode WM_PRODUCT_SALES_DETAIL_ITEM_MISMATCH = new ErrorCode(1_040_714_016, "拣货明细的物料与销售出库单行的物料不一致");
+    ErrorCode WM_PRODUCT_SALES_LINE_SALES_NOTICE_LINE_REQUIRED = new ErrorCode(1_040_714_017,
+            "出库单关联了发货通知单，必须选择发货通知单行");
+    ErrorCode WM_PRODUCT_SALES_LINE_SALES_NOTICE_LINE_NOT_ALLOWED = new ErrorCode(1_040_714_018,
+            "出库单未关联发货通知单，不能选择发货通知单行");
+    ErrorCode WM_PRODUCT_SALES_LINE_NOTICE_LINE_ITEM_MISMATCH = new ErrorCode(1_040_714_030,
+            "出库行物料与发货通知单行物料不一致");
+    ErrorCode WM_PRODUCT_SALES_LINE_NOTICE_LINE_QUANTITY_MISMATCH = new ErrorCode(1_040_714_031,
+            "出库行数量与发货通知单行数量不一致");
+    ErrorCode WM_PRODUCT_SALES_LINE_NOTICE_LINE_BATCH_MISMATCH = new ErrorCode(1_040_714_032,
+            "出库行批次号与发货通知单行批次号不一致");
+    ErrorCode WM_PRODUCT_SALES_LINE_NOTICE_LINE_OQC_MISMATCH = new ErrorCode(1_040_714_033,
+            "出库行 OQC 检验标识与发货通知单行不一致");
 
     // ========== MES 仓库管理-杂项出库单（1-040-715-000） ==========
     ErrorCode WM_MISC_ISSUE_NOT_EXISTS = new ErrorCode(1_040_715_000, "杂项出库单不存在");
@@ -651,6 +663,7 @@ public interface ErrorCodeConstants {
     ErrorCode WM_SALES_NOTICE_CLIENT_MISMATCH = new ErrorCode(1_040_720_005, "发货通知单的客户与当前单据不一致");
     ErrorCode WM_SALES_NOTICE_LINE_NOT_EXISTS = new ErrorCode(1_040_720_010, "发货通知单行不存在");
     ErrorCode WM_SALES_NOTICE_LINE_EMPTY = new ErrorCode(1_040_720_011, "发货通知单行为空，不能提交");
+    ErrorCode WM_SALES_NOTICE_LINE_NOT_MATCH = new ErrorCode(1_040_720_012, "发货通知单行不属于指定的发货通知单");
 
     // ========== MES 仓库管理-条码配置（1-040-730-000） ==========
     ErrorCode WM_BARCODE_CONFIG_NOT_EXISTS = new ErrorCode(1_040_730_000, "条码配置不存在");

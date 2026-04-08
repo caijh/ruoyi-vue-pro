@@ -5,6 +5,7 @@ import cn.iocoder.yudao.module.mes.dal.dataobject.md.item.MesMdItemDO;
 import cn.iocoder.yudao.module.mes.dal.dataobject.qc.oqc.MesQcOqcDO;
 import cn.iocoder.yudao.module.mes.dal.dataobject.wm.batch.MesWmBatchDO;
 import cn.iocoder.yudao.module.mes.dal.dataobject.wm.materialstock.MesWmMaterialStockDO;
+import cn.iocoder.yudao.module.mes.dal.dataobject.wm.salesnotice.MesWmSalesNoticeLineDO;
 import cn.iocoder.yudao.module.mes.enums.wm.MesWmQualityStatusEnum;
 import com.baomidou.mybatisplus.annotation.KeySequence;
 import com.baomidou.mybatisplus.annotation.TableId;
@@ -39,6 +40,12 @@ public class MesWmProductSalesLineDO extends BaseDO {
      * 关联 {@link MesWmProductSalesDO#getId()}
      */
     private Long salesId;
+    /**
+     * 发货通知单行ID
+     *
+     * 关联 {@link MesWmSalesNoticeLineDO#getId()}
+     */
+    private Long noticeLineId;
     /**
      * 物料ID
      *
