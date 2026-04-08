@@ -26,6 +26,7 @@ public interface MesWmMaterialStockMapper extends BaseMapperX<MesWmMaterialStock
                 .inIfPresent(MesWmMaterialStockDO::getItemTypeId, itemTypeIds)
                 .inIfPresent(MesWmMaterialStockDO::getItemId, itemIds)
                 .likeIfPresent(MesWmMaterialStockDO::getBatchCode, reqVO.getBatchCode())
+                .eqIfPresent(MesWmMaterialStockDO::getBatchId, reqVO.getBatchId())
                 .eqIfPresent(MesWmMaterialStockDO::getWarehouseId, reqVO.getWarehouseId())
                 .eqIfPresent(MesWmMaterialStockDO::getLocationId, reqVO.getLocationId())
                 .eqIfPresent(MesWmMaterialStockDO::getAreaId, reqVO.getAreaId())

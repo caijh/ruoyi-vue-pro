@@ -7,6 +7,7 @@ import cn.iocoder.yudao.module.mes.controller.admin.wm.returnvendor.vo.line.MesW
 import cn.iocoder.yudao.module.mes.dal.dataobject.wm.returnvendor.MesWmReturnVendorLineDO;
 import cn.iocoder.yudao.module.mes.dal.mysql.wm.returnvendor.MesWmReturnVendorLineMapper;
 import cn.iocoder.yudao.module.mes.service.md.item.MesMdItemService;
+import cn.iocoder.yudao.module.mes.service.wm.batch.MesWmBatchService;
 import jakarta.annotation.Resource;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
@@ -36,6 +37,8 @@ public class MesWmReturnVendorLineServiceImpl implements MesWmReturnVendorLineSe
     private MesWmReturnVendorDetailService returnVendorDetailService;
     @Resource
     private MesMdItemService itemService;
+    @Resource
+    private MesWmBatchService batchService;
 
     @Override
     public Long createReturnVendorLine(MesWmReturnVendorLineSaveReqVO createReqVO) {
@@ -108,6 +111,10 @@ public class MesWmReturnVendorLineServiceImpl implements MesWmReturnVendorLineSe
         returnVendorService.validateReturnVendorExistsAndPrepare(reqVO.getReturnId());
         // 校验物料存在
         itemService.validateItemExists(reqVO.getItemId());
+        // 校验批次存在且属于当前物料
+        if (reqVO.getBatchId() != null) {
+            batchService.validateBatchExists(reqVO.getBatchId(), reqVO.getItemId());
+        }
     }
 
 }

@@ -7,6 +7,7 @@ import cn.iocoder.yudao.module.mes.controller.admin.wm.packages.vo.line.MesWmPac
 import cn.iocoder.yudao.module.mes.dal.dataobject.wm.packages.MesWmPackageLineDO;
 import cn.iocoder.yudao.module.mes.dal.mysql.wm.packages.MesWmPackageLineMapper;
 import cn.iocoder.yudao.module.mes.service.md.item.MesMdItemService;
+import cn.iocoder.yudao.module.mes.service.pro.workorder.MesProWorkOrderService;
 import jakarta.annotation.Resource;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
@@ -33,13 +34,13 @@ public class MesWmPackageLineServiceImpl implements MesWmPackageLineService {
     private MesWmPackageService packageService;
     @Resource
     private MesMdItemService itemService;
+    @Resource
+    private MesProWorkOrderService workOrderService;
 
     @Override
     public Long createPackageLine(MesWmPackageLineSaveReqVO createReqVO) {
-        // 校验装箱单状态为草稿
-        packageService.validatePackageStatusDraft(createReqVO.getPackageId());
-        // 校验产品物料存在
-        itemService.validateItemExists(createReqVO.getItemId());
+        // 校验数据
+        validateLineSaveData(createReqVO);
 
         // 插入
         MesWmPackageLineDO line = BeanUtils.toBean(createReqVO, MesWmPackageLineDO.class);
@@ -51,10 +52,9 @@ public class MesWmPackageLineServiceImpl implements MesWmPackageLineService {
     public void updatePackageLine(MesWmPackageLineSaveReqVO updateReqVO) {
         // 校验存在
         MesWmPackageLineDO line = validatePackageLineExists(updateReqVO.getId());
-        // 校验装箱单状态为草稿
-        packageService.validatePackageStatusDraft(line.getPackageId());
-        // 校验产品物料存在
-        itemService.validateItemExists(updateReqVO.getItemId());
+        // 校验数据
+        updateReqVO.setPackageId(line.getPackageId());
+        validateLineSaveData(updateReqVO);
 
         // 更新
         MesWmPackageLineDO updateObj = BeanUtils.toBean(updateReqVO, MesWmPackageLineDO.class);
@@ -92,6 +92,20 @@ public class MesWmPackageLineServiceImpl implements MesWmPackageLineService {
     }
 
     // ========== 校验方法 ==========
+
+    /**
+     * 校验保存时的关联数据
+     */
+    private void validateLineSaveData(MesWmPackageLineSaveReqVO reqVO) {
+        // 校验装箱单状态为草稿
+        packageService.validatePackageStatusDraft(reqVO.getPackageId());
+        // 校验产品物料存在
+        itemService.validateItemExists(reqVO.getItemId());
+        // 校验工单已确认
+        if (reqVO.getWorkOrderId() != null) {
+            workOrderService.validateWorkOrderConfirmed(reqVO.getWorkOrderId());
+        }
+    }
 
     private MesWmPackageLineDO validatePackageLineExists(Long id) {
         MesWmPackageLineDO line = packageLineMapper.selectById(id);

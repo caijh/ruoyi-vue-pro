@@ -237,8 +237,15 @@ public class MesWmBatchServiceImpl implements MesWmBatchService {
     }
 
     @Override
-    public List<MesWmBatchDO> getBatchList() {
-        return batchMapper.selectList();
+    public MesWmBatchDO validateBatchExists(Long batchId, Long itemId) {
+        MesWmBatchDO batch = batchMapper.selectById(batchId);
+        if (batch == null) {
+            throw exception(WM_BATCH_NOT_EXISTS);
+        }
+        if (ObjUtil.notEqual(batch.getItemId(), itemId)) {
+            throw exception(WM_BATCH_ITEM_MISMATCH);
+        }
+        return batch;
     }
 
 }

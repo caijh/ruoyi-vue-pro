@@ -12,6 +12,7 @@ import cn.iocoder.yudao.module.mes.dal.mysql.wm.returnsales.MesWmReturnSalesLine
 import cn.iocoder.yudao.module.mes.enums.wm.MesWmQualityStatusEnum;
 import cn.iocoder.yudao.module.mes.enums.wm.MesWmReturnSalesStatusEnum;
 import cn.iocoder.yudao.module.mes.service.md.item.MesMdItemService;
+import cn.iocoder.yudao.module.mes.service.wm.batch.MesWmBatchService;
 import jakarta.annotation.Resource;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
@@ -42,6 +43,8 @@ public class MesWmReturnSalesLineServiceImpl implements MesWmReturnSalesLineServ
     private MesWmReturnSalesService returnSalesService;
     @Resource
     private MesMdItemService itemService;
+    @Resource
+    private MesWmBatchService batchService;
     @Resource
     @Lazy
     private MesWmReturnSalesDetailService returnSalesDetailService;
@@ -152,6 +155,10 @@ public class MesWmReturnSalesLineServiceImpl implements MesWmReturnSalesLineServ
         // 如果物料启用了批次管理，则必须选择批次
         if (Boolean.TRUE.equals(item.getBatchFlag()) && batchId == null) {
             throw exception(MD_ITEM_BATCH_REQUIRED);
+        }
+        // 校验批次存在且属于当前物料
+        if (batchId != null) {
+            batchService.validateBatchExists(batchId, itemId);
         }
     }
 

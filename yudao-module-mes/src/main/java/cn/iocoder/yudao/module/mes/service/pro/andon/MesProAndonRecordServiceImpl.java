@@ -50,7 +50,7 @@ public class MesProAndonRecordServiceImpl implements MesProAndonRecordService {
         MesProAndonConfigDO config = andonConfigService.validateAndonConfigExists(createReqVO.getConfigId());
         workstationService.validateWorkstationExists(createReqVO.getWorkstationId());
         if (createReqVO.getWorkOrderId() != null) {
-            workOrderService.validateWorkOrderExists(createReqVO.getWorkOrderId());
+            workOrderService.validateWorkOrderConfirmed(createReqVO.getWorkOrderId());
         }
         if (createReqVO.getProcessId() != null) {
             processService.validateProcessExists(createReqVO.getProcessId());

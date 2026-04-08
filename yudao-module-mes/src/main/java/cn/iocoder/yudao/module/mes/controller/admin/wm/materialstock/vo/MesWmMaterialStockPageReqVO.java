@@ -21,6 +21,9 @@ public class MesWmMaterialStockPageReqVO extends PageParam {
     @Schema(description = "批次号", example = "B20260101")
     private String batchCode;
 
+    @Schema(description = "批次编号", example = "1")
+    private Long batchId;
+
     @Schema(description = "仓库编号", example = "1")
     private Long warehouseId;
 

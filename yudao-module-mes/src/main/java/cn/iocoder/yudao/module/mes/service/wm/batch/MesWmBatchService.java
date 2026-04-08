@@ -69,10 +69,12 @@ public interface MesWmBatchService {
     List<MesWmBatchDO> getBackwardBatchList(String code);
 
     /**
-     * 获取批次列表
+     * 校验批次存在，并校验批次与物料的归属关系
      *
-     * @return 批次列表
+     * @param batchId 批次ID
+     * @param itemId  物料ID
+     * @return 批次记录
      */
-    List<MesWmBatchDO> getBatchList();
+    MesWmBatchDO validateBatchExists(Long batchId, Long itemId);
 
 }
