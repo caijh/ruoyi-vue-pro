@@ -13,3 +13,5 @@ DELETE FROM "mes_wm_item_receipt";
 DELETE FROM "mes_wm_item_receipt_line";
 DELETE FROM "mes_wm_item_receipt_detail";
 DELETE FROM "mes_wm_batch";
+DELETE FROM "mes_pro_task";
+DELETE FROM "mes_pro_route_process";

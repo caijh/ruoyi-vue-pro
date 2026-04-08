@@ -39,12 +39,13 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import cn.iocoder.yudao.module.mes.dal.dataobject.pro.route.MesProRouteProcessDO;
+import cn.iocoder.yudao.module.mes.service.pro.route.MesProRouteProcessService;
+
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static cn.iocoder.yudao.framework.apilog.core.enums.OperateTypeEnum.EXPORT;
 import static cn.iocoder.yudao.framework.common.pojo.CommonResult.success;
@@ -59,24 +60,20 @@ public class MesProTaskController {
 
     @Resource
     private MesProTaskService taskService;
-
     @Resource
     private MesProWorkOrderService workOrderService;
-
     @Resource
     private MesMdWorkstationService workstationService;
-
     @Resource
     private MesProProcessService processService;
-
     @Resource
     private MesMdItemService itemService;
-
     @Resource
     private MesMdClientService clientService;
-
     @Resource
     private MesMdUnitMeasureService unitMeasureService;
+    @Resource
+    private MesProRouteProcessService routeProcessService;
 
     @PostMapping("/create")
     @Operation(summary = "创建生产任务")
@@ -217,11 +214,22 @@ public class MesProTaskController {
         Map<Long, MesMdWorkstationDO> workstationMap = workstationService.getWorkstationMap(
                 convertSet(list, MesProTaskDO::getWorkstationId));
         Map<Long, MesProProcessDO> processMap = processService.getProcessMap(
-                new java.util.ArrayList<>(convertSet(list, MesProTaskDO::getProcessId)));
+                new ArrayList<>(convertSet(list, MesProTaskDO::getProcessId)));
         Map<Long, MesMdItemDO> itemMap = itemService.getItemMap(
                 convertSet(list, MesProTaskDO::getItemId));
         Map<Long, MesMdClientDO> clientMap = clientService.getClientMap(
                 convertSet(list, MesProTaskDO::getClientId));
+        // 工序的 checkFlag：批量查询后构建 routeId -> processId -> checkFlag 的双层 Map
+        Set<Long> routeIds = convertSet(list, MesProTaskDO::getRouteId);
+        Map<Long, Map<Long, Boolean>> routeProcessCheckFlagMap = new HashMap<>();
+        if (CollUtil.isNotEmpty(routeIds)) {
+            List<MesProRouteProcessDO> allRouteProcesses = routeProcessService.getRouteProcessListByRouteIds(routeIds);
+            for (MesProRouteProcessDO rp : allRouteProcesses) {
+                routeProcessCheckFlagMap
+                        .computeIfAbsent(rp.getRouteId(), k -> new HashMap<>())
+                        .put(rp.getProcessId(), Boolean.TRUE.equals(rp.getCheckFlag()));
+            }
+        }
         // 拼接 VO
         return convertList(list, task -> {
             MesProTaskRespVO vo = BeanUtils.toBean(task, MesProTaskRespVO.class);
@@ -235,6 +243,8 @@ public class MesProTaskController {
                     vo.setItemCode(item.getCode()).setItemName(item.getName()).setItemSpec(item.getSpecification()));
             findAndThen(clientMap, task.getClientId(), c ->
                     vo.setClientName(c.getName()));
+            findAndThen(routeProcessCheckFlagMap, task.getRouteId(), processCheckMap ->
+                    findAndThen(processCheckMap, task.getProcessId(), vo::setCheckFlag));
             return vo;
         });
     }
