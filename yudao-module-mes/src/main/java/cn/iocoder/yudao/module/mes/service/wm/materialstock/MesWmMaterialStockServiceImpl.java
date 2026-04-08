@@ -92,6 +92,7 @@ public class MesWmMaterialStockServiceImpl implements MesWmMaterialStockService 
             MesWmWarehouseDO virtualWarehouse = warehouseService.getWarehouseByCode(
                     MesWmWarehouseDO.WIP_VIRTUAL_WAREHOUSE);
             Assert.notNull(virtualWarehouse, "虚拟仓库（WIP_VIRTUAL_WAREHOUSE）不存在");
+            virtualWarehouseId = virtualWarehouse.getId();
         }
 
         // 2. 分页查询
