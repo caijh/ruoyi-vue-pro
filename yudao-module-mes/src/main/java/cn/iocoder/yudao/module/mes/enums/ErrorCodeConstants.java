@@ -169,6 +169,7 @@ public interface ErrorCodeConstants {
     ErrorCode DV_CHECK_PLAN_NO_SUBJECT = new ErrorCode(1_040_302_004, "启用方案时，至少需要关联一个点检保养项目");
     ErrorCode DV_CHECK_PLAN_NOT_ENABLED = new ErrorCode(1_040_302_005, "点检保养方案未启用，不允许停用");
     ErrorCode DV_CHECK_PLAN_TYPE_MISMATCH = new ErrorCode(1_040_302_006, "点检保养方案类型与当前业务不匹配");
+    ErrorCode DV_CHECK_PLAN_NOT_ENABLED_FOR_RECORD = new ErrorCode(1_040_302_007, "点检保养方案未启用，不允许创建记录");
     // ========== MES 设备管理-点检方案设备（1-040-302-100） ==========
     ErrorCode DV_CHECK_PLAN_MACHINERY_NOT_EXISTS = new ErrorCode(1_040_302_100, "点检保养方案设备不存在");
     ErrorCode DV_CHECK_PLAN_MACHINERY_DUPLICATE = new ErrorCode(1_040_302_101, "该设备已关联到当前方案，请勿重复添加");

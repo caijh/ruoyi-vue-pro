@@ -152,8 +152,13 @@ public class MesDvCheckPlanServiceImpl implements MesDvCheckPlanService {
     @Override
     public MesDvCheckPlanDO validateCheckPlanExistsAndType(Long id, Integer type) {
         MesDvCheckPlanDO plan = doValidateCheckPlanExists(id);
+        // 校验类型匹配
         if (ObjUtil.notEqual(plan.getType(), type)) {
             throw exception(DV_CHECK_PLAN_TYPE_MISMATCH);
+        }
+        // 校验方案已启用
+        if (ObjUtil.notEqual(MesDvCheckPlanStatusEnum.ENABLED.getStatus(), plan.getStatus())) {
+            throw exception(DV_CHECK_PLAN_NOT_ENABLED_FOR_RECORD);
         }
         return plan;
     }
