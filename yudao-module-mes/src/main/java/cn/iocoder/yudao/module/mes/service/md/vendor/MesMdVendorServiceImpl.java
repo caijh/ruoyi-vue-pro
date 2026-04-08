@@ -10,6 +10,7 @@ import cn.iocoder.yudao.module.mes.controller.admin.md.vendor.vo.MesMdVendorImpo
 import cn.iocoder.yudao.module.mes.controller.admin.md.vendor.vo.MesMdVendorImportRespVO;
 import cn.iocoder.yudao.module.mes.controller.admin.md.vendor.vo.MesMdVendorPageReqVO;
 import cn.iocoder.yudao.module.mes.controller.admin.md.vendor.vo.MesMdVendorSaveReqVO;
+import cn.iocoder.yudao.framework.common.enums.CommonStatusEnum;
 import cn.iocoder.yudao.module.mes.dal.dataobject.md.vendor.MesMdVendorDO;
 import cn.iocoder.yudao.module.mes.dal.mysql.md.vendor.MesMdVendorMapper;
 import cn.iocoder.yudao.module.mes.enums.wm.BarcodeBizTypeEnum;
@@ -99,6 +100,15 @@ public class MesMdVendorServiceImpl implements MesMdVendorService {
         MesMdVendorDO vendor = vendorMapper.selectById(id);
         if (vendor == null) {
             throw exception(MD_VENDOR_NOT_EXISTS);
+        }
+        return vendor;
+    }
+
+    @Override
+    public MesMdVendorDO validateVendorExistsAndEnable(Long id) {
+        MesMdVendorDO vendor = validateVendorExists(id);
+        if (ObjUtil.notEqual(CommonStatusEnum.ENABLE.getStatus(), vendor.getStatus())) {
+            throw exception(MD_VENDOR_IS_DISABLE);
         }
         return vendor;
     }

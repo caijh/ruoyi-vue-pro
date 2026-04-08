@@ -89,7 +89,7 @@ public class MesWmItemReceiptServiceImpl implements MesWmItemReceiptService {
         // 校验编码唯一
         validateCodeUnique(reqVO.getId(), reqVO.getCode());
         // 校验供应商存在
-        vendorService.validateVendorExists(reqVO.getVendorId());
+        vendorService.validateVendorExistsAndEnable(reqVO.getVendorId());
         // 校验到货通知单存在
         if (reqVO.getNoticeId() != null) {
             MesWmArrivalNoticeDO notice = arrivalNoticeService.validateArrivalNoticeExists(reqVO.getNoticeId());

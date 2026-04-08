@@ -30,6 +30,7 @@ public interface ErrorCodeConstants {
     ErrorCode MD_ITEM_NAME_DUPLICATE = new ErrorCode(1_040_102_002, "物料名称已存在");
     ErrorCode MD_ITEM_IMPORT_LIST_IS_EMPTY = new ErrorCode(1_040_102_003, "导入物料数据不能为空");
     ErrorCode MD_ITEM_BATCH_REQUIRED = new ErrorCode(1_040_102_004, "当前物料启用了批次管理，请选择批次");
+    ErrorCode MD_ITEM_IS_DISABLE = new ErrorCode(1_040_102_005, "物料已禁用");
 
     // ========== MES 基础数据-物料批次属性配置（1-040-102-100） ==========
     ErrorCode MD_ITEM_BATCH_CONFIG_NOT_EXISTS = new ErrorCode(1_040_102_100, "物料批次属性配置不存在");
@@ -62,6 +63,7 @@ public interface ErrorCodeConstants {
     ErrorCode MD_CLIENT_NAME_DUPLICATE = new ErrorCode(1_040_103_002, "客户名称已存在");
     ErrorCode MD_CLIENT_NICKNAME_DUPLICATE = new ErrorCode(1_040_103_003, "客户简称已存在");
     ErrorCode MD_CLIENT_IMPORT_LIST_IS_EMPTY = new ErrorCode(1_040_103_004, "导入客户数据不能为空");
+    ErrorCode MD_CLIENT_IS_DISABLE = new ErrorCode(1_040_103_005, "客户已禁用");
 
     // ========== MES 基础数据-供应商（1-040-104-000） ==========
     ErrorCode MD_VENDOR_NOT_EXISTS = new ErrorCode(1_040_104_000, "供应商不存在");
@@ -70,6 +72,7 @@ public interface ErrorCodeConstants {
     ErrorCode MD_VENDOR_NICKNAME_DUPLICATE = new ErrorCode(1_040_104_003, "供应商简称已存在");
     ErrorCode MD_VENDOR_IMPORT_LIST_IS_EMPTY = new ErrorCode(1_040_104_004, "导入供应商数据不能为空");
     ErrorCode MD_VENDOR_HAS_REFERENCE = new ErrorCode(1_040_104_005, "该供应商已被其他业务引用，无法删除");
+    ErrorCode MD_VENDOR_IS_DISABLE = new ErrorCode(1_040_104_006, "供应商已禁用");
 
     // ========== MES 基础数据-车间（1-040-105-000） ==========
     ErrorCode MD_WORKSHOP_NOT_EXISTS = new ErrorCode(1_040_105_000, "车间不存在");
@@ -81,6 +84,7 @@ public interface ErrorCodeConstants {
     ErrorCode MD_WORKSTATION_NOT_EXISTS = new ErrorCode(1_040_106_000, "工作站不存在");
     ErrorCode MD_WORKSTATION_CODE_DUPLICATE = new ErrorCode(1_040_106_001, "工作站编码已存在");
     ErrorCode MD_WORKSTATION_NAME_DUPLICATE = new ErrorCode(1_040_106_002, "工作站名称已存在");
+    ErrorCode MD_WORKSTATION_IS_DISABLE = new ErrorCode(1_040_106_003, "工作站已禁用");
     // ========== MES 基础数据-设备资源（1-040-106-100） ==========
     ErrorCode MD_WORKSTATION_MACHINE_NOT_EXISTS = new ErrorCode(1_040_106_100, "设备资源记录不存在");
     ErrorCode MD_WORKSTATION_MACHINE_EXISTS = new ErrorCode(1_040_106_101, "该设备已分配至工作站：{}");

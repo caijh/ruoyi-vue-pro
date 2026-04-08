@@ -3,6 +3,7 @@ package cn.iocoder.yudao.module.mes.service.md.workstation;
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.ObjUtil;
 import cn.iocoder.yudao.framework.common.pojo.PageResult;
+import cn.iocoder.yudao.framework.common.enums.CommonStatusEnum;
 import cn.iocoder.yudao.framework.common.util.object.BeanUtils;
 import cn.iocoder.yudao.module.mes.controller.admin.md.workstation.vo.MesMdWorkstationPageReqVO;
 import cn.iocoder.yudao.module.mes.controller.admin.md.workstation.vo.MesMdWorkstationSaveReqVO;
@@ -121,6 +122,15 @@ public class MesMdWorkstationServiceImpl implements MesMdWorkstationService {
         MesMdWorkstationDO workstation = workstationMapper.selectById(id);
         if (workstation == null) {
             throw exception(MD_WORKSTATION_NOT_EXISTS);
+        }
+        return workstation;
+    }
+
+    @Override
+    public MesMdWorkstationDO validateWorkstationExistsAndEnable(Long id) {
+        MesMdWorkstationDO workstation = validateWorkstationExists(id);
+        if (ObjUtil.notEqual(CommonStatusEnum.ENABLE.getStatus(), workstation.getStatus())) {
+            throw exception(MD_WORKSTATION_IS_DISABLE);
         }
         return workstation;
     }

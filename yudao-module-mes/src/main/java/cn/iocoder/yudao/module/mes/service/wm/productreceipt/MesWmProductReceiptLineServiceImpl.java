@@ -111,7 +111,7 @@ public class MesWmProductReceiptLineServiceImpl implements MesWmProductReceiptLi
         // 校验父单据存在且为可编辑状态
         productReceiptService.validateProductReceiptEditable(reqVO.getReceiptId());
         // 校验物料存在
-        itemService.validateItemExists(reqVO.getItemId());
+        itemService.validateItemExistsAndEnable(reqVO.getItemId());
     }
 
 }

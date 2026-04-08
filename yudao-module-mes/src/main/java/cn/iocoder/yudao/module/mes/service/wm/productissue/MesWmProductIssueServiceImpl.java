@@ -262,7 +262,7 @@ public class MesWmProductIssueServiceImpl implements MesWmProductIssueService {
         validateCodeUnique(reqVO.getId(), reqVO.getCode());
         workOrderService.validateWorkOrderConfirmed(reqVO.getWorkOrderId());
         if (reqVO.getWorkstationId() != null) {
-            workstationService.validateWorkstationExists(reqVO.getWorkstationId());
+            workstationService.validateWorkstationExistsAndEnable(reqVO.getWorkstationId());
         }
     }
 

@@ -65,7 +65,9 @@ public class MesWmReturnSalesLineServiceImpl implements MesWmReturnSalesLineServ
     @Override
     public void updateReturnSalesLine(MesWmReturnSalesLineSaveReqVO updateReqVO) {
         // 校验存在
-        validateReturnSalesLineExists(updateReqVO.getId());
+        MesWmReturnSalesLineDO oldLine = validateReturnSalesLineExists(updateReqVO.getId());
+        // 固定父单 ID，防止通过接口篡改
+        updateReqVO.setReturnId(oldLine.getReturnId());
         validateLineSaveData(updateReqVO);
 
         // 更新
@@ -153,7 +155,7 @@ public class MesWmReturnSalesLineServiceImpl implements MesWmReturnSalesLineServ
      * @param batchId  批次ID
      */
     private void validateItemBatchManagement(Long returnId, Long itemId, Long batchId) {
-        MesMdItemDO item = itemService.validateItemExists(itemId);
+        MesMdItemDO item = itemService.validateItemExistsAndEnable(itemId);
         // 如果物料启用了批次管理，则必须选择批次
         if (Boolean.TRUE.equals(item.getBatchFlag()) && batchId == null) {
             throw exception(MD_ITEM_BATCH_REQUIRED);

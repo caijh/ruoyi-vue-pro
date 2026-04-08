@@ -113,7 +113,7 @@ public class MesWmSalesNoticeLineServiceImpl implements MesWmSalesNoticeLineServ
         validateNoticeStatusDraft(reqVO.getNoticeId());
         // 校验物料存在
         if (reqVO.getItemId() != null) {
-            itemService.validateItemExists(reqVO.getItemId());
+            itemService.validateItemExistsAndEnable(reqVO.getItemId());
         }
     }
 

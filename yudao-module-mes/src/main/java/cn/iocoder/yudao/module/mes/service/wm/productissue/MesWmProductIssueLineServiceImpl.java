@@ -112,7 +112,7 @@ public class MesWmProductIssueLineServiceImpl implements MesWmProductIssueLineSe
         // 校验父数据存在 + 校验物料在工单 BOM 中
         validateItemInWorkOrderBom(reqVO.getIssueId(), reqVO.getItemId());
         // 校验物料存在
-        itemService.validateItemExists(reqVO.getItemId());
+        itemService.validateItemExistsAndEnable(reqVO.getItemId());
     }
 
     private void validateItemInWorkOrderBom(Long issueId, Long itemId) {

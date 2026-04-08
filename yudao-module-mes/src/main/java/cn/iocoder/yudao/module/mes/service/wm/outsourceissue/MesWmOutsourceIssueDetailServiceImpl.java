@@ -112,7 +112,7 @@ public class MesWmOutsourceIssueDetailServiceImpl implements MesWmOutsourceIssue
             throw exception(WM_OUTSOURCE_ISSUE_DETAIL_LINE_NOT_MATCH);
         }
         // 校验物料存在
-        itemService.validateItemExists(saveReqVO.getItemId());
+        itemService.validateItemExistsAndEnable(saveReqVO.getItemId());
         if (ObjUtil.notEqual(line.getItemId(), saveReqVO.getItemId())) {
             throw exception(WM_OUTSOURCE_ISSUE_DETAIL_ITEM_MISMATCH);
         }

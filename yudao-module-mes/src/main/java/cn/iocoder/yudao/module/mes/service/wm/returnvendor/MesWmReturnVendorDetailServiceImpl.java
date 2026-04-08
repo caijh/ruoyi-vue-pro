@@ -72,7 +72,7 @@ public class MesWmReturnVendorDetailServiceImpl implements MesWmReturnVendorDeta
             throw exception(WM_RETURN_VENDOR_DETAIL_LINE_NOT_MATCH);
         }
         // 校验物料存在
-        itemService.validateItemExists(reqVO.getItemId());
+        itemService.validateItemExistsAndEnable(reqVO.getItemId());
         // 校验物料与行物料一致
         validateItemConsistency(reqVO.getItemId(), line);
         // 校验库位存在

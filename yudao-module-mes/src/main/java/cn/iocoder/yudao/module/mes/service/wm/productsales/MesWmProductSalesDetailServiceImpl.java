@@ -115,7 +115,7 @@ public class MesWmProductSalesDetailServiceImpl implements MesWmProductSalesDeta
             throw exception(WM_PRODUCT_SALES_DETAIL_LINE_NOT_MATCH);
         }
         // 校验物料存在
-        itemService.validateItemExists(reqVO.getItemId());
+        itemService.validateItemExistsAndEnable(reqVO.getItemId());
         if (ObjUtil.notEqual(line.getItemId(), reqVO.getItemId())) {
             throw exception(WM_PRODUCT_SALES_DETAIL_ITEM_MISMATCH);
         }

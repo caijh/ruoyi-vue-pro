@@ -52,10 +52,8 @@ public class MesWmProductSalesLineServiceImpl implements MesWmProductSalesLineSe
 
     @Override
     public Long createProductSalesLine(MesWmProductSalesLineSaveReqVO createReqVO) {
-        // 校验物料存在
-        itemService.validateItemExists(createReqVO.getItemId());
-        // 根据 batchCode 解析 batchId
-        fillBatchId(createReqVO);
+        // 校验数据
+        validateLineSaveData(createReqVO);
 
         // 新增
         MesWmProductSalesLineDO line = BeanUtils.toBean(createReqVO, MesWmProductSalesLineDO.class);
@@ -66,11 +64,10 @@ public class MesWmProductSalesLineServiceImpl implements MesWmProductSalesLineSe
     @Override
     public void updateProductSalesLine(MesWmProductSalesLineSaveReqVO updateReqVO) {
         // 校验存在
-        validateProductSalesLineExists(updateReqVO.getId());
-        // 校验物料存在
-        itemService.validateItemExists(updateReqVO.getItemId());
-        // 根据 batchCode 解析 batchId
-        fillBatchId(updateReqVO);
+        MesWmProductSalesLineDO oldLine = validateProductSalesLineExists(updateReqVO.getId());
+        // 校验数据
+        updateReqVO.setSalesId(oldLine.getSalesId());
+        validateLineSaveData(updateReqVO);
 
         // 更新
         MesWmProductSalesLineDO updateObj = BeanUtils.toBean(updateReqVO, MesWmProductSalesLineDO.class);
@@ -81,7 +78,9 @@ public class MesWmProductSalesLineServiceImpl implements MesWmProductSalesLineSe
     @Transactional(rollbackFor = Exception.class)
     public void deleteProductSalesLine(Long id) {
         // 校验存在
-        validateProductSalesLineExists(id);
+        MesWmProductSalesLineDO line = validateProductSalesLineExists(id);
+        // 校验主单为草稿状态才允许删除行
+        productSalesService.validateProductSalesExistsAndDraft(line.getSalesId());
 
         // 级联删除明细
         productSalesDetailService.deleteProductSalesDetailByLineId(id);
@@ -137,6 +136,18 @@ public class MesWmProductSalesLineServiceImpl implements MesWmProductSalesLineSe
         }
         MesWmBatchDO batch = batchService.getBatchByCode(reqVO.getBatchCode());
         reqVO.setBatchId(batch != null ? batch.getId() : null);
+    }
+
+    /**
+     * 校验保存时的关联数据
+     */
+    private void validateLineSaveData(MesWmProductSalesLineSaveReqVO reqVO) {
+        // 校验主单存在且为草稿状态
+        productSalesService.validateProductSalesExistsAndDraft(reqVO.getSalesId());
+        // 校验物料存在
+        itemService.validateItemExistsAndEnable(reqVO.getItemId());
+        // 根据 batchCode 解析 batchId
+        fillBatchId(reqVO);
     }
 
     @Override

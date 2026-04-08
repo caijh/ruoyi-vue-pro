@@ -259,7 +259,7 @@ public class MesWmOutsourceIssueServiceImpl implements MesWmOutsourceIssueServic
         validateCodeUnique(saveReqVO.getId(), saveReqVO.getCode());
         // 校验供应商存在
         if (saveReqVO.getVendorId() != null) {
-            vendorService.validateVendorExists(saveReqVO.getVendorId());
+            vendorService.validateVendorExistsAndEnable(saveReqVO.getVendorId());
         }
         // 校验工单存在且类型为外协（代工）
         MesProWorkOrderDO workOrder = workOrderService.validateWorkOrderConfirmed(saveReqVO.getWorkOrderId());

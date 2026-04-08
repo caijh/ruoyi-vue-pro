@@ -267,7 +267,7 @@ public class MesWmProductSalesServiceImpl implements MesWmProductSalesService {
         // 校验编码唯一
         validateCodeUnique(id, reqVO.getCode());
         // 校验客户存在
-        clientService.validateClientExists(reqVO.getClientId());
+        clientService.validateClientExistsAndEnable(reqVO.getClientId());
         // 校验发货通知单
         if (reqVO.getNoticeId() != null) {
             MesWmSalesNoticeDO notice = salesNoticeService.validateSalesNoticeExists(reqVO.getNoticeId());
@@ -291,7 +291,8 @@ public class MesWmProductSalesServiceImpl implements MesWmProductSalesService {
     /**
      * 校验销售出库单存在且为草稿状态
      */
-    private MesWmProductSalesDO validateProductSalesExistsAndDraft(Long id) {
+    @Override
+    public MesWmProductSalesDO validateProductSalesExistsAndDraft(Long id) {
         MesWmProductSalesDO sales = validateProductSalesExists(id);
         if (ObjUtil.notEqual(MesWmProductSalesStatusEnum.PREPARE.getStatus(), sales.getStatus())) {
             throw exception(WM_PRODUCT_SALES_NOT_PREPARE);

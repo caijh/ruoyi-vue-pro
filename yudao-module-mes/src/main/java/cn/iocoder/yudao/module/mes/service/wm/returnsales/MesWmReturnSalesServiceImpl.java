@@ -170,7 +170,7 @@ public class MesWmReturnSalesServiceImpl implements MesWmReturnSalesService {
                         MesWmReturnSalesDetailDO::getQuantity, BigDecimal::add, BigDecimal.ZERO);
                 // 对比行数量与明细总数量，不满足直接抛出
                 if (line.getQuantity().compareTo(totalDetailQuantity) > 0) {
-                    MesMdItemDO item = itemService.validateItemExists(line.getItemId());
+                    MesMdItemDO item = itemService.validateItemExistsAndEnable(line.getItemId());
                     throw exception(WM_RETURN_SALES_DETAIL_QUANTITY_MISMATCH,
                             item.getCode() + " " + item.getName() + " 未完成上架");
                 }
@@ -272,7 +272,7 @@ public class MesWmReturnSalesServiceImpl implements MesWmReturnSalesService {
      */
     private void validateSaveData(MesWmReturnSalesSaveReqVO reqVO) {
         validateCodeUnique(reqVO.getId(), reqVO.getCode());
-        clientService.validateClientExists(reqVO.getClientId());
+        clientService.validateClientExistsAndEnable(reqVO.getClientId());
     }
 
 }

@@ -109,7 +109,7 @@ public class MesWmTransferLineServiceImpl implements MesWmTransferLineService {
         // 校验父数据可编辑
         transferService.validateTransferEditable(reqVO.getTransferId());
         // 校验产品存在
-        itemService.validateItemExists(reqVO.getItemId());
+        itemService.validateItemExistsAndEnable(reqVO.getItemId());
         // 校验来源仓库、库区、库位的关联关系
         warehouseAreaService.validateWarehouseAreaExists(reqVO.getFromWarehouseId(),
                 reqVO.getFromLocationId(), reqVO.getFromAreaId());

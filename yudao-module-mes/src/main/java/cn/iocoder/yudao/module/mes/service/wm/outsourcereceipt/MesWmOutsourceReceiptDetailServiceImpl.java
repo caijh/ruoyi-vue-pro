@@ -92,7 +92,7 @@ public class MesWmOutsourceReceiptDetailServiceImpl implements MesWmOutsourceRec
      */
     private void validateDetailSaveData(MesWmOutsourceReceiptDetailSaveReqVO reqVO) {
         // 校验物料存在
-        itemService.validateItemExists(reqVO.getItemId());
+        itemService.validateItemExistsAndEnable(reqVO.getItemId());
         // 校验仓库、库区、库位的层级关系
         areaService.validateWarehouseAreaExists(reqVO.getWarehouseId(), reqVO.getLocationId(), reqVO.getAreaId());
     }

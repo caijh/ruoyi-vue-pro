@@ -55,7 +55,9 @@ public class MesWmReturnVendorLineServiceImpl implements MesWmReturnVendorLineSe
     @Override
     public void updateReturnVendorLine(MesWmReturnVendorLineSaveReqVO updateReqVO) {
         // 校验存在
-        validateReturnVendorLineExists(updateReqVO.getId());
+        MesWmReturnVendorLineDO oldLine = validateReturnVendorLineExists(updateReqVO.getId());
+        // 固定父单 ID，防止通过接口篡改
+        updateReqVO.setReturnId(oldLine.getReturnId());
         // 校验数据
         validateReturnVendorLineSaveData(updateReqVO);
 
@@ -111,7 +113,7 @@ public class MesWmReturnVendorLineServiceImpl implements MesWmReturnVendorLineSe
         // 校验父数据存在且为草稿状态
         MesWmReturnVendorDO returnVendor = returnVendorService.validateReturnVendorExistsAndPrepare(reqVO.getReturnId());
         // 校验物料存在
-        itemService.validateItemExists(reqVO.getItemId());
+        itemService.validateItemExistsAndEnable(reqVO.getItemId());
         // 校验批次存在且属于当前物料和供应商
         if (reqVO.getBatchId() != null) {
             batchService.validateBatchExists(reqVO.getBatchId(), reqVO.getItemId(), null, returnVendor.getVendorId());

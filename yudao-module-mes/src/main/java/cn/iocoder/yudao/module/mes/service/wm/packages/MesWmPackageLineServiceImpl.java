@@ -100,7 +100,7 @@ public class MesWmPackageLineServiceImpl implements MesWmPackageLineService {
         // 校验装箱单状态为草稿
         packageService.validatePackageStatusDraft(reqVO.getPackageId());
         // 校验产品物料存在
-        itemService.validateItemExists(reqVO.getItemId());
+        itemService.validateItemExistsAndEnable(reqVO.getItemId());
         // 校验工单已确认
         workOrderService.validateWorkOrderConfirmed(reqVO.getWorkOrderId());
     }

@@ -150,6 +150,15 @@ public class MesMdItemServiceImpl implements MesMdItemService {
         return item;
     }
 
+    @Override
+    public MesMdItemDO validateItemExistsAndEnable(Long id) {
+        MesMdItemDO item = validateItemExists(id);
+        if (ObjUtil.notEqual(CommonStatusEnum.ENABLE.getStatus(), item.getStatus())) {
+            throw exception(MD_ITEM_IS_DISABLE);
+        }
+        return item;
+    }
+
     private void validateItemCodeUnique(Long id, String code) {
         MesMdItemDO item = itemMapper.selectByCode(code);
         if (item == null) {

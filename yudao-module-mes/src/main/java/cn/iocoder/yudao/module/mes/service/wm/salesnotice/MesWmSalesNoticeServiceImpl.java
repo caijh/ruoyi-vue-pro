@@ -136,7 +136,7 @@ public class MesWmSalesNoticeServiceImpl implements MesWmSalesNoticeService {
         validateNoticeCodeUnique(saveReqVO.getId(), saveReqVO.getNoticeCode());
         // 校验客户存在
         if (saveReqVO.getClientId() != null) {
-            clientService.validateClientExists(saveReqVO.getClientId());
+            clientService.validateClientExistsAndEnable(saveReqVO.getClientId());
         }
     }
 

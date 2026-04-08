@@ -160,7 +160,7 @@ public class MesWmOutsourceReceiptServiceImpl implements MesWmOutsourceReceiptSe
                         MesWmOutsourceReceiptDetailDO::getQuantity, BigDecimal::add, BigDecimal.ZERO);
                 // 对比行数量与明细总数量，不满足直接抛出
                 if (line.getQuantity().compareTo(totalDetailQuantity) > 0) {
-                    MesMdItemDO item = itemService.validateItemExists(line.getItemId());
+                    MesMdItemDO item = itemService.validateItemExistsAndEnable(line.getItemId());
                     throw exception(WM_OUTSOURCE_RECEIPT_DETAIL_QUANTITY_MISMATCH,
                             item.getCode() + " " + item.getName() + " 未完成上架");
                 }
@@ -309,7 +309,7 @@ public class MesWmOutsourceReceiptServiceImpl implements MesWmOutsourceReceiptSe
         // 校验编码唯一
         validateCodeUnique(id, reqVO.getCode());
         // 校验供应商存在
-        vendorService.validateVendorExists(reqVO.getVendorId());
+        vendorService.validateVendorExistsAndEnable(reqVO.getVendorId());
         // 校验外协工单存在
         if (reqVO.getWorkOrderId() != null) {
             workOrderService.validateWorkOrderConfirmed(reqVO.getWorkOrderId());
