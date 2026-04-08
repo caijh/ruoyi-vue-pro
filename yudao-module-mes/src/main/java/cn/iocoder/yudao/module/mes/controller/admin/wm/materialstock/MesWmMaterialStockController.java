@@ -139,8 +139,8 @@ public class MesWmMaterialStockController {
                 MapUtils.findAndThen(unitMeasureMap, item.getUnitMeasureId(),
                         unitMeasure -> vo.setUnitMeasureName(unitMeasure.getName()));
             });
-            MapUtils.findAndThen(warehouseMap, vo.getWarehouseId(),
-                    warehouse -> vo.setWarehouseName(warehouse.getName()));
+            MapUtils.findAndThen(warehouseMap, vo.getWarehouseId(), warehouse ->
+                    vo.setWarehouseCode(warehouse.getCode()).setWarehouseName(warehouse.getName()));
             MapUtils.findAndThen(locationMap, vo.getLocationId(),
                     location -> vo.setLocationName(location.getName()));
             MapUtils.findAndThen(areaMap, vo.getAreaId(),
