@@ -248,4 +248,16 @@ public class MesWmBatchServiceImpl implements MesWmBatchService {
         return batch;
     }
 
+    @Override
+    public MesWmBatchDO validateBatchExists(Long batchId, Long itemId, Long clientId, Long vendorId) {
+        MesWmBatchDO batch = validateBatchExists(batchId, itemId);
+        if (clientId != null && ObjUtil.notEqual(batch.getClientId(), clientId)) {
+            throw exception(WM_BATCH_CLIENT_MISMATCH);
+        }
+        if (vendorId != null && ObjUtil.notEqual(batch.getVendorId(), vendorId)) {
+            throw exception(WM_BATCH_VENDOR_MISMATCH);
+        }
+        return batch;
+    }
+
 }

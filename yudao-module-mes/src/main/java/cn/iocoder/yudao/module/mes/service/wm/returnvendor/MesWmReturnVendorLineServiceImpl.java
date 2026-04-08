@@ -5,6 +5,7 @@ import cn.iocoder.yudao.framework.common.util.object.BeanUtils;
 import cn.iocoder.yudao.module.mes.controller.admin.wm.returnvendor.vo.line.MesWmReturnVendorLinePageReqVO;
 import cn.iocoder.yudao.module.mes.controller.admin.wm.returnvendor.vo.line.MesWmReturnVendorLineSaveReqVO;
 import cn.iocoder.yudao.module.mes.dal.dataobject.wm.returnvendor.MesWmReturnVendorLineDO;
+import cn.iocoder.yudao.module.mes.dal.dataobject.wm.returnvendor.MesWmReturnVendorDO;
 import cn.iocoder.yudao.module.mes.dal.mysql.wm.returnvendor.MesWmReturnVendorLineMapper;
 import cn.iocoder.yudao.module.mes.service.md.item.MesMdItemService;
 import cn.iocoder.yudao.module.mes.service.wm.batch.MesWmBatchService;
@@ -108,12 +109,12 @@ public class MesWmReturnVendorLineServiceImpl implements MesWmReturnVendorLineSe
 
     private void validateReturnVendorLineSaveData(MesWmReturnVendorLineSaveReqVO reqVO) {
         // 校验父数据存在且为草稿状态
-        returnVendorService.validateReturnVendorExistsAndPrepare(reqVO.getReturnId());
+        MesWmReturnVendorDO returnVendor = returnVendorService.validateReturnVendorExistsAndPrepare(reqVO.getReturnId());
         // 校验物料存在
         itemService.validateItemExists(reqVO.getItemId());
-        // 校验批次存在且属于当前物料
+        // 校验批次存在且属于当前物料和供应商
         if (reqVO.getBatchId() != null) {
-            batchService.validateBatchExists(reqVO.getBatchId(), reqVO.getItemId());
+            batchService.validateBatchExists(reqVO.getBatchId(), reqVO.getItemId(), null, returnVendor.getVendorId());
         }
     }
 

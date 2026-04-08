@@ -102,9 +102,7 @@ public class MesWmPackageLineServiceImpl implements MesWmPackageLineService {
         // 校验产品物料存在
         itemService.validateItemExists(reqVO.getItemId());
         // 校验工单已确认
-        if (reqVO.getWorkOrderId() != null) {
-            workOrderService.validateWorkOrderConfirmed(reqVO.getWorkOrderId());
-        }
+        workOrderService.validateWorkOrderConfirmed(reqVO.getWorkOrderId());
     }
 
     private MesWmPackageLineDO validatePackageLineExists(Long id) {

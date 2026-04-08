@@ -53,6 +53,8 @@ public interface ErrorCodeConstants {
     ErrorCode WM_BATCH_QUALITY_STATUS_REQUIRED = new ErrorCode(1_040_717_013, "批次配置要求质量状态不能为空");
     ErrorCode WM_BATCH_NOT_EXISTS = new ErrorCode(1_040_717_014, "批次不存在");
     ErrorCode WM_BATCH_ITEM_MISMATCH = new ErrorCode(1_040_717_015, "批次不属于当前物料");
+    ErrorCode WM_BATCH_CLIENT_MISMATCH = new ErrorCode(1_040_717_016, "批次不属于当前客户");
+    ErrorCode WM_BATCH_VENDOR_MISMATCH = new ErrorCode(1_040_717_017, "批次不属于当前供应商");
 
     // ========== MES 基础数据-客户（1-040-103-000） ==========
     ErrorCode MD_CLIENT_NOT_EXISTS = new ErrorCode(1_040_103_000, "客户不存在");
