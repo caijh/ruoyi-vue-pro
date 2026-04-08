@@ -42,7 +42,7 @@ public class MesDvCheckPlanMachineryServiceImpl implements MesDvCheckPlanMachine
         // 1.1 校验方案草稿状态
         MesDvCheckPlanDO currentPlan = checkPlanService.validateCheckPlanPrepare(createReqVO.getPlanId());
         // 1.2 校验设备存在
-        machineryService.validateMachineryExists(createReqVO.getMachineryId());
+        machineryService.validateMachineryExistsAndEnable(createReqVO.getMachineryId());
         // 1.3 校验同一方案下设备不重复
         if (checkPlanMachineryMapper.selectByPlanIdAndMachineryId(createReqVO.getPlanId(), createReqVO.getMachineryId()) != null) {
             throw exception(DV_CHECK_PLAN_MACHINERY_DUPLICATE);

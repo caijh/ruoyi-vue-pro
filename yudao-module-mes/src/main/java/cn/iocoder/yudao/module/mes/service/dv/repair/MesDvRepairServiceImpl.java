@@ -79,7 +79,7 @@ public class MesDvRepairServiceImpl implements MesDvRepairService {
         // 校验编码唯一
         validateCodeUnique(reqVO.getId(), reqVO.getCode());
         // 校验设备存在
-        machineryService.validateMachineryExists(reqVO.getMachineryId());
+        machineryService.validateMachineryExistsAndEnable(reqVO.getMachineryId());
     }
 
     private void validateCodeUnique(Long id, String code) {

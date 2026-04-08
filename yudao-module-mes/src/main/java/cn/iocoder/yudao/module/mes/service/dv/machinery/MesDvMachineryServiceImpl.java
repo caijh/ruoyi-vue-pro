@@ -3,6 +3,7 @@ package cn.iocoder.yudao.module.mes.service.dv.machinery;
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.ObjUtil;
 import cn.hutool.core.util.StrUtil;
+import cn.iocoder.yudao.framework.common.enums.CommonStatusEnum;
 import cn.iocoder.yudao.framework.common.pojo.PageResult;
 import cn.iocoder.yudao.framework.common.util.object.BeanUtils;
 import cn.iocoder.yudao.module.mes.controller.admin.dv.machinery.vo.MesDvMachineryImportExcelVO;
@@ -133,6 +134,17 @@ public class MesDvMachineryServiceImpl implements MesDvMachineryService {
     public void validateMachineryExists(Long id) {
         if (machineryMapper.selectById(id) == null) {
             throw exception(DV_MACHINERY_NOT_EXISTS);
+        }
+    }
+
+    @Override
+    public void validateMachineryExistsAndEnable(Long id) {
+        MesDvMachineryDO machinery = machineryMapper.selectById(id);
+        if (machinery == null) {
+            throw exception(DV_MACHINERY_NOT_EXISTS);
+        }
+        if (ObjUtil.notEqual(CommonStatusEnum.ENABLE.getStatus(), machinery.getStatus())) {
+            throw exception(DV_MACHINERY_IS_DISABLE);
         }
     }
 

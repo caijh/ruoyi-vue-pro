@@ -98,7 +98,7 @@ public class MesMdWorkstationServiceImpl implements MesMdWorkstationService {
         // 校验车间存在
         validateWorkshopExists(reqVO.getWorkshopId());
         // 校验工序存在
-        processService.validateProcessExists(reqVO.getProcessId());
+        processService.validateProcessExistsAndEnable(reqVO.getProcessId());
         // 处理仓库层级（未指定仓库时自动设置虚拟线边库）
         handleWarehouseHierarchy(reqVO);
     }

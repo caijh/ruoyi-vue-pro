@@ -89,7 +89,7 @@ public class MesProCardProcessServiceImpl implements MesProCardProcessService {
         cardService.validateCardExists(reqVO.getCardId());
         // 校验工序存在
         if (reqVO.getProcessId() != null) {
-            processService.validateProcessExists(reqVO.getProcessId());
+            processService.validateProcessExistsAndEnable(reqVO.getProcessId());
         }
     }
 

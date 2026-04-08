@@ -75,6 +75,13 @@ public interface MesDvMachineryService {
     void validateMachineryExists(Long id);
 
     /**
+     * 校验设备存在且启用
+     *
+     * @param id 编号
+     */
+    void validateMachineryExistsAndEnable(Long id);
+
+    /**
      * 获得设备列表
      *
      * @return 设备列表

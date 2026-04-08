@@ -53,7 +53,7 @@ public class MesProAndonRecordServiceImpl implements MesProAndonRecordService {
             workOrderService.validateWorkOrderConfirmed(createReqVO.getWorkOrderId());
         }
         if (createReqVO.getProcessId() != null) {
-            processService.validateProcessExists(createReqVO.getProcessId());
+            processService.validateProcessExistsAndEnable(createReqVO.getProcessId());
         }
 
         // 2. 插入记录

@@ -47,7 +47,7 @@ public class MesMdWorkstationMachineServiceImpl implements MesMdWorkstationMachi
 
     private void validateWorkstationMachineSaveData(MesMdWorkstationMachineSaveReqVO reqVO) {
         // 校验设备是否存在
-        machineryService.validateMachineryExists(reqVO.getMachineryId());
+        machineryService.validateMachineryExistsAndEnable(reqVO.getMachineryId());
         // 校验该设备是否已分配到其他工作站（一台设备只能分配到一个工作站）
         MesMdWorkstationMachineDO existing = workstationMachineMapper.selectByMachineryId(reqVO.getMachineryId());
         if (existing != null) {

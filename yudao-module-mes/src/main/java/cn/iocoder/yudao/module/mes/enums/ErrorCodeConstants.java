@@ -158,6 +158,7 @@ public interface ErrorCodeConstants {
     // ========== MES 设备管理-设备台账（1-040-301-000） ==========
     ErrorCode DV_MACHINERY_NOT_EXISTS = new ErrorCode(1_040_301_000, "设备不存在");
     ErrorCode DV_MACHINERY_CODE_DUPLICATE = new ErrorCode(1_040_301_001, "设备编码已存在");
+    ErrorCode DV_MACHINERY_IS_DISABLE = new ErrorCode(1_040_301_007, "设备已禁用");
     ErrorCode DV_MACHINERY_IMPORT_LIST_IS_EMPTY = new ErrorCode(1_040_301_002, "导入设备数据不能为空");
     ErrorCode DV_MACHINERY_HAS_CHECK_PLAN = new ErrorCode(1_040_301_003, "设备已关联点检计划，无法删除");
     ErrorCode DV_MACHINERY_HAS_CHECK_RECORD = new ErrorCode(1_040_301_004, "设备已关联点检记录，无法删除");
@@ -168,6 +169,7 @@ public interface ErrorCodeConstants {
     ErrorCode DV_SUBJECT_NOT_EXISTS = new ErrorCode(1_040_304_000, "点检保养项目不存在");
     ErrorCode DV_SUBJECT_CODE_DUPLICATE = new ErrorCode(1_040_304_001, "项目编码已存在");
     ErrorCode DV_SUBJECT_USED_BY_CHECK_PLAN = new ErrorCode(1_040_304_002, "点检保养项目已被点检保养方案使用，无法删除");
+    ErrorCode DV_SUBJECT_IS_DISABLE = new ErrorCode(1_040_304_003, "点检保养项目已禁用");
 
     // ========== MES 设备管理-点检计划（1-040-302-000） ==========
     ErrorCode DV_CHECK_PLAN_NOT_EXISTS = new ErrorCode(1_040_302_000, "点检计划不存在");
@@ -224,6 +226,7 @@ public interface ErrorCodeConstants {
     ErrorCode PRO_PROCESS_CODE_EXISTS = new ErrorCode(1_040_500_001, "工序编码已存在");
     ErrorCode PRO_PROCESS_NAME_EXISTS = new ErrorCode(1_040_500_002, "工序名称已存在");
     ErrorCode PRO_PROCESS_USED_BY_ROUTE = new ErrorCode(1_040_500_003, "工序已被工艺路线引用，无法删除");
+    ErrorCode PRO_PROCESS_IS_DISABLE = new ErrorCode(1_040_500_004, "工序已禁用");
     // ========== MES 生产管理-工序内容（1-040-500-100） ==========
     ErrorCode PRO_PROCESS_CONTENT_NOT_EXISTS = new ErrorCode(1_040_500_100, "工序内容不存在");
 

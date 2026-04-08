@@ -98,7 +98,7 @@ public class MesDvMaintenRecordServiceImpl implements MesDvMaintenRecordService 
 
     private void validateMaintenRecordRelation(MesDvMaintenRecordSaveReqVO reqVO) {
         // 校验设备是否存在
-        machineryService.validateMachineryExists(reqVO.getMachineryId());
+        machineryService.validateMachineryExistsAndEnable(reqVO.getMachineryId());
         // 校验保养计划是否存在
         if (reqVO.getPlanId() != null) {
             checkPlanService.validateCheckPlanExistsAndType(reqVO.getPlanId(), MesDvCheckPlanTypeEnum.MAINTENANCE.getType());
