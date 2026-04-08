@@ -10,6 +10,7 @@ import cn.iocoder.yudao.module.mes.service.md.item.MesMdItemService;
 import cn.iocoder.yudao.module.mes.service.wm.materialstock.MesWmMaterialStockService;
 import cn.iocoder.yudao.module.mes.service.wm.warehouse.MesWmWarehouseAreaService;
 import jakarta.annotation.Resource;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
@@ -33,6 +34,7 @@ public class MesWmProductSalesDetailServiceImpl implements MesWmProductSalesDeta
     @Resource
     private MesMdItemService itemService;
     @Resource
+    @Lazy
     private MesWmProductSalesLineService productSalesLineService;
     @Resource
     private MesWmMaterialStockService materialStockService;

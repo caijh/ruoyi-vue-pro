@@ -12,6 +12,18 @@ import lombok.ToString;
 @ToString(callSuper = true)
 public class MesWmMaterialStockPageReqVO extends PageParam {
 
+    /**
+     * 虚拟仓过滤模式 - 排除虚拟仓
+     */
+    public static final String VIRTUAL_FILTER_EXCLUDE = "exclude";
+    /**
+     * 虚拟仓过滤模式 - 只看虚拟仓
+     */
+    public static final String VIRTUAL_FILTER_ONLY = "only";
+
+    @Schema(description = "虚拟仓过滤模式", example = "exclude")
+    private String virtualFilter;
+
     @Schema(description = "物料分类编号", example = "1")
     private Long itemTypeId;
 
