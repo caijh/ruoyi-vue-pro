@@ -7,6 +7,7 @@ import cn.iocoder.yudao.module.mes.controller.admin.tm.tool.vo.type.MesTmToolTyp
 import cn.iocoder.yudao.module.mes.controller.admin.tm.tool.vo.type.MesTmToolTypeSaveReqVO;
 import cn.iocoder.yudao.module.mes.dal.dataobject.tm.tool.MesTmToolTypeDO;
 import cn.iocoder.yudao.module.mes.dal.mysql.tm.tool.MesTmToolTypeMapper;
+import cn.iocoder.yudao.module.mes.service.md.workstation.MesMdWorkstationToolService;
 import jakarta.annotation.Resource;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
@@ -36,6 +37,10 @@ public class MesTmToolTypeServiceImpl implements MesTmToolTypeService {
     @Resource
     @Lazy
     private MesTmToolService toolService;
+
+    @Resource
+    @Lazy
+    private MesMdWorkstationToolService workstationToolService;
 
     @Override
     public Long createToolType(MesTmToolTypeSaveReqVO createReqVO) {
@@ -74,6 +79,10 @@ public class MesTmToolTypeServiceImpl implements MesTmToolTypeService {
         // 校验是否被工具引用
         if (toolService.getToolCountByToolTypeId(id) > 0) {
             throw exception(TM_TOOL_TYPE_HAS_TOOL);
+        }
+        // 校验是否被工作站工装资源引用
+        if (workstationToolService.getWorkstationToolCountByToolTypeId(id) > 0) {
+            throw exception(TM_TOOL_TYPE_HAS_WORKSTATION_TOOL);
         }
 
         // 删除

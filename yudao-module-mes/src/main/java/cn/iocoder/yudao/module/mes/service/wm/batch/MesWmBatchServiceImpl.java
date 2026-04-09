@@ -39,6 +39,11 @@ import static cn.iocoder.yudao.module.mes.enums.ErrorCodeConstants.*;
 @Slf4j
 public class MesWmBatchServiceImpl implements MesWmBatchService {
 
+    /**
+     * 批次追溯最大递归深度，防止极端场景下性能问题
+     */
+    private static final int MAX_TRACE_DEPTH = 20;
+
     @Resource
     private MesWmBatchMapper batchMapper;
     @Resource
@@ -196,11 +201,11 @@ public class MesWmBatchServiceImpl implements MesWmBatchService {
 
     @Override
     public List<MesWmBatchDO> getForwardBatchList(String code) {
-        return getForwardBatchList(code, new HashSet<>());
+        return getForwardBatchList(code, new HashSet<>(), 0);
     }
 
-    private List<MesWmBatchDO> getForwardBatchList(String code, Set<String> visited) {
-        if (code == null || !visited.add(code)) {
+    private List<MesWmBatchDO> getForwardBatchList(String code, Set<String> visited, int depth) {
+        if (code == null || !visited.add(code) || depth >= MAX_TRACE_DEPTH) {
             return new ArrayList<>();
         }
         List<MesWmBatchDO> list = batchMapper.selectListByForward(code);
@@ -210,18 +215,18 @@ public class MesWmBatchServiceImpl implements MesWmBatchService {
         // 继续递归查询下游批次
         List<MesWmBatchDO> results = new ArrayList<>(list);
         for (MesWmBatchDO batch : list) {
-            results.addAll(getForwardBatchList(batch.getCode(), visited));
+            results.addAll(getForwardBatchList(batch.getCode(), visited, depth + 1));
         }
         return results;
     }
 
     @Override
     public List<MesWmBatchDO> getBackwardBatchList(String code) {
-        return getBackwardBatchList(code, new HashSet<>());
+        return getBackwardBatchList(code, new HashSet<>(), 0);
     }
 
-    private List<MesWmBatchDO> getBackwardBatchList(String code, Set<String> visited) {
-        if (code == null || !visited.add(code)) {
+    private List<MesWmBatchDO> getBackwardBatchList(String code, Set<String> visited, int depth) {
+        if (code == null || !visited.add(code) || depth >= MAX_TRACE_DEPTH) {
             return new ArrayList<>();
         }
         List<MesWmBatchDO> list = batchMapper.selectListByBackward(code);
@@ -231,7 +236,7 @@ public class MesWmBatchServiceImpl implements MesWmBatchService {
         // 继续递归查询上游批次
         List<MesWmBatchDO> results = new ArrayList<>(list);
         for (MesWmBatchDO batch : list) {
-            results.addAll(getBackwardBatchList(batch.getCode(), visited));
+            results.addAll(getBackwardBatchList(batch.getCode(), visited, depth + 1));
         }
         return results;
     }

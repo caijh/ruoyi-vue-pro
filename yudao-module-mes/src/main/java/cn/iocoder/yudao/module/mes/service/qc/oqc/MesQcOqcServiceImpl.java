@@ -221,8 +221,8 @@ public class MesQcOqcServiceImpl implements MesQcOqcService {
             return null;
         }
         if (Objects.equals(sourceDocType, MesBizTypeConstants.WM_PRODUCT_SALES)) {
-            MesWmProductSalesLineDO salesLine = productSalesLineService.getProductSalesLine(sourceLineId);
-            if (salesLine != null && salesLine.getSalesId() != null) {
+            MesWmProductSalesLineDO salesLine = productSalesLineService.validateProductSalesLineExists(sourceLineId);
+            if (salesLine.getSalesId() != null) {
                 MesWmProductSalesDO sales = productSalesService.getProductSales(salesLine.getSalesId());
                 return sales != null ? sales.getCode() : null;
             }

@@ -82,11 +82,14 @@ public class MesQcIndicatorResultServiceImpl implements MesQcIndicatorResultServ
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void updateIndicatorResult(MesQcIndicatorResultSaveReqVO updateReqVO) {
-        // 1. 校验存在
+        // 1.1 校验存在
         validateIndicatorResultExists(updateReqVO.getId());
+        // 1.2 校验所有明细的 indicatorId 是否存在
+        validateIndicatorIds(updateReqVO.getItems());
 
-        // 2.1 更新主表
+        // 2.1 更新主表（锁定 qcId/qcType/itemId，不允许改挂到其他质检单）
         MesQcIndicatorResultDO updateObj = BeanUtils.toBean(updateReqVO, MesQcIndicatorResultDO.class);
+        updateObj.setQcId(null).setQcType(null).setItemId(null);
         resultMapper.updateById(updateObj);
         // 2.2 批量更新明细
         List<MesQcIndicatorResultDetailDO> details = BeanUtils.toBean(updateReqVO.getItems(),

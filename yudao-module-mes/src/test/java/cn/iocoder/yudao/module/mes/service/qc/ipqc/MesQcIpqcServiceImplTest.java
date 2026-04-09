@@ -8,6 +8,9 @@ import cn.iocoder.yudao.module.mes.enums.qc.MesQcStatusEnum;
 import cn.iocoder.yudao.module.mes.service.md.item.MesMdItemService;
 import cn.iocoder.yudao.module.mes.service.md.workstation.MesMdWorkstationService;
 import cn.iocoder.yudao.module.mes.service.pro.feedback.MesProFeedbackService;
+import cn.iocoder.yudao.module.mes.service.pro.route.MesProRouteProcessService;
+import cn.iocoder.yudao.module.mes.service.pro.route.MesProRouteProductService;
+import cn.iocoder.yudao.module.mes.service.pro.task.MesProTaskService;
 import cn.iocoder.yudao.module.mes.service.pro.workorder.MesProWorkOrderService;
 import cn.iocoder.yudao.module.mes.service.qc.defectrecord.MesQcDefectRecordService;
 import cn.iocoder.yudao.module.mes.service.qc.template.MesQcTemplateItemService;
@@ -54,6 +57,12 @@ public class MesQcIpqcServiceImplTest extends BaseDbUnitTest {
     private AdminUserApi adminUserApi;
     @MockitoBean
     private MesProFeedbackService feedbackService;
+    @MockitoBean
+    private MesProRouteProductService routeProductService;
+    @MockitoBean
+    private MesProRouteProcessService routeProcessService;
+    @MockitoBean
+    private MesProTaskService taskService;
 
     @Test
     public void testFinishIpqc_writeBack_feedback() {
@@ -211,4 +220,153 @@ public class MesQcIpqcServiceImplTest extends BaseDbUnitTest {
         assertThrows(Exception.class, () -> ipqcService.finishIpqc(ipqc.getId()));
     }
 
+    // ==================== processId 推导行为测试 ====================
+
+    /**
+     * 工位有工序 + 该工序在产品工艺路线中 → processId 应该被设置为工位工序
+     */
+    @Test
+    public void testCreateIpqc_processId_workstationHasProcess() {
+        // 准备参数
+        Long workstationId = randomLongId();
+        Long workOrderId = randomLongId();
+        Long productId = randomLongId();
+        Long processId = randomLongId();
+        Long routeId = randomLongId();
+        Long templateId = randomLongId();
+
+        MesQcIpqcSaveReqVO reqVO = new MesQcIpqcSaveReqVO();
+        reqVO.setCode("IPQC-TEST-001");
+        reqVO.setWorkstationId(workstationId);
+        reqVO.setWorkOrderId(workOrderId);
+        reqVO.setInspectorUserId(randomLongId());
+
+        // mock 工位返回有工序
+        MesMdWorkstationDO workstation = new MesMdWorkstationDO();
+        workstation.setId(workstationId);
+        workstation.setProcessId(processId);
+        when(workstationService.validateWorkstationExists(workstationId)).thenReturn(workstation);
+        // mock 工单
+        MesProWorkOrderDO workOrder = new MesProWorkOrderDO();
+        workOrder.setId(workOrderId);
+        workOrder.setProductId(productId);
+        when(workOrderService.validateWorkOrderExists(workOrderId)).thenReturn(workOrder);
+        when(workOrderService.validateWorkOrderConfirmed(workOrderId)).thenReturn(workOrder);
+        // mock 模板匹配
+        MesQcTemplateItemDO templateItem = new MesQcTemplateItemDO();
+        templateItem.setTemplateId(templateId);
+        when(templateItemService.getRequiredTemplateByItemIdAndType(eq(productId), anyInt())).thenReturn(templateItem);
+        // mock 工艺路线
+        MesProRouteProductDO routeProduct = new MesProRouteProductDO();
+        routeProduct.setRouteId(routeId);
+        when(routeProductService.getRouteProductByItemId(productId)).thenReturn(routeProduct);
+        // mock 工序在路线中
+        when(routeProcessService.getRouteProcessByRouteIdAndProcessId(routeId, processId))
+                .thenReturn(new MesProRouteProcessDO());
+
+        // 调用
+        Long ipqcId = ipqcService.createIpqc(reqVO);
+
+        // 断言：processId 应该是工位工序
+        MesQcIpqcDO ipqc = ipqcMapper.selectById(ipqcId);
+        assertEquals(processId, ipqc.getProcessId());
+    }
+
+    /**
+     * 工位没有工序（processId=null）→ processId 应该留 null（与 KTG 对齐，不回退到任务工序）
+     */
+    @Test
+    public void testCreateIpqc_processId_workstationNoProcess_shouldBeNull() {
+        // 准备参数
+        Long workstationId = randomLongId();
+        Long workOrderId = randomLongId();
+        Long productId = randomLongId();
+        Long taskId = randomLongId();
+        Long templateId = randomLongId();
+
+        MesQcIpqcSaveReqVO reqVO = new MesQcIpqcSaveReqVO();
+        reqVO.setCode("IPQC-TEST-002");
+        reqVO.setWorkstationId(workstationId);
+        reqVO.setWorkOrderId(workOrderId);
+        reqVO.setTaskId(taskId); // 故意传入 taskId，验证不会回退
+        reqVO.setInspectorUserId(randomLongId());
+
+        // mock 工位没有工序
+        MesMdWorkstationDO workstation = new MesMdWorkstationDO();
+        workstation.setId(workstationId);
+        workstation.setProcessId(null); // 无工序
+        when(workstationService.validateWorkstationExists(workstationId)).thenReturn(workstation);
+        // mock 工单
+        MesProWorkOrderDO workOrder = new MesProWorkOrderDO();
+        workOrder.setId(workOrderId);
+        workOrder.setProductId(productId);
+        when(workOrderService.validateWorkOrderExists(workOrderId)).thenReturn(workOrder);
+        when(workOrderService.validateWorkOrderConfirmed(workOrderId)).thenReturn(workOrder);
+        // mock 模板匹配
+        MesQcTemplateItemDO templateItem = new MesQcTemplateItemDO();
+        templateItem.setTemplateId(templateId);
+        when(templateItemService.getRequiredTemplateByItemIdAndType(eq(productId), anyInt())).thenReturn(templateItem);
+
+        // 调用
+        Long ipqcId = ipqcService.createIpqc(reqVO);
+
+        // 断言：processId 应该是 null，即使传入了 taskId 也不应该回退
+        MesQcIpqcDO ipqc = ipqcMapper.selectById(ipqcId);
+        assertNull(ipqc.getProcessId(),
+                "工位无工序时 processId 应为 null（与 KTG 对齐），不应回退到任务工序");
+        // 断言：不应该读取任务的 processId
+        verify(routeProductService, never()).getRouteProductByItemId(any());
+    }
+
+    /**
+     * 工位有工序但该工序不在产品工艺路线中 → processId 应该留 null
+     */
+    @Test
+    public void testCreateIpqc_processId_processNotInRoute() {
+        // 准备参数
+        Long workstationId = randomLongId();
+        Long workOrderId = randomLongId();
+        Long productId = randomLongId();
+        Long processId = randomLongId();
+        Long routeId = randomLongId();
+        Long templateId = randomLongId();
+
+        MesQcIpqcSaveReqVO reqVO = new MesQcIpqcSaveReqVO();
+        reqVO.setCode("IPQC-TEST-003");
+        reqVO.setWorkstationId(workstationId);
+        reqVO.setWorkOrderId(workOrderId);
+        reqVO.setInspectorUserId(randomLongId());
+
+        // mock 工位有工序
+        MesMdWorkstationDO workstation = new MesMdWorkstationDO();
+        workstation.setId(workstationId);
+        workstation.setProcessId(processId);
+        when(workstationService.validateWorkstationExists(workstationId)).thenReturn(workstation);
+        // mock 工单
+        MesProWorkOrderDO workOrder = new MesProWorkOrderDO();
+        workOrder.setId(workOrderId);
+        workOrder.setProductId(productId);
+        when(workOrderService.validateWorkOrderExists(workOrderId)).thenReturn(workOrder);
+        when(workOrderService.validateWorkOrderConfirmed(workOrderId)).thenReturn(workOrder);
+        // mock 模板匹配
+        MesQcTemplateItemDO templateItem = new MesQcTemplateItemDO();
+        templateItem.setTemplateId(templateId);
+        when(templateItemService.getRequiredTemplateByItemIdAndType(eq(productId), anyInt())).thenReturn(templateItem);
+        // mock 工艺路线存在
+        MesProRouteProductDO routeProduct = new MesProRouteProductDO();
+        routeProduct.setRouteId(routeId);
+        when(routeProductService.getRouteProductByItemId(productId)).thenReturn(routeProduct);
+        // mock 工序不在路线中
+        when(routeProcessService.getRouteProcessByRouteIdAndProcessId(routeId, processId))
+                .thenReturn(null);
+
+        // 调用
+        Long ipqcId = ipqcService.createIpqc(reqVO);
+
+        // 断言：processId 应该是 null
+        MesQcIpqcDO ipqc = ipqcMapper.selectById(ipqcId);
+        assertNull(ipqc.getProcessId());
+    }
+
 }
+

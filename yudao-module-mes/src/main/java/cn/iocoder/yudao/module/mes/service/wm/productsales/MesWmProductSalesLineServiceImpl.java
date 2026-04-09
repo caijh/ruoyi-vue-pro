@@ -124,7 +124,8 @@ public class MesWmProductSalesLineServiceImpl implements MesWmProductSalesLineSe
         return productSalesLineMapper.selectPage(pageReqVO);
     }
 
-    private MesWmProductSalesLineDO validateProductSalesLineExists(Long id) {
+    @Override
+    public MesWmProductSalesLineDO validateProductSalesLineExists(Long id) {
         MesWmProductSalesLineDO line = productSalesLineMapper.selectById(id);
         if (line == null) {
             throw exception(WM_PRODUCT_SALES_LINE_NOT_EXISTS);
