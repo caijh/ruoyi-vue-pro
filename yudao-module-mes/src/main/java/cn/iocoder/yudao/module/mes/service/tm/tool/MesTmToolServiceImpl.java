@@ -121,6 +121,11 @@ public class MesTmToolServiceImpl implements MesTmToolService {
     }
 
     @Override
+    public Long getToolCountByToolTypeId(Long toolTypeId) {
+        return toolMapper.selectCountByToolTypeId(toolTypeId);
+    }
+
+    @Override
     public List<MesTmToolDO> getToolList() {
         return toolMapper.selectList();
     }

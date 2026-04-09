@@ -243,6 +243,11 @@ public class MesMdWorkstationServiceImpl implements MesMdWorkstationService {
     }
 
     @Override
+    public Long getWorkstationCountByWorkshopId(Long workshopId) {
+        return workstationMapper.selectCountByWorkshopId(workshopId);
+    }
+
+    @Override
     public Long getWorkstationCountByWarehouseId(Long warehouseId) {
         return workstationMapper.selectCountByWarehouseId(warehouseId);
     }

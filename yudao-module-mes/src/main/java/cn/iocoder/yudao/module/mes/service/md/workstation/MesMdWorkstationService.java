@@ -106,6 +106,14 @@ public interface MesMdWorkstationService {
     Long getWorkstationCountByAreaId(Long areaId);
 
     /**
+     * 获得指定车间下的工作站数量
+     *
+     * @param workshopId 车间编号
+     * @return 工作站数量
+     */
+    Long getWorkstationCountByWorkshopId(Long workshopId);
+
+    /**
      * 获得工作站列表
      *
      * @param ids 编号数组
