@@ -39,7 +39,7 @@ public class MesQcIndicatorDO extends BaseDO {
      *
      * 枚举 {@link cn.iocoder.yudao.module.mes.enums.DictTypeConstants#MES_INDICATOR_TYPE}
      */
-    private String type;
+    private Integer type;
     /**
      * 检测工具
      */
