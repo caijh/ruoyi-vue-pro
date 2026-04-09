@@ -17,8 +17,10 @@ import cn.iocoder.yudao.module.mes.dal.dataobject.md.item.MesMdItemTypeDO;
 import cn.iocoder.yudao.module.mes.dal.dataobject.md.unitmeasure.MesMdUnitMeasureDO;
 import cn.iocoder.yudao.module.mes.dal.mysql.md.item.MesMdItemMapper;
 import cn.iocoder.yudao.module.mes.enums.md.MesMdItemTypeEnum;
+import cn.iocoder.yudao.module.mes.enums.md.autocode.MesMdAutoCodeRuleCodeEnum;
 import cn.iocoder.yudao.module.mes.enums.wm.BarcodeBizTypeEnum;
 import cn.iocoder.yudao.module.mes.service.md.unitmeasure.MesMdUnitMeasureService;
+import cn.iocoder.yudao.module.mes.service.md.autocode.MesMdAutoCodeRecordService;
 import cn.iocoder.yudao.module.mes.service.wm.barcode.MesWmBarcodeService;
 import jakarta.annotation.Resource;
 import org.springframework.stereotype.Service;
@@ -59,6 +61,8 @@ public class MesMdItemServiceImpl implements MesMdItemService {
     private MesMdProductSipService productSipService;
     @Resource
     private MesWmBarcodeService barcodeService;
+    @Resource
+    private MesMdAutoCodeRecordService autoCodeRecordService;
 
     @Override
     public Long createItem(MesMdItemSaveReqVO createReqVO) {
@@ -183,6 +187,11 @@ public class MesMdItemServiceImpl implements MesMdItemService {
         if (itemTypeService.getItemType(itemTypeId) == null) {
             throw exception(MD_ITEM_TYPE_NOT_EXISTS);
         }
+        // 校验必须是叶子分类（没有子分类）
+        List<MesMdItemTypeDO> children = itemTypeService.getItemTypeChildrenList(itemTypeId);
+        if (CollUtil.isNotEmpty(children)) {
+            throw exception(MD_ITEM_TYPE_NOT_LEAF);
+        }
     }
 
     private void validateUnitMeasureExists(Long unitMeasureId) {
@@ -276,11 +285,11 @@ public class MesMdItemServiceImpl implements MesMdItemService {
         importItems.forEach(importItem -> {
             int currentIndex = index.getAndIncrement();
             // 2.1 校验字段
-            String key = StrUtil.blankToDefault(importItem.getCode(), "第 " + currentIndex + " 行");
             if (StrUtil.isBlank(importItem.getCode())) {
-                respVO.getFailureCodes().put(key, "物料编码不能为空");
-                return;
+                // 空编码时自动生成
+                importItem.setCode(autoCodeRecordService.generateAutoCode(MesMdAutoCodeRuleCodeEnum.MD_ITEM_CODE.getCode()));
             }
+            String key = importItem.getCode();
             if (StrUtil.isBlank(importItem.getName())) {
                 respVO.getFailureCodes().put(key, "物料名称不能为空");
                 return;
