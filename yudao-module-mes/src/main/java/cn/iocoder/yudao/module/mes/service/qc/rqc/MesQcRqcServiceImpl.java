@@ -47,6 +47,7 @@ public class MesQcRqcServiceImpl implements MesQcRqcService {
 
     @Resource
     private MesQcRqcMapper rqcMapper;
+
     @Resource
     private MesQcTemplateItemService templateItemService;
     @Resource

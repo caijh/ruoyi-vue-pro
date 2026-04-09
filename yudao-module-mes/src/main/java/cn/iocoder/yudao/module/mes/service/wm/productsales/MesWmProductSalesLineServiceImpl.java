@@ -43,6 +43,7 @@ public class MesWmProductSalesLineServiceImpl implements MesWmProductSalesLineSe
 
     @Resource
     private MesWmProductSalesLineMapper productSalesLineMapper;
+
     @Resource
     private MesWmProductSalesDetailService productSalesDetailService;
     @Resource

@@ -48,13 +48,10 @@ public class MesWmProductReceiptServiceImpl implements MesWmProductReceiptServic
 
     @Resource
     private MesWmProductReceiptLineService productReceiptLineService;
-
     @Resource
     private MesWmProductReceiptDetailService productReceiptDetailService;
-
     @Resource
     private MesWmTransactionService wmTransactionService;
-
     @Resource
     private MesProWorkOrderService workOrderService;
     @Resource

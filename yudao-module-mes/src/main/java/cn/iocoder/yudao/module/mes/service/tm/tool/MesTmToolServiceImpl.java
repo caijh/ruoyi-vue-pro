@@ -39,7 +39,6 @@ public class MesTmToolServiceImpl implements MesTmToolService {
     @Resource
     @Lazy // 延迟加载，避免循环依赖
     private MesTmToolTypeService toolTypeService;
-
     @Resource
     private MesWmBarcodeService barcodeService;
 

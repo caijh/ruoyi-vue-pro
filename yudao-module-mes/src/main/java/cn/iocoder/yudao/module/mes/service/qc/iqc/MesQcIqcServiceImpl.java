@@ -64,12 +64,12 @@ public class MesQcIqcServiceImpl implements MesQcIqcService {
     private MesMdVendorService vendorService;
     @Resource
     private MesMdItemService itemService;
-
-    @Resource
-    private AdminUserApi adminUserApi;
     @Resource
     @Lazy
     private MesQcIndicatorResultService indicatorResultService;
+
+    @Resource
+    private AdminUserApi adminUserApi;
 
     @Override
     @Transactional(rollbackFor = Exception.class)

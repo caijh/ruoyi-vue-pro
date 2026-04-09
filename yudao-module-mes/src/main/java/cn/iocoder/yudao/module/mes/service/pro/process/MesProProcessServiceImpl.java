@@ -37,7 +37,6 @@ public class MesProProcessServiceImpl implements MesProProcessService {
 
     @Resource
     private MesProProcessContentService processContentService;
-
     @Resource
     @Lazy
     private MesProRouteProcessService routeProcessService;

@@ -41,6 +41,7 @@ public class MesDvCheckRecordServiceImpl implements MesDvCheckRecordService {
 
     @Resource
     private MesDvCheckRecordMapper checkRecordMapper;
+
     @Resource
     @Lazy
     private MesDvCheckRecordLineService checkRecordLineService;
@@ -50,6 +51,7 @@ public class MesDvCheckRecordServiceImpl implements MesDvCheckRecordService {
     private MesDvCheckPlanService checkPlanService;
     @Resource
     private MesDvCheckPlanSubjectService checkPlanSubjectService;
+
     @Resource
     private AdminUserApi adminUserApi;
 

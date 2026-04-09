@@ -46,6 +46,7 @@ public class MesWmBatchServiceImpl implements MesWmBatchService {
 
     @Resource
     private MesWmBatchMapper batchMapper;
+
     @Resource
     private MesMdItemService itemService;
     @Resource

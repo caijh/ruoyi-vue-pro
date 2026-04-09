@@ -36,10 +36,8 @@ public class MesWmSalesNoticeLineServiceImpl implements MesWmSalesNoticeLineServ
     @Resource
     @Lazy
     private MesWmSalesNoticeService salesNoticeService;
-
     @Resource
     private MesWmBatchService batchService;
-
     @Resource
     private MesMdItemService itemService;
 

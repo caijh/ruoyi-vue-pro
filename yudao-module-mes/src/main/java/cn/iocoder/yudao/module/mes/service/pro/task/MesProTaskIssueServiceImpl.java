@@ -30,7 +30,6 @@ public class MesProTaskIssueServiceImpl implements MesProTaskIssueService {
 
     @Resource
     private MesProTaskService taskService;
-
     @Resource
     private MesMdItemService itemService;
 

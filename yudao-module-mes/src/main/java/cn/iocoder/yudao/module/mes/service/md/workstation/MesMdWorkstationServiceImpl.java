@@ -51,7 +51,6 @@ public class MesMdWorkstationServiceImpl implements MesMdWorkstationService {
     private MesMdWorkstationToolService workstationToolService;
     @Resource
     private MesMdWorkstationWorkerService workstationWorkerService;
-
     @Resource
     private MesMdWorkshopService workshopService;
     @Resource

@@ -43,7 +43,6 @@ public class MesWmProductSalesController {
 
     @Resource
     private MesWmProductSalesService productSalesService;
-
     @Resource
     private MesMdClientService clientService;
     @Resource

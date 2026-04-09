@@ -48,6 +48,7 @@ public class MesQcOqcServiceImpl implements MesQcOqcService {
 
     @Resource
     private MesQcOqcMapper oqcMapper;
+
     @Resource
     private MesQcTemplateItemService templateItemService;
     @Resource
@@ -67,12 +68,12 @@ public class MesQcOqcServiceImpl implements MesQcOqcService {
     @Resource
     @Lazy
     private MesWmProductSalesService productSalesService;
-
-    @Resource
-    private AdminUserApi adminUserApi;
     @Resource
     @Lazy
     private MesQcIndicatorResultService indicatorResultService;
+
+    @Resource
+    private AdminUserApi adminUserApi;
 
     @Override
     @Transactional(rollbackFor = Exception.class)

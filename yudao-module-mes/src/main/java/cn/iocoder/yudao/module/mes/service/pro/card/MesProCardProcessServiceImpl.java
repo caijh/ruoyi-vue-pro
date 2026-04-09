@@ -30,7 +30,6 @@ public class MesProCardProcessServiceImpl implements MesProCardProcessService {
     @Resource
     @Lazy
     private MesProCardService cardService;
-
     @Resource
     private MesProProcessService processService;
 

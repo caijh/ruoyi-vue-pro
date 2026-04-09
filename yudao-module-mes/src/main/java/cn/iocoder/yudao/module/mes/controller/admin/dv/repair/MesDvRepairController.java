@@ -48,7 +48,6 @@ public class MesDvRepairController {
 
     @Resource
     private MesDvRepairService repairService;
-
     @Resource
     private MesDvMachineryService machineryService;
 

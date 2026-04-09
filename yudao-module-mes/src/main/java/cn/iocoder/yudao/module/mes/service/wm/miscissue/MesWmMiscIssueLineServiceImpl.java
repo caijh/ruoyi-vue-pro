@@ -32,14 +32,11 @@ public class MesWmMiscIssueLineServiceImpl implements MesWmMiscIssueLineService 
     @Resource
     @Lazy
     private MesWmMiscIssueService miscIssueService;
-
     @Resource
     @Lazy
     private MesWmMiscIssueDetailService miscIssueDetailService;
-
     @Resource
     private MesMdItemService itemService;
-
     @Resource
     private MesWmWarehouseAreaService warehouseAreaService;
 

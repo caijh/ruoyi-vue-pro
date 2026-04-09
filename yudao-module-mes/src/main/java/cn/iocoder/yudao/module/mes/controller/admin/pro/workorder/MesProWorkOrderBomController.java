@@ -43,16 +43,12 @@ public class MesProWorkOrderBomController {
 
     @Resource
     private MesProWorkOrderBomService workOrderBomService;
-
     @Resource
     private MesMdItemService itemService;
-
     @Resource
     private MesMdUnitMeasureService unitMeasureService;
-
     @Resource
     private MesMdItemTypeService itemTypeService;
-
     @Resource
     private MesMdProductBomService productBomService;
 

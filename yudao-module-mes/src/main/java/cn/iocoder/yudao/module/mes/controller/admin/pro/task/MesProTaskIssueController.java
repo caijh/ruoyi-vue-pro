@@ -40,10 +40,8 @@ public class MesProTaskIssueController {
 
     @Resource
     private MesProTaskIssueService taskIssueService;
-
     @Resource
     private MesMdItemService itemService;
-
     @Resource
     private MesMdUnitMeasureService unitMeasureService;
 

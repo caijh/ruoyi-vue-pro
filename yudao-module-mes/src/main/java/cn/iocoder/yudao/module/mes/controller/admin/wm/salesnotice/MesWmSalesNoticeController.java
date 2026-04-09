@@ -42,7 +42,6 @@ public class MesWmSalesNoticeController {
 
     @Resource
     private MesWmSalesNoticeService salesNoticeService;
-
     @Resource
     private MesMdClientService clientService;
 

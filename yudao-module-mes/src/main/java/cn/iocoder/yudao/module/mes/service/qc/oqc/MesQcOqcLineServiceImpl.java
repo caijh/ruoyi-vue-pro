@@ -37,6 +37,7 @@ public class MesQcOqcLineServiceImpl implements MesQcOqcLineService {
 
     @Resource
     private MesQcOqcLineMapper oqcLineMapper;
+
     @Resource
     private MesQcIndicatorService indicatorService;
     @Resource

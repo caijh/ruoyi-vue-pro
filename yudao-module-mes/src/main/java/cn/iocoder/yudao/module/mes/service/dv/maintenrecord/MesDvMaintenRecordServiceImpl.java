@@ -35,6 +35,7 @@ public class MesDvMaintenRecordServiceImpl implements MesDvMaintenRecordService 
 
     @Resource
     private MesDvMaintenRecordMapper maintenRecordMapper;
+
     @Resource
     @Lazy
     private MesDvMaintenRecordLineService maintenRecordLineService;

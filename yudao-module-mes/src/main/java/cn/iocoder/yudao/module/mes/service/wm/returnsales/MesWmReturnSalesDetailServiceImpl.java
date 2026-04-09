@@ -40,10 +40,8 @@ public class MesWmReturnSalesDetailServiceImpl implements MesWmReturnSalesDetail
     @Resource
     @Lazy
     private MesWmReturnSalesService returnSalesService;
-
     @Resource
     private MesWmWarehouseAreaService warehouseAreaService;
-
     @Resource
     @Lazy
     private MesWmMaterialStockService materialStockService;

@@ -37,19 +37,15 @@ public class MesWmOutsourceReceiptLineServiceImpl implements MesWmOutsourceRecei
 
     @Resource
     private MesMdItemService itemService;
-
     @Resource
     @Lazy
     private MesWmOutsourceReceiptDetailService outsourceReceiptDetailService;
-
     @Resource
     @Lazy
     private MesWmOutsourceReceiptService outsourceReceiptService;
-
     @Resource
     @Lazy
     private MesProWorkOrderService workOrderService;
-
     @Resource
     private MesWmBatchService batchService;
 

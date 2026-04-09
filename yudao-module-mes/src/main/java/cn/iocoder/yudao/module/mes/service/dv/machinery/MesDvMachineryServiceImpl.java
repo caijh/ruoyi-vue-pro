@@ -49,26 +49,20 @@ public class MesDvMachineryServiceImpl implements MesDvMachineryService {
     @Resource
     @Lazy // 延迟加载，避免循环依赖
     private MesDvMachineryTypeService machineryTypeService;
-
     @Resource
     @Lazy
     private MesMdWorkshopService workshopService;
-
     @Resource
     private MesWmBarcodeService barcodeService;
-
     @Resource
     @Lazy
     private MesDvCheckPlanMachineryService checkPlanMachineryService;
-
     @Resource
     @Lazy
     private MesDvCheckRecordService checkRecordService;
-
     @Resource
     @Lazy
     private MesDvMaintenRecordService maintenRecordService;
-
     @Resource
     @Lazy
     private MesDvRepairService repairService;

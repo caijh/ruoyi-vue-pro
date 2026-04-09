@@ -35,11 +35,9 @@ public class MesProCardServiceImpl implements MesProCardService {
     @Resource
     private MesProCardMapper cardMapper;
 
-    // DONE @AI：会用对应的 service
     @Resource
     @Lazy
     private MesProCardProcessService cardProcessService;
-
     @Resource
     private MesProWorkOrderService workOrderService;
     @Resource

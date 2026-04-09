@@ -37,7 +37,6 @@ public class MesTmToolTypeServiceImpl implements MesTmToolTypeService {
     @Resource
     @Lazy
     private MesTmToolService toolService;
-
     @Resource
     @Lazy
     private MesMdWorkstationToolService workstationToolService;

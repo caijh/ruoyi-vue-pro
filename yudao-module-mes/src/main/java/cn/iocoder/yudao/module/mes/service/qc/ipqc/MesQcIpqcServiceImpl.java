@@ -82,15 +82,15 @@ public class MesQcIpqcServiceImpl implements MesQcIpqcService {
     @Resource
     @Lazy
     private MesProTaskService taskService;
-
-    @Resource
-    private AdminUserApi adminUserApi;
     @Resource
     @Lazy
     private MesProFeedbackService feedbackService;
     @Resource
     @Lazy
     private MesQcIndicatorResultService indicatorResultService;
+
+    @Resource
+    private AdminUserApi adminUserApi;
 
     @Override
     @Transactional(rollbackFor = Exception.class)

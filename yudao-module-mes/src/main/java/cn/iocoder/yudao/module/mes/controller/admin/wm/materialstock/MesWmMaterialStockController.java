@@ -52,22 +52,16 @@ public class MesWmMaterialStockController {
 
     @Resource
     private MesWmMaterialStockService materialStockService;
-
     @Resource
     private MesMdItemService itemService;
-
     @Resource
     private MesMdUnitMeasureService unitMeasureService;
-
     @Resource
     private MesWmWarehouseService warehouseService;
-
     @Resource
     private MesWmWarehouseLocationService locationService;
-
     @Resource
     private MesWmWarehouseAreaService areaService;
-
     @Resource
     private MesMdVendorService vendorService;
 

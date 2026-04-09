@@ -31,10 +31,8 @@ public class MesWmProductReceiptLineServiceImpl implements MesWmProductReceiptLi
     @Resource
     @Lazy
     private MesWmProductReceiptService productReceiptService;
-
     @Resource
     private MesWmProductReceiptDetailService productReceiptDetailService;
-
     @Resource
     private MesMdItemService itemService;
 

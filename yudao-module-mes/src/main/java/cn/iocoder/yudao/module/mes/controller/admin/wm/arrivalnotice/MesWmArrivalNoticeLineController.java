@@ -40,13 +40,10 @@ public class MesWmArrivalNoticeLineController {
 
     @Resource
     private MesWmArrivalNoticeLineService arrivalNoticeLineService;
-
     @Resource
     private MesMdItemService itemService;
-
     @Resource
     private MesMdUnitMeasureService unitMeasureService;
-
     @Resource
     private MesQcIqcService iqcService;
 

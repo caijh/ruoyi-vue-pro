@@ -47,13 +47,10 @@ public class MesProCardController {
 
     @Resource
     private MesProCardService cardService;
-
     @Resource
     private MesProWorkOrderService workOrderService;
-
     @Resource
     private MesMdItemService itemService;
-
     @Resource
     private MesMdUnitMeasureService unitMeasureService;
 

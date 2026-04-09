@@ -34,13 +34,10 @@ public class MesProAndonRecordServiceImpl implements MesProAndonRecordService {
 
     @Resource
     private MesMdWorkstationService workstationService;
-
     @Resource
     private MesProWorkOrderService workOrderService;
-
     @Resource
     private MesProProcessService processService;
-
     @Resource
     private MesProAndonConfigService andonConfigService;
 

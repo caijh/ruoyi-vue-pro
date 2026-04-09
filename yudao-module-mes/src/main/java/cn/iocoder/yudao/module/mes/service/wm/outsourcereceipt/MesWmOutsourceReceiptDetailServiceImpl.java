@@ -27,7 +27,6 @@ public class MesWmOutsourceReceiptDetailServiceImpl implements MesWmOutsourceRec
 
     @Resource
     private MesMdItemService itemService;
-
     @Resource
     private MesWmWarehouseAreaService areaService;
 

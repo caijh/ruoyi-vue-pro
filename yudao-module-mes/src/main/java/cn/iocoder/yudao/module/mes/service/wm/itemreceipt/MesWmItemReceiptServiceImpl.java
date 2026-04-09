@@ -58,7 +58,6 @@ public class MesWmItemReceiptServiceImpl implements MesWmItemReceiptService {
     @Resource
     @Lazy
     private MesQcIqcService iqcService;
-
     @Resource
     private MesWmTransactionService wmTransactionService;
 

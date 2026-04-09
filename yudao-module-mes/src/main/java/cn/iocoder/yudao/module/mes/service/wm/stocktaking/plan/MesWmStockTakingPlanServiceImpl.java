@@ -34,6 +34,7 @@ public class MesWmStockTakingPlanServiceImpl implements MesWmStockTakingPlanServ
 
     @Resource
     private MesWmStockTakingPlanMapper stockTakingPlanMapper;
+
     @Resource
     private MesWmStockTakingPlanParamService stockTakingPlanParamService;
 

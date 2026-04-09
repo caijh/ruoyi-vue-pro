@@ -33,6 +33,7 @@ public class MesDvCheckPlanServiceImpl implements MesDvCheckPlanService {
 
     @Resource
     private MesDvCheckPlanMapper checkPlanMapper;
+
     @Resource
     @Lazy
     private MesDvCheckPlanMachineryService checkPlanMachineryService;

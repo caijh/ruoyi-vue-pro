@@ -48,10 +48,8 @@ public class MesDvMachineryController {
 
     @Resource
     private MesDvMachineryService machineryService;
-
     @Resource
     private MesDvMachineryTypeService machineryTypeService;
-
     @Resource
     private MesMdWorkshopService workshopService;
 

@@ -29,6 +29,7 @@ public class MesWmPackageLineServiceImpl implements MesWmPackageLineService {
 
     @Resource
     private MesWmPackageLineMapper packageLineMapper;
+
     @Resource
     @Lazy
     private MesWmPackageService packageService;

@@ -49,16 +49,12 @@ public class MesWmProductSalesServiceImpl implements MesWmProductSalesService {
 
     @Resource
     private MesWmProductSalesLineService productSalesLineService;
-
     @Resource
     private MesWmProductSalesDetailService productSalesDetailService;
-
     @Resource
     private MesMdClientService clientService;
-
     @Resource
     private MesWmSalesNoticeService salesNoticeService;
-
     @Resource
     private MesWmTransactionService wmTransactionService;
 

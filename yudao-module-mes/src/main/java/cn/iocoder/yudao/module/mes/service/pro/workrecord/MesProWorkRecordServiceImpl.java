@@ -33,6 +33,7 @@ public class MesProWorkRecordServiceImpl implements MesProWorkRecordService {
     private MesProWorkRecordLogMapper workRecordLogMapper;
     @Resource
     private MesProWorkRecordMapper workRecordMapper;
+
     @Resource
     private MesMdWorkstationService workstationService;
 

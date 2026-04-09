@@ -37,7 +37,6 @@ public class MesWmSalesNoticeServiceImpl implements MesWmSalesNoticeService {
 
     @Resource
     private MesWmSalesNoticeLineService salesNoticeLineService;
-
     @Resource
     private MesMdClientService clientService;
 

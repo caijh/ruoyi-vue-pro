@@ -42,7 +42,6 @@ public class MesWmArrivalNoticeController {
 
     @Resource
     private MesWmArrivalNoticeService arrivalNoticeService;
-
     @Resource
     private MesMdVendorService vendorService;
 

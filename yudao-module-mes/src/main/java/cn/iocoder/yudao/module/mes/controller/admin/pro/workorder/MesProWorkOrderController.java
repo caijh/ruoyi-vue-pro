@@ -47,16 +47,12 @@ public class MesProWorkOrderController {
 
     @Resource
     private MesProWorkOrderService workOrderService;
-
     @Resource
     private MesMdItemService itemService;
-
     @Resource
     private MesMdClientService clientService;
-
     @Resource
     private MesMdVendorService vendorService;
-
     @Resource
     private MesMdUnitMeasureService unitMeasureService;
 

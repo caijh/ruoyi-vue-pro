@@ -26,6 +26,7 @@ public class MesDvCheckPlanSubjectServiceImpl implements MesDvCheckPlanSubjectSe
 
     @Resource
     private MesDvCheckPlanSubjectMapper checkPlanSubjectMapper;
+
     @Resource
     @Lazy
     private MesDvCheckPlanService checkPlanService;

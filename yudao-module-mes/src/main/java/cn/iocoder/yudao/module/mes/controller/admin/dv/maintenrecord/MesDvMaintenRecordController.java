@@ -46,10 +46,8 @@ public class MesDvMaintenRecordController {
 
     @Resource
     private MesDvMaintenRecordService maintenRecordService;
-
     @Resource
     private MesDvCheckPlanService checkPlanService;
-
     @Resource
     private MesDvMachineryService machineryService;
 

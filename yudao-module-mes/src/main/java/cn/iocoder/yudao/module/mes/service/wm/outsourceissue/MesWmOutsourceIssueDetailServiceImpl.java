@@ -30,6 +30,7 @@ public class MesWmOutsourceIssueDetailServiceImpl implements MesWmOutsourceIssue
 
     @Resource
     private MesWmOutsourceIssueDetailMapper outsourceIssueDetailMapper;
+
     @Resource
     @Lazy
     private MesWmOutsourceIssueLineService outsourceIssueLineService;

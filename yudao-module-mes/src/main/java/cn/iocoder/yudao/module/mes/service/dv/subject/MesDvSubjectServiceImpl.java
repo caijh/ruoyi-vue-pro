@@ -33,7 +33,7 @@ public class MesDvSubjectServiceImpl implements MesDvSubjectService {
 
     @Resource
     private MesDvSubjectMapper subjectMapper;
-    // DONE @AI：调用对方的 service
+
     @Resource
     @Lazy
     private MesDvCheckPlanSubjectService checkPlanSubjectService;
