@@ -27,4 +27,7 @@ public class MesProWorkOrderItemRespVO {
     @Schema(description = "需求数量", example = "1000.00")
     private BigDecimal quantity;
 
+    @Schema(description = "物料/产品标识", example = "ITEM")
+    private String itemOrProduct;
+
 }

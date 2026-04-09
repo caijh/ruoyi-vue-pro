@@ -29,6 +29,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 
 import java.math.BigDecimal;
+import java.util.Collection;
 import java.util.List;
 
 import static cn.iocoder.yudao.framework.common.exception.util.ServiceExceptionUtil.exception;
@@ -269,6 +270,11 @@ public class MesWmItemReceiptServiceImpl implements MesWmItemReceiptService {
     @Override
     public List<MesWmItemReceiptDO> getItemReceiptListByVendorId(Long vendorId) {
         return itemReceiptMapper.selectListByVendorId(vendorId);
+    }
+
+    @Override
+    public List<MesWmItemReceiptDO> getItemReceiptList(Collection<Long> ids) {
+        return itemReceiptMapper.selectByIds(ids);
     }
 
 }

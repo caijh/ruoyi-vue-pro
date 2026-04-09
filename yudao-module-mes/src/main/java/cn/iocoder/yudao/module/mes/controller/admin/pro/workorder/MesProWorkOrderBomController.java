@@ -122,6 +122,8 @@ public class MesProWorkOrderBomController {
         Map<Long, MesMdItemDO> itemMap = itemService.getItemMap(leafItems.keySet());
         Map<Long, MesMdUnitMeasureDO> unitMeasureMap = unitMeasureService.getUnitMeasureMap(
                 convertSet(itemMap.values(), MesMdItemDO::getUnitMeasureId));
+        Map<Long, MesMdItemTypeDO> itemTypeMap = itemTypeService.getItemTypeMap(
+                convertSet(itemMap.values(), MesMdItemDO::getItemTypeId));
         List<MesProWorkOrderItemRespVO> result = new ArrayList<>(leafItems.size());
         for (Map.Entry<Long, BigDecimal> entry : leafItems.entrySet()) {
             MesMdItemDO item = itemMap.get(entry.getKey());
@@ -133,6 +135,8 @@ public class MesProWorkOrderBomController {
                     .setItemCode(item.getCode()).setItemName(item.getName()).setItemSpec(item.getSpecification());
             MapUtils.findAndThen(unitMeasureMap, item.getUnitMeasureId(),
                     unitMeasure -> vo.setUnitMeasureName(unitMeasure.getName()));
+            MapUtils.findAndThen(itemTypeMap, item.getItemTypeId(),
+                    itemType -> vo.setItemOrProduct(itemType.getItemOrProduct()));
             result.add(vo);
         }
         return success(result);
