@@ -326,4 +326,9 @@ public class MesWmOutsourceReceiptServiceImpl implements MesWmOutsourceReceiptSe
         }
     }
 
+    @Override
+    public Long getOutsourceReceiptCountByVendorId(Long vendorId) {
+        return outsourceReceiptMapper.selectCountByVendorId(vendorId);
+    }
+
 }

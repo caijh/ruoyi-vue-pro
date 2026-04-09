@@ -296,4 +296,9 @@ public class MesQcIqcServiceImpl implements MesQcIqcService {
         return convertMap(list, MesQcIqcDO::getId);
     }
 
+    @Override
+    public Long getIqcCountByVendorId(Long vendorId) {
+        return iqcMapper.selectCountByVendorId(vendorId);
+    }
+
 }

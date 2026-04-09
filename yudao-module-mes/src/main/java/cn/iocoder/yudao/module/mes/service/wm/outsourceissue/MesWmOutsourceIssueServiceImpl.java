@@ -281,4 +281,9 @@ public class MesWmOutsourceIssueServiceImpl implements MesWmOutsourceIssueServic
         }
     }
 
+    @Override
+    public Long getOutsourceIssueCountByVendorId(Long vendorId) {
+        return outsourceIssueMapper.selectCountByVendorId(vendorId);
+    }
+
 }

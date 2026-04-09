@@ -41,4 +41,8 @@ public interface MesProWorkOrderMapper extends BaseMapperX<MesProWorkOrderDO> {
                 .setSql("quantity_produced = IFNULL(quantity_produced, 0) + " + incrQuantityProduced));
     }
 
+    default Long selectCountByVendorId(Long vendorId) {
+        return selectCount(MesProWorkOrderDO::getVendorId, vendorId);
+    }
+
 }
