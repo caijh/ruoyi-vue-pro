@@ -7,6 +7,7 @@ import cn.iocoder.yudao.module.mes.dal.dataobject.md.workstation.MesMdWorkstatio
 import cn.iocoder.yudao.module.mes.dal.mysql.md.workstation.MesMdWorkstationMachineMapper;
 import cn.iocoder.yudao.module.mes.service.dv.machinery.MesDvMachineryService;
 import jakarta.annotation.Resource;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
@@ -28,6 +29,7 @@ public class MesMdWorkstationMachineServiceImpl implements MesMdWorkstationMachi
     private MesMdWorkstationMachineMapper workstationMachineMapper;
 
     @Resource
+    @Lazy
     private MesMdWorkstationService workstationService;
     @Resource
     private MesDvMachineryService machineryService;

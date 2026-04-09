@@ -20,6 +20,7 @@ import cn.iocoder.yudao.module.mes.service.wm.warehouse.MesWmWarehouseLocationSe
 import cn.iocoder.yudao.module.mes.service.wm.warehouse.MesWmWarehouseService;
 import cn.iocoder.yudao.module.mes.service.pro.process.MesProProcessService;
 import jakarta.annotation.Resource;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
@@ -44,6 +45,7 @@ public class MesMdWorkstationServiceImpl implements MesMdWorkstationService {
     private MesMdWorkstationMapper workstationMapper;
 
     @Resource
+    @Lazy
     private MesMdWorkstationMachineService workstationMachineService;
     @Resource
     private MesMdWorkstationToolService workstationToolService;
