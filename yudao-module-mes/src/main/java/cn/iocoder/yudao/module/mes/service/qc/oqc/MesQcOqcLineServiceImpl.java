@@ -9,9 +9,9 @@ import cn.iocoder.yudao.module.mes.dal.dataobject.qc.indicator.MesQcIndicatorDO;
 import cn.iocoder.yudao.module.mes.dal.dataobject.qc.oqc.MesQcOqcLineDO;
 import cn.iocoder.yudao.module.mes.dal.dataobject.qc.template.MesQcTemplateIndicatorDO;
 import cn.iocoder.yudao.module.mes.dal.mysql.qc.oqc.MesQcOqcLineMapper;
-import cn.iocoder.yudao.module.mes.dal.mysql.qc.template.MesQcTemplateIndicatorMapper;
 import cn.iocoder.yudao.module.mes.enums.qc.MesQcDefectLevelEnum;
 import cn.iocoder.yudao.module.mes.service.qc.indicator.MesQcIndicatorService;
+import cn.iocoder.yudao.module.mes.service.qc.template.MesQcTemplateIndicatorService;
 import jakarta.annotation.Resource;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
@@ -38,9 +38,9 @@ public class MesQcOqcLineServiceImpl implements MesQcOqcLineService {
     @Resource
     private MesQcOqcLineMapper oqcLineMapper;
     @Resource
-    private MesQcTemplateIndicatorMapper templateIndicatorMapper;
-    @Resource
     private MesQcIndicatorService indicatorService;
+    @Resource
+    private MesQcTemplateIndicatorService templateIndicatorService;
 
     @Override
     public MesQcOqcLineDO validateOqcLineExists(Long id) {
@@ -63,7 +63,7 @@ public class MesQcOqcLineServiceImpl implements MesQcOqcLineService {
 
     @Override
     public void createLinesFromTemplate(Long oqcId, Long templateId) {
-        List<MesQcTemplateIndicatorDO> templateIndicators = templateIndicatorMapper.selectListByTemplateId(templateId);
+        List<MesQcTemplateIndicatorDO> templateIndicators = templateIndicatorService.getTemplateIndicatorListByTemplateId(templateId);
         if (CollUtil.isEmpty(templateIndicators)) {
             return;
         }
