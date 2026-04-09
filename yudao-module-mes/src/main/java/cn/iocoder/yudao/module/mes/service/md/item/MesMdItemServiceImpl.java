@@ -270,6 +270,11 @@ public class MesMdItemServiceImpl implements MesMdItemService {
     }
 
     @Override
+    public Long getItemCountByUnitMeasureId(Long unitMeasureId) {
+        return itemMapper.selectCountByUnitMeasureId(unitMeasureId);
+    }
+
+    @Override
     @Transactional(rollbackFor = Exception.class)
     public MesMdItemImportRespVO importItemList(List<MesMdItemImportExcelVO> importItems, boolean updateSupport) {
         // 1. 参数校验

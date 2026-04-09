@@ -6,8 +6,8 @@ import cn.iocoder.yudao.framework.common.util.object.BeanUtils;
 import cn.iocoder.yudao.module.mes.controller.admin.md.unitmeasure.vo.MesMdUnitMeasurePageReqVO;
 import cn.iocoder.yudao.module.mes.controller.admin.md.unitmeasure.vo.MesMdUnitMeasureSaveReqVO;
 import cn.iocoder.yudao.module.mes.dal.dataobject.md.unitmeasure.MesMdUnitMeasureDO;
-import cn.iocoder.yudao.module.mes.dal.mysql.md.item.MesMdItemMapper;
 import cn.iocoder.yudao.module.mes.dal.mysql.md.unitmeasure.MesMdUnitMeasureMapper;
+import cn.iocoder.yudao.module.mes.service.md.item.MesMdItemService;
 import jakarta.annotation.Resource;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
@@ -33,7 +33,7 @@ public class MesMdUnitMeasureServiceImpl implements MesMdUnitMeasureService {
     private MesMdUnitMeasureMapper unitMeasureMapper;
 
     @Resource
-    private MesMdItemMapper itemMapper;
+    private MesMdItemService itemService;
 
     @Override
     public Long createUnitMeasure(MesMdUnitMeasureSaveReqVO createReqVO) {
@@ -63,7 +63,7 @@ public class MesMdUnitMeasureServiceImpl implements MesMdUnitMeasureService {
         // 校验存在
         validateUnitMeasureExists(id);
         // 校验是否被物料引用
-        if (itemMapper.selectCountByUnitMeasureId(id) > 0) {
+        if (itemService.getItemCountByUnitMeasureId(id) > 0) {
             throw exception(MD_UNIT_MEASURE_HAS_ITEM);
         }
         // 删除

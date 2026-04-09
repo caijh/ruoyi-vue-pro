@@ -118,4 +118,12 @@ public interface MesMdItemService {
      */
     MesMdItemImportRespVO importItemList(List<MesMdItemImportExcelVO> importItems, boolean updateSupport);
 
+    /**
+     * 基于计量单位编号，获得物料数量
+     *
+     * @param unitMeasureId 计量单位编号
+     * @return 物料数量
+     */
+    Long getItemCountByUnitMeasureId(Long unitMeasureId);
+
 }
