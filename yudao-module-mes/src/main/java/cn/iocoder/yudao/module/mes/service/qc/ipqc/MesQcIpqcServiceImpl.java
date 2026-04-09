@@ -27,6 +27,7 @@ import cn.iocoder.yudao.module.mes.service.pro.route.MesProRouteProductService;
 import cn.iocoder.yudao.module.mes.service.pro.task.MesProTaskService;
 import cn.iocoder.yudao.module.mes.service.pro.workorder.MesProWorkOrderService;
 import cn.iocoder.yudao.module.mes.service.qc.defectrecord.MesQcDefectRecordService;
+import cn.iocoder.yudao.module.mes.service.qc.indicatorresult.MesQcIndicatorResultService;
 import cn.iocoder.yudao.module.mes.service.qc.template.MesQcTemplateItemService;
 import cn.iocoder.yudao.module.system.api.user.AdminUserApi;
 import jakarta.annotation.Resource;
@@ -87,6 +88,9 @@ public class MesQcIpqcServiceImpl implements MesQcIpqcService {
     @Resource
     @Lazy
     private MesProFeedbackService feedbackService;
+    @Resource
+    @Lazy
+    private MesQcIndicatorResultService indicatorResultService;
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -183,6 +187,8 @@ public class MesQcIpqcServiceImpl implements MesQcIpqcService {
         if (ipqc.getCheckResult() == null) {
             throw exception(QC_IPQC_CHECK_RESULT_EMPTY);
         }
+        // 1.3 校验至少存在一条检测结果
+        indicatorResultService.validateIndicatorResultExistsByQcIdAndType(id, MesQcTypeEnum.IPQC.getType());
 
         // 2. 更新状态为已完成
         ipqcMapper.updateById(new MesQcIpqcDO()
@@ -276,7 +282,8 @@ public class MesQcIpqcServiceImpl implements MesQcIpqcService {
             MesProFeedbackDO feedback = feedbackService.validateFeedbackExists(sourceDocId);
             return feedback.getCode();
         }
-        return null;
+        // 未知来源类型应报错，而不是静默忽略
+        throw exception(QC_IPQC_SOURCE_DOC_TYPE_UNKNOWN);
     }
 
     /**

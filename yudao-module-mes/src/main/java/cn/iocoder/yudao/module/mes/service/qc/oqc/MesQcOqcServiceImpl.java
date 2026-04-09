@@ -16,6 +16,7 @@ import cn.iocoder.yudao.module.mes.enums.MesBizTypeConstants;
 import cn.iocoder.yudao.module.mes.service.md.client.MesMdClientService;
 import cn.iocoder.yudao.module.mes.service.md.item.MesMdItemService;
 import cn.iocoder.yudao.module.mes.service.qc.defectrecord.MesQcDefectRecordService;
+import cn.iocoder.yudao.module.mes.service.qc.indicatorresult.MesQcIndicatorResultService;
 import cn.iocoder.yudao.module.mes.service.qc.template.MesQcTemplateItemService;
 import cn.iocoder.yudao.module.mes.service.wm.productsales.MesWmProductSalesLineService;
 import cn.iocoder.yudao.module.mes.service.wm.productsales.MesWmProductSalesService;
@@ -69,6 +70,9 @@ public class MesQcOqcServiceImpl implements MesQcOqcService {
 
     @Resource
     private AdminUserApi adminUserApi;
+    @Resource
+    @Lazy
+    private MesQcIndicatorResultService indicatorResultService;
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -128,6 +132,8 @@ public class MesQcOqcServiceImpl implements MesQcOqcService {
         if (oqc.getCheckResult() == null) {
             throw exception(QC_OQC_CHECK_RESULT_EMPTY);
         }
+        // 1.3 校验至少存在一条检测结果
+        indicatorResultService.validateIndicatorResultExistsByQcIdAndType(id, MesQcTypeEnum.OQC.getType());
 
         // 2. 更新状态为已完成
         MesQcOqcDO updateObj = new MesQcOqcDO()

@@ -39,7 +39,7 @@ public class MesQcDefectDO extends BaseDO {
      *
      * 字典类型 {@link cn.iocoder.yudao.module.mes.enums.DictTypeConstants#MES_DEFECT_TYPE}
      */
-    private String type;
+    private Integer type;
     /**
      * 缺陷等级
      *
