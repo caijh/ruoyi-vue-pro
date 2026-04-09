@@ -114,14 +114,12 @@ public class MesWmTransferLineServiceImpl implements MesWmTransferLineService {
         warehouseAreaService.validateWarehouseAreaExists(reqVO.getFromWarehouseId(),
                 reqVO.getFromLocationId(), reqVO.getFromAreaId());
         // 校验库存记录存在，且转移数量不超过库存数量
-        if (reqVO.getMaterialStockId() != null) {
-            MesWmMaterialStockDO stock = materialStockService.getMaterialStock(reqVO.getMaterialStockId());
-            if (stock == null) {
-                throw exception(WM_MATERIAL_STOCK_NOT_EXISTS);
-            }
-            if (stock.getQuantity() != null && reqVO.getQuantity().compareTo(stock.getQuantity()) > 0) {
-                throw exception(WM_TRANSFER_LINE_QUANTITY_EXCEED_STOCK);
-            }
+        MesWmMaterialStockDO stock = materialStockService.getMaterialStock(reqVO.getMaterialStockId());
+        if (stock == null) {
+            throw exception(WM_MATERIAL_STOCK_NOT_EXISTS);
+        }
+        if (stock.getQuantity() != null && reqVO.getQuantity().compareTo(stock.getQuantity()) > 0) {
+            throw exception(WM_TRANSFER_LINE_QUANTITY_EXCEED_STOCK);
         }
     }
 
