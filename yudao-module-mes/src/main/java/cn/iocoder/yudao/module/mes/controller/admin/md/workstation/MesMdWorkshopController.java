@@ -77,7 +77,11 @@ public class MesMdWorkshopController {
     @PreAuthorize("@ss.hasPermission('mes:md-workshop:query')")
     public CommonResult<MesMdWorkshopRespVO> getWorkshop(@RequestParam("id") Long id) {
         MesMdWorkshopDO workshop = workshopService.getWorkshop(id);
-        return success(BeanUtils.toBean(workshop, MesMdWorkshopRespVO.class));
+        if (workshop == null) {
+            return success(null);
+        }
+        List<MesMdWorkshopRespVO> voList = buildWorkshopRespVOList(Collections.singletonList(workshop));
+        return success(voList.get(0));
     }
 
     @GetMapping("/page")

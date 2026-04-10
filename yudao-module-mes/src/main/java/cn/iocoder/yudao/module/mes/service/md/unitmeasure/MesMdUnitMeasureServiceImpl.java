@@ -62,10 +62,15 @@ public class MesMdUnitMeasureServiceImpl implements MesMdUnitMeasureService {
     public void deleteUnitMeasure(Long id) {
         // 校验存在
         validateUnitMeasureExists(id);
+        // 校验是否存在以此为主单位的辅单位
+        if (unitMeasureMapper.selectCountByPrimaryId(id) > 0) {
+            throw exception(MD_UNIT_MEASURE_HAS_SECONDARY);
+        }
         // 校验是否被物料引用
         if (itemService.getItemCountByUnitMeasureId(id) > 0) {
             throw exception(MD_UNIT_MEASURE_HAS_ITEM);
         }
+
         // 删除
         unitMeasureMapper.deleteById(id);
     }
