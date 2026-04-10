@@ -125,6 +125,11 @@ public class MesWmProductIssueDetailServiceImpl implements MesWmProductIssueDeta
         if (ObjUtil.notEqual(line.getIssueId(), reqVO.getIssueId())) {
             throw exception(WM_PRODUCT_ISSUE_DETAIL_LINE_NOT_MATCH);
         }
+        // 校验主单状态为待拣货（只有 APPROVING 状态才允许新增/修改明细）
+        MesWmProductIssueDO issue = issueService.validateProductIssueExists(line.getIssueId());
+        if (ObjUtil.notEqual(MesWmProductIssueStatusEnum.APPROVING.getStatus(), issue.getStatus())) {
+            throw exception(WM_PRODUCT_ISSUE_STATUS_INVALID);
+        }
         // 校验物料匹配（明细 itemId 必须与行 itemId 一致）
         validateDetailItemMatch(reqVO.getItemId(), line.getItemId());
         // 校验仓库、库区、库位的关联关系

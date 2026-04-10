@@ -233,8 +233,10 @@ public class MesQcOqcServiceImpl implements MesQcOqcService {
                 MesWmProductSalesDO sales = productSalesService.getProductSales(salesLine.getSalesId());
                 return sales != null ? sales.getCode() : null;
             }
+            return null;
         }
-        return null;
+        // 未知来源类型应报错，而不是静默忽略
+        throw exception(QC_OQC_SOURCE_DOC_TYPE_UNKNOWN);
     }
 
     @Override

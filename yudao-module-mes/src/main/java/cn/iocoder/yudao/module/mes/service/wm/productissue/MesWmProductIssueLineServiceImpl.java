@@ -109,7 +109,9 @@ public class MesWmProductIssueLineServiceImpl implements MesWmProductIssueLineSe
      * 校验保存时的关联数据
      */
     private void validateProductIssueLineSaveData(MesWmProductIssueLineSaveReqVO reqVO) {
-        // 校验父数据存在 + 校验物料在工单 BOM 中
+        // 校验父数据存在 + 草稿状态才允许新增/修改行
+        issueService.validateProductIssueExistsAndPrepare(reqVO.getIssueId());
+        // 校验物料在工单 BOM 中
         validateItemInWorkOrderBom(reqVO.getIssueId(), reqVO.getItemId());
         // 校验物料存在
         itemService.validateItemExistsAndEnable(reqVO.getItemId());

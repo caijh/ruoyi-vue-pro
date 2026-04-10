@@ -38,11 +38,13 @@ public class MesWmArrivalNoticeServiceImpl implements MesWmArrivalNoticeService 
 
     @Resource
     private MesWmArrivalNoticeLineService arrivalNoticeLineService;
+    @Resource
+    private cn.iocoder.yudao.module.mes.service.md.vendor.MesMdVendorService vendorService;
 
     @Override
     public Long createArrivalNotice(MesWmArrivalNoticeSaveReqVO createReqVO) {
-        // 校验编码唯一
-        validateCodeUnique(null, createReqVO.getCode());
+        // 校验数据
+        validateArrivalNoticeSaveData(createReqVO);
 
         // 插入
         MesWmArrivalNoticeDO notice = BeanUtils.toBean(createReqVO, MesWmArrivalNoticeDO.class);
@@ -55,12 +57,19 @@ public class MesWmArrivalNoticeServiceImpl implements MesWmArrivalNoticeService 
     public void updateArrivalNotice(MesWmArrivalNoticeSaveReqVO updateReqVO) {
         // 校验存在 + 草稿状态
         validateArrivalNoticeExistsAndDraft(updateReqVO.getId());
-        // 校验编码唯一
-        validateCodeUnique(updateReqVO.getId(), updateReqVO.getCode());
+        // 校验数据
+        validateArrivalNoticeSaveData(updateReqVO);
 
         // 更新
         MesWmArrivalNoticeDO updateObj = BeanUtils.toBean(updateReqVO, MesWmArrivalNoticeDO.class);
         arrivalNoticeMapper.updateById(updateObj);
+    }
+
+    private void validateArrivalNoticeSaveData(MesWmArrivalNoticeSaveReqVO reqVO) {
+        // 校验编码唯一
+        validateCodeUnique(reqVO.getId(), reqVO.getCode());
+        // 校验供应商存在且启用
+        vendorService.validateVendorExistsAndEnable(reqVO.getVendorId());
     }
 
     @Override
@@ -143,6 +152,13 @@ public class MesWmArrivalNoticeServiceImpl implements MesWmArrivalNoticeService 
         // 校验状态：只有待入库才允许完成
         if (ObjUtil.notEqual(MesWmArrivalNoticeStatusEnum.PENDING_RECEIPT.getStatus(), notice.getStatus())) {
             throw exception(WM_ARRIVAL_NOTICE_STATUS_NOT_PENDING_RECEIPT);
+        }
+        // 行级防御校验：确保所有需检行都已完成 IQC
+        List<MesWmArrivalNoticeLineDO> lines = arrivalNoticeLineService.getArrivalNoticeLineListByNoticeId(id);
+        boolean hasUnchecked = CollectionUtils.anyMatch(lines,
+                line -> Boolean.TRUE.equals(line.getIqcCheckFlag()) && line.getIqcId() == null);
+        if (hasUnchecked) {
+            throw exception(WM_ARRIVAL_NOTICE_IQC_PENDING);
         }
 
         // 完成
