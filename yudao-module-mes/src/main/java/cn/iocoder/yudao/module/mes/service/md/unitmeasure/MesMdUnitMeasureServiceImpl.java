@@ -40,6 +40,7 @@ public class MesMdUnitMeasureServiceImpl implements MesMdUnitMeasureService {
     private MesMdUnitMeasureMapper unitMeasureMapper;
 
     @Resource
+    @Lazy
     private MesMdItemService itemService;
     @Resource
     @Lazy
