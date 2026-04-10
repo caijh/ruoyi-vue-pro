@@ -13,6 +13,7 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.*;
 
 import java.math.BigDecimal;
+import cn.iocoder.yudao.module.mes.enums.DictTypeConstants;
 
 /**
  * MES 销售出库单行 DO
@@ -87,6 +88,7 @@ public class MesWmProductSalesLineDO extends BaseDO {
     /**
      * 质量状态
      *
+     * 字典 {@link DictTypeConstants#MES_WM_QUALITY_STATUS}
      * 枚举 {@link MesWmQualityStatusEnum}
      */
     private Integer qualityStatus;

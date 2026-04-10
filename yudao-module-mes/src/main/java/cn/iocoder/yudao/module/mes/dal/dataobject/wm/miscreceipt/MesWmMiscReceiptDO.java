@@ -63,6 +63,7 @@ public class MesWmMiscReceiptDO extends BaseDO {
     /**
      * 状态
      *
+     * 字典 {@link DictTypeConstants#MES_WM_MISC_RECEIPT_STATUS}
      * 枚举 {@link MesWmMiscReceiptStatusEnum}
      */
     private Integer status;

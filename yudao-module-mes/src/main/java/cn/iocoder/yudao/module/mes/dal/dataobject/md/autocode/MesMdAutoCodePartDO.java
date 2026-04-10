@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.annotation.KeySequence;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.*;
+import cn.iocoder.yudao.module.mes.enums.DictTypeConstants;
 
 /**
  * MES 编码规则组成 DO
@@ -47,6 +48,7 @@ public class MesMdAutoCodePartDO extends BaseDO {
     /**
      * 分段类型
      *
+     * 字典 {@link DictTypeConstants#MES_MD_AUTO_CODE_PART_TYPE}
      * 枚举 {@link cn.iocoder.yudao.module.mes.enums.md.autocode.MesMdAutoCodePartTypeEnum}
      */
     private Integer type;
@@ -81,6 +83,7 @@ public class MesMdAutoCodePartDO extends BaseDO {
     /**
      * 循环方式
      *
+     * 字典 {@link DictTypeConstants#MES_MD_AUTO_CODE_CYCLE_METHOD}
      * 枚举 {@link cn.iocoder.yudao.module.mes.enums.md.autocode.MesMdAutoCodeCycleMethodEnum}
      */
     private Integer cycleMethod;

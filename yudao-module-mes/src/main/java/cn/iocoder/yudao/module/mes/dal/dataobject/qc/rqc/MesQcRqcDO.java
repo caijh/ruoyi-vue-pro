@@ -11,6 +11,7 @@ import lombok.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import cn.iocoder.yudao.module.mes.enums.DictTypeConstants;
 
 /**
  * MES 退货检验单（RQC, Return Quality Control） DO
@@ -110,6 +111,7 @@ public class MesQcRqcDO extends BaseDO {
     /**
      * 检测结果
      *
+     * 字典 {@link DictTypeConstants#MES_QC_CHECK_RESULT}
      * 枚举 {@link cn.iocoder.yudao.module.mes.enums.qc.MesQcCheckResultEnum}
      */
     private Integer checkResult;
@@ -126,6 +128,7 @@ public class MesQcRqcDO extends BaseDO {
     /**
      * 状态
      *
+     * 字典 {@link DictTypeConstants#MES_ORDER_STATUS}
      * 枚举 {@link MesQcStatusEnum}
      */
     private Integer status;

@@ -16,6 +16,7 @@ import lombok.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import cn.iocoder.yudao.module.mes.enums.DictTypeConstants;
 
 /**
  * MES 库存事务流水 DO
@@ -43,6 +44,7 @@ public class MesWmTransactionDO extends BaseDO {
     /**
      * 事务类型
      *
+     * 字典 {@link DictTypeConstants#MES_WM_TRANSACTION_TYPE}
      * 枚举 {@link MesWmTransactionTypeEnum}
      */
     private Integer type;

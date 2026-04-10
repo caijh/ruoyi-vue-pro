@@ -10,6 +10,7 @@ import com.baomidou.mybatisplus.annotation.FieldStrategy;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import cn.iocoder.yudao.module.mes.enums.DictTypeConstants;
 
 /**
  * MES 用户工作站绑定关系（当前快照） DO
@@ -46,6 +47,7 @@ public class MesProWorkRecordDO extends BaseDO {
     /**
      * 当前状态
      *
+     * 字典 {@link DictTypeConstants#MES_PRO_WORK_RECORD_TYPE}
      * 枚举 {@link cn.iocoder.yudao.module.mes.enums.pro.MesProWorkRecordTypeEnum}
      */
     private Integer type;

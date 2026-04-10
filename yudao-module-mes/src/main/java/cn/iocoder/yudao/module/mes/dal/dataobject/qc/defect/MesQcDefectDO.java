@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.annotation.KeySequence;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.*;
+import cn.iocoder.yudao.module.mes.enums.DictTypeConstants;
 
 /**
  * MES 缺陷类型 DO
@@ -43,6 +44,7 @@ public class MesQcDefectDO extends BaseDO {
     /**
      * 缺陷等级
      *
+     * 字典 {@link DictTypeConstants#MES_DEFECT_LEVEL}
      * 枚举 {@link cn.iocoder.yudao.module.mes.enums.qc.MesQcDefectLevelEnum}
      */
     private Integer level;
