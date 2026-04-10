@@ -210,6 +210,23 @@ public class MesWmArrivalNoticeServiceImpl implements MesWmArrivalNoticeService 
         return notice;
     }
 
+    @Override
+    public MesWmArrivalNoticeDO validateArrivalNoticeReadyForReceipt(Long id) {
+        // 1. 校验到货通知单存在且状态为待入库
+        MesWmArrivalNoticeDO notice = validateArrivalNoticeExists(id);
+        if (ObjUtil.notEqual(MesWmArrivalNoticeStatusEnum.PENDING_RECEIPT.getStatus(), notice.getStatus())) {
+            throw exception(WM_ARRIVAL_NOTICE_STATUS_NOT_PENDING_RECEIPT);
+        }
+        // 2. 行级防御校验：确保所有需检行都已完成 IQC
+        List<MesWmArrivalNoticeLineDO> lines = arrivalNoticeLineService.getArrivalNoticeLineListByNoticeId(id);
+        boolean hasUnchecked = CollectionUtils.anyMatch(lines,
+                line -> Boolean.TRUE.equals(line.getIqcCheckFlag()) && line.getIqcId() == null);
+        if (hasUnchecked) {
+            throw exception(WM_ARRIVAL_NOTICE_IQC_PENDING);
+        }
+        return notice;
+    }
+
     private void validateCodeUnique(Long id, String code) {
         MesWmArrivalNoticeDO notice = arrivalNoticeMapper.selectByCode(code);
         if (notice == null) {

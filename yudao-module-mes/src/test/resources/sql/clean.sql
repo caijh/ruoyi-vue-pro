@@ -20,3 +20,4 @@ DELETE FROM "mes_wm_batch";
 DELETE FROM "mes_wm_material_stock";
 DELETE FROM "mes_pro_task";
 DELETE FROM "mes_pro_route_process";
+DELETE FROM "mes_qc_indicator_result";

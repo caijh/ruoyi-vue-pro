@@ -29,6 +29,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 
 import java.math.BigDecimal;
+import java.net.URI;
 import java.util.*;
 
 import static cn.iocoder.yudao.framework.common.exception.util.ServiceExceptionUtil.exception;
@@ -181,7 +182,7 @@ public class MesQcIndicatorResultServiceImpl implements MesQcIndicatorResultServ
      * 按检测项的 resultType 校验明细值格式
      *
      * <p>FLOAT → 必须可解析为 BigDecimal；INTEGER → 必须可解析为整数；
-     * TEXT / DICT / FILE → 放行
+     * DICT → 必须属于字典值域；FILE → 必须为 http/https URL；TEXT → 放行
      */
     private void validateDetailValues(List<MesQcIndicatorResultSaveReqVO.Item> items,
                                       Map<Long, MesQcIndicatorDO> indicatorMap) {
@@ -219,7 +220,23 @@ public class MesQcIndicatorResultServiceImpl implements MesQcIndicatorResultServ
                     dictDataApi.validateDictDataList(dictType, Collections.singleton(item.getValue()));
                 }
             }
-            // FILE / TEXT 不做格式校验
+            if (Objects.equals(resultType, MesQcResultValueTypeEnum.FILE.getType())
+                    && !isHttpUrl(item.getValue())) {
+                throw exception(QC_RESULT_VALUE_FORMAT_INVALID,
+                        "检测项[" + indicator.getName() + "]要求文件 URL，实际值=" + item.getValue());
+            }
+            // TEXT 不做格式校验
+        }
+    }
+
+    private boolean isHttpUrl(String value) {
+        try {
+            URI uri = URI.create(value);
+            String scheme = uri.getScheme();
+            return StrUtil.isNotBlank(uri.getHost())
+                    && ("http".equalsIgnoreCase(scheme) || "https".equalsIgnoreCase(scheme));
+        } catch (IllegalArgumentException e) {
+            return false;
         }
     }
 

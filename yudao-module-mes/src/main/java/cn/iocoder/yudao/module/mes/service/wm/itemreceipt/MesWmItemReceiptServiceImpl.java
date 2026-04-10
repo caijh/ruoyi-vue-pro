@@ -14,7 +14,6 @@ import cn.iocoder.yudao.module.mes.dal.dataobject.wm.itemreceipt.MesWmItemReceip
 import cn.iocoder.yudao.module.mes.dal.dataobject.wm.itemreceipt.MesWmItemReceiptLineDO;
 import cn.iocoder.yudao.module.mes.dal.mysql.wm.itemreceipt.MesWmItemReceiptMapper;
 import cn.iocoder.yudao.module.mes.enums.MesBizTypeConstants;
-import cn.iocoder.yudao.module.mes.enums.wm.MesWmArrivalNoticeStatusEnum;
 import cn.iocoder.yudao.module.mes.enums.wm.MesWmItemReceiptStatusEnum;
 import cn.iocoder.yudao.module.mes.enums.wm.MesWmTransactionTypeEnum;
 import cn.iocoder.yudao.module.mes.service.md.vendor.MesMdVendorService;
@@ -92,10 +91,7 @@ public class MesWmItemReceiptServiceImpl implements MesWmItemReceiptService {
         vendorService.validateVendorExistsAndEnable(reqVO.getVendorId());
         // 校验到货通知单存在
         if (reqVO.getNoticeId() != null) {
-            MesWmArrivalNoticeDO notice = arrivalNoticeService.validateArrivalNoticeExists(reqVO.getNoticeId());
-            if (ObjUtil.notEqual(notice.getStatus(), MesWmArrivalNoticeStatusEnum.PENDING_RECEIPT.getStatus())) {
-                throw exception(WM_ARRIVAL_NOTICE_STATUS_NOT_PENDING_RECEIPT);
-            }
+            MesWmArrivalNoticeDO notice = arrivalNoticeService.validateArrivalNoticeReadyForReceipt(reqVO.getNoticeId());
             if (ObjUtil.notEqual(notice.getVendorId(), reqVO.getVendorId())) {
                 throw exception(WM_ARRIVAL_NOTICE_VENDOR_MISMATCH);
             }
