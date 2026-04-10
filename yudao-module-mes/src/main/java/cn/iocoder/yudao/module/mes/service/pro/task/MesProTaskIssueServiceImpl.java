@@ -83,6 +83,11 @@ public class MesProTaskIssueServiceImpl implements MesProTaskIssueService {
         return taskIssueMapper.selectListByTaskId(taskId);
     }
 
+    @Override
+    public Long getTaskIssueCountByUnitMeasureId(Long unitMeasureId) {
+        return taskIssueMapper.selectCountByUnitMeasureId(unitMeasureId);
+    }
+
     private void validateTaskIssueExists(Long id) {
         if (taskIssueMapper.selectById(id) == null) {
             throw exception(PRO_TASK_ISSUE_NOT_EXISTS);

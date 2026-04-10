@@ -88,4 +88,12 @@ public interface MesWmBatchService {
      */
     MesWmBatchDO validateBatchExists(Long batchId, Long itemId, Long clientId, Long vendorId);
 
+    /**
+     * 获取指定工具的批次数量
+     *
+     * @param toolId 工具编号
+     * @return 批次数量
+     */
+    Long getBatchCountByToolId(Long toolId);
+
 }

@@ -68,4 +68,12 @@ public interface MesQcTemplateIndicatorService {
      */
     List<MesQcTemplateIndicatorDO> getTemplateIndicatorListByTemplateId(Long templateId);
 
+    /**
+     * 获取指定计量单位的检测指标项数量
+     *
+     * @param unitMeasureId 计量单位编号
+     * @return 检测指标项数量
+     */
+    Long getTemplateIndicatorCountByUnitMeasureId(Long unitMeasureId);
+
 }

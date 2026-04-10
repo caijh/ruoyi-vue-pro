@@ -87,4 +87,9 @@ public class MesQcTemplateIndicatorServiceImpl implements MesQcTemplateIndicator
         return templateIndicatorMapper.selectListByTemplateId(templateId);
     }
 
+    @Override
+    public Long getTemplateIndicatorCountByUnitMeasureId(Long unitMeasureId) {
+        return templateIndicatorMapper.selectCountByUnitMeasureId(unitMeasureId);
+    }
+
 }

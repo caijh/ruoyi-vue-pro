@@ -266,4 +266,9 @@ public class MesWmBatchServiceImpl implements MesWmBatchService {
         return batch;
     }
 
+    @Override
+    public Long getBatchCountByToolId(Long toolId) {
+        return batchMapper.selectCountByToolId(toolId);
+    }
+
 }

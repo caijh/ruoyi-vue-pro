@@ -8,6 +8,9 @@ import cn.iocoder.yudao.module.mes.controller.admin.md.unitmeasure.vo.MesMdUnitM
 import cn.iocoder.yudao.module.mes.dal.dataobject.md.unitmeasure.MesMdUnitMeasureDO;
 import cn.iocoder.yudao.module.mes.dal.mysql.md.unitmeasure.MesMdUnitMeasureMapper;
 import cn.iocoder.yudao.module.mes.service.md.item.MesMdItemService;
+import cn.iocoder.yudao.module.mes.service.pro.task.MesProTaskIssueService;
+import cn.iocoder.yudao.module.mes.service.qc.template.MesQcTemplateIndicatorService;
+import org.springframework.context.annotation.Lazy;
 import jakarta.annotation.Resource;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
@@ -34,6 +37,12 @@ public class MesMdUnitMeasureServiceImpl implements MesMdUnitMeasureService {
 
     @Resource
     private MesMdItemService itemService;
+    @Resource
+    @Lazy
+    private MesProTaskIssueService taskIssueService;
+    @Resource
+    @Lazy
+    private MesQcTemplateIndicatorService templateIndicatorService;
 
     @Override
     public Long createUnitMeasure(MesMdUnitMeasureSaveReqVO createReqVO) {
@@ -69,6 +78,14 @@ public class MesMdUnitMeasureServiceImpl implements MesMdUnitMeasureService {
         // 校验是否被物料引用
         if (itemService.getItemCountByUnitMeasureId(id) > 0) {
             throw exception(MD_UNIT_MEASURE_HAS_ITEM);
+        }
+        // 校验是否被生产任务投料引用
+        if (taskIssueService.getTaskIssueCountByUnitMeasureId(id) > 0) {
+            throw exception(MD_UNIT_MEASURE_HAS_TASK_ISSUE);
+        }
+        // 校验是否被质检方案指标项引用
+        if (templateIndicatorService.getTemplateIndicatorCountByUnitMeasureId(id) > 0) {
+            throw exception(MD_UNIT_MEASURE_HAS_QC_TEMPLATE_INDICATOR);
         }
 
         // 删除
