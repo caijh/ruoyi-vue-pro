@@ -104,13 +104,15 @@ public interface MesProFeedbackService {
      * 并根据检验结果回写合格/不合格/废品数量，同时更新任务/工单的已生产数量。
      *
      * @param feedbackId          报工记录 ID
+     * @param sourceLineId        来源产出行 ID（用于直接定位待检行）
      * @param qualifiedQty        合格品数量
      * @param unqualifiedQty      不合格品数量
      * @param laborScrapQty       工废数量
      * @param materialScrapQty    料废数量
      * @param otherScrapQty       其他废品数量
      */
-    void updateProFeedbackWhenIpqcFinish(Long feedbackId, BigDecimal qualifiedQty, BigDecimal unqualifiedQty,
+    void updateProFeedbackWhenIpqcFinish(Long feedbackId, Long sourceLineId,
+                                         BigDecimal qualifiedQty, BigDecimal unqualifiedQty,
                                          BigDecimal laborScrapQty, BigDecimal materialScrapQty, BigDecimal otherScrapQty);
 
 }

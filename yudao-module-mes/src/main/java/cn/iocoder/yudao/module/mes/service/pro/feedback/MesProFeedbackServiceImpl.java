@@ -313,7 +313,8 @@ public class MesProFeedbackServiceImpl implements MesProFeedbackService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void updateProFeedbackWhenIpqcFinish(Long feedbackId, BigDecimal qualifiedQty, BigDecimal unqualifiedQty,
+    public void updateProFeedbackWhenIpqcFinish(Long feedbackId, Long sourceLineId,
+                                                BigDecimal qualifiedQty, BigDecimal unqualifiedQty,
                                                 BigDecimal laborScrapQty, BigDecimal materialScrapQty, BigDecimal otherScrapQty) {
         // 1. 校验报工单存在且为待检验状态
         MesProFeedbackDO feedback = validateFeedbackExists(feedbackId);
@@ -322,7 +323,7 @@ public class MesProFeedbackServiceImpl implements MesProFeedbackService {
         }
 
         // 2. 拆分待检产出行（合格/不合格），生成明细，完成产出入库
-        productProduceService.splitPendingAndFinishProduce(feedbackId, qualifiedQty, unqualifiedQty);
+        productProduceService.splitPendingAndFinishProduce(feedbackId, sourceLineId, qualifiedQty, unqualifiedQty);
 
         // 3. 回写合格/不合格/废品数量，更新状态为已完成
         feedbackMapper.updateById(new MesProFeedbackDO().setId(feedbackId)

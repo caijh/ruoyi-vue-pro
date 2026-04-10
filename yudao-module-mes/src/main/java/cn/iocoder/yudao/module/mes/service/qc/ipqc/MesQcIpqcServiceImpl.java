@@ -221,7 +221,7 @@ public class MesQcIpqcServiceImpl implements MesQcIpqcService {
         }
 
         if (Objects.equals(ipqc.getSourceDocType(), MesBizTypeConstants.PRO_FEEDBACK)) {
-            feedbackService.updateProFeedbackWhenIpqcFinish(ipqc.getSourceDocId(),
+            feedbackService.updateProFeedbackWhenIpqcFinish(ipqc.getSourceDocId(), ipqc.getSourceLineId(),
                     ObjectUtil.defaultIfNull(ipqc.getQualifiedQuantity(), BigDecimal.ZERO),
                     ObjectUtil.defaultIfNull(ipqc.getUnqualifiedQuantity(), BigDecimal.ZERO),
                     ObjectUtil.defaultIfNull(ipqc.getLaborScrapQuantity(), BigDecimal.ZERO),
@@ -286,20 +286,19 @@ public class MesQcIpqcServiceImpl implements MesQcIpqcService {
         }
         if (Objects.equals(sourceDocType, MesBizTypeConstants.PRO_FEEDBACK)) {
             MesProFeedbackDO feedback = feedbackService.validateFeedbackExists(sourceDocId);
-            // 校验该报工存在待检产出行
-            List<MesWmProductProduceLineDO> lines = productProduceLineService
-                    .getProductProduceLineListByFeedbackId(sourceDocId);
-            boolean hasPending = lines.stream().anyMatch(
-                    l -> Objects.equals(l.getQualityStatus(), MesWmQualityStatusEnum.PENDING.getStatus()));
-            if (!hasPending) {
-                throw exception(QC_IPQC_SOURCE_DOC_NO_PENDING_LINE);
+            // 校验 sourceLineId 必填
+            if (sourceLineId == null) {
+                throw exception(QC_IPQC_SOURCE_LINE_REQUIRED);
             }
-            // 校验 sourceLineId 属于该报工的产出行
-            if (sourceLineId != null) {
-                boolean belongs = lines.stream().anyMatch(l -> Objects.equals(l.getId(), sourceLineId));
-                if (!belongs) {
-                    throw exception(QC_IPQC_SOURCE_LINE_NOT_BELONG);
-                }
+            // 校验 sourceLineId 存在，且属于该报工的产出行
+            MesWmProductProduceLineDO targetLine = productProduceLineService
+                    .validateProductProduceLineExists(sourceLineId);
+            if (ObjUtil.notEqual(targetLine.getFeedbackId(), sourceDocId)) {
+                throw exception(QC_IPQC_SOURCE_LINE_NOT_BELONG);
+            }
+            // 校验该产出行为待检验状态
+            if (ObjUtil.notEqual(targetLine.getQualityStatus(), MesWmQualityStatusEnum.PENDING.getStatus())) {
+                throw exception(QC_IPQC_SOURCE_LINE_NOT_PENDING);
             }
             return feedback.getCode();
         }

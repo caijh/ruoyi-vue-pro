@@ -353,6 +353,8 @@ public interface ErrorCodeConstants {
     ErrorCode QC_IPQC_SOURCE_DOC_TYPE_UNKNOWN = new ErrorCode(1_040_604_007, "未知的 IPQC 来源单据类型");
     ErrorCode QC_IPQC_SOURCE_DOC_NO_PENDING_LINE = new ErrorCode(1_040_604_008, "来源报工单不存在待检产出行，无法创建 IPQC");
     ErrorCode QC_IPQC_SOURCE_LINE_NOT_BELONG = new ErrorCode(1_040_604_009, "来源单据行不属于该报工单");
+    ErrorCode QC_IPQC_SOURCE_LINE_REQUIRED = new ErrorCode(1_040_604_010, "来源单据类型为报工时，来源产出行 ID 不能为空");
+    ErrorCode QC_IPQC_SOURCE_LINE_NOT_PENDING = new ErrorCode(1_040_604_011, "来源产出行不是待检验状态");
     // ========== MES 质量管理-过程检验行（1-040-604-100） ==========
     ErrorCode QC_IPQC_LINE_NOT_EXISTS = new ErrorCode(1_040_604_100, "过程检验行不存在");
 

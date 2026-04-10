@@ -61,6 +61,7 @@ public class MesProFeedbackServiceImplTest extends BaseDbUnitTest {
         // 准备数据：插入一条待检验状态的报工单
         Long taskId = randomLongId();
         Long workOrderId = randomLongId();
+        Long sourceLineId = randomLongId();
         MesProFeedbackDO feedback = randomPojo(MesProFeedbackDO.class, o -> {
             o.setStatus(MesProFeedbackStatusEnum.UNCHECK.getStatus());
             o.setTaskId(taskId);
@@ -87,13 +88,12 @@ public class MesProFeedbackServiceImplTest extends BaseDbUnitTest {
         BigDecimal laborScrapQty = BigDecimal.valueOf(5);
         BigDecimal materialScrapQty = BigDecimal.valueOf(10);
         BigDecimal otherScrapQty = BigDecimal.valueOf(5);
-
-        feedbackService.updateProFeedbackWhenIpqcFinish(feedback.getId(),
+        feedbackService.updateProFeedbackWhenIpqcFinish(feedback.getId(), sourceLineId,
                 qualifiedQty, unqualifiedQty, laborScrapQty, materialScrapQty, otherScrapQty);
 
         // 断言 1：调用了 splitPendingAndFinishProduce
         verify(productProduceService).splitPendingAndFinishProduce(
-                eq(feedback.getId()), eq(qualifiedQty), eq(unqualifiedQty));
+                eq(feedback.getId()), eq(sourceLineId), eq(qualifiedQty), eq(unqualifiedQty));
 
         // 断言 2：报工单状态更新为已完成
         MesProFeedbackDO updatedFeedback = feedbackMapper.selectById(feedback.getId());
@@ -137,7 +137,7 @@ public class MesProFeedbackServiceImplTest extends BaseDbUnitTest {
                 .thenReturn(ListUtil.of(qualifiedLine));
 
         // 调用
-        feedbackService.updateProFeedbackWhenIpqcFinish(feedback.getId(),
+        feedbackService.updateProFeedbackWhenIpqcFinish(feedback.getId(), randomLongId(),
                 BigDecimal.valueOf(50), BigDecimal.ZERO,
                 BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO);
 
@@ -156,7 +156,7 @@ public class MesProFeedbackServiceImplTest extends BaseDbUnitTest {
         // 调用不存在的 feedbackId，应该抛异常
         Long feedbackId = randomLongId();
         assertThrows(Exception.class, () ->
-                feedbackService.updateProFeedbackWhenIpqcFinish(feedbackId,
+                feedbackService.updateProFeedbackWhenIpqcFinish(feedbackId, randomLongId(),
                         BigDecimal.TEN, BigDecimal.ZERO,
                         BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO));
     }
@@ -171,12 +171,12 @@ public class MesProFeedbackServiceImplTest extends BaseDbUnitTest {
 
         // 调用，应该抛异常
         assertThrows(Exception.class, () ->
-                feedbackService.updateProFeedbackWhenIpqcFinish(feedback.getId(),
+                feedbackService.updateProFeedbackWhenIpqcFinish(feedback.getId(), randomLongId(),
                         BigDecimal.TEN, BigDecimal.ZERO,
                         BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO));
 
         // 断言：不应该调用任何产出单方法
-        verify(productProduceService, never()).splitPendingAndFinishProduce(anyLong(), any(), any());
+        verify(productProduceService, never()).splitPendingAndFinishProduce(anyLong(), anyLong(), any(), any());
     }
 
     @Test
@@ -189,7 +189,7 @@ public class MesProFeedbackServiceImplTest extends BaseDbUnitTest {
 
         // 调用，应该抛异常
         assertThrows(Exception.class, () ->
-                feedbackService.updateProFeedbackWhenIpqcFinish(feedback.getId(),
+                feedbackService.updateProFeedbackWhenIpqcFinish(feedback.getId(), randomLongId(),
                         BigDecimal.TEN, BigDecimal.ZERO,
                         BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO));
     }
