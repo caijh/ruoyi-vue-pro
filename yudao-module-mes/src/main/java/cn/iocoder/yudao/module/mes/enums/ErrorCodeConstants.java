@@ -27,6 +27,7 @@ public interface ErrorCodeConstants {
     ErrorCode MD_UNIT_MEASURE_HAS_SECONDARY = new ErrorCode(1_040_101_003, "该主单位下存在辅单位，无法删除");
     ErrorCode MD_UNIT_MEASURE_HAS_TASK_ISSUE = new ErrorCode(1_040_101_004, "该计量单位已被生产投料引用，无法删除");
     ErrorCode MD_UNIT_MEASURE_HAS_QC_TEMPLATE_INDICATOR = new ErrorCode(1_040_101_005, "该计量单位已被质检方案指标项引用，无法删除");
+    ErrorCode MD_UNIT_MEASURE_HAS_QC_LINE = new ErrorCode(1_040_101_006, "该计量单位已被质检单据行引用，无法删除");
 
     // ========== MES 基础数据-物料（1-040-102-000） ==========
     ErrorCode MD_ITEM_NOT_EXISTS = new ErrorCode(1_040_102_000, "物料不存在");

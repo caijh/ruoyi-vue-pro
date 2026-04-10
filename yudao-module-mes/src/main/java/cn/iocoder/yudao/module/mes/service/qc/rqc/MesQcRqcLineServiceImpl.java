@@ -125,4 +125,9 @@ public class MesQcRqcLineServiceImpl implements MesQcRqcLineService {
         rqcLineMapper.deleteByRqcId(rqcId);
     }
 
+    @Override
+    public Long getRqcLineCountByUnitMeasureId(Long unitMeasureId) {
+        return rqcLineMapper.selectCountByUnitMeasureId(unitMeasureId);
+    }
+
 }

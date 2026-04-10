@@ -9,6 +9,10 @@ import cn.iocoder.yudao.module.mes.dal.dataobject.md.unitmeasure.MesMdUnitMeasur
 import cn.iocoder.yudao.module.mes.dal.mysql.md.unitmeasure.MesMdUnitMeasureMapper;
 import cn.iocoder.yudao.module.mes.service.md.item.MesMdItemService;
 import cn.iocoder.yudao.module.mes.service.pro.task.MesProTaskIssueService;
+import cn.iocoder.yudao.module.mes.service.qc.ipqc.MesQcIpqcLineService;
+import cn.iocoder.yudao.module.mes.service.qc.iqc.MesQcIqcLineService;
+import cn.iocoder.yudao.module.mes.service.qc.oqc.MesQcOqcLineService;
+import cn.iocoder.yudao.module.mes.service.qc.rqc.MesQcRqcLineService;
 import cn.iocoder.yudao.module.mes.service.qc.template.MesQcTemplateIndicatorService;
 import org.springframework.context.annotation.Lazy;
 import jakarta.annotation.Resource;
@@ -43,6 +47,18 @@ public class MesMdUnitMeasureServiceImpl implements MesMdUnitMeasureService {
     @Resource
     @Lazy
     private MesQcTemplateIndicatorService templateIndicatorService;
+    @Resource
+    @Lazy
+    private MesQcIqcLineService iqcLineService;
+    @Resource
+    @Lazy
+    private MesQcOqcLineService oqcLineService;
+    @Resource
+    @Lazy
+    private MesQcIpqcLineService ipqcLineService;
+    @Resource
+    @Lazy
+    private MesQcRqcLineService rqcLineService;
 
     @Override
     public Long createUnitMeasure(MesMdUnitMeasureSaveReqVO createReqVO) {
@@ -86,6 +102,13 @@ public class MesMdUnitMeasureServiceImpl implements MesMdUnitMeasureService {
         // 校验是否被质检方案指标项引用
         if (templateIndicatorService.getTemplateIndicatorCountByUnitMeasureId(id) > 0) {
             throw exception(MD_UNIT_MEASURE_HAS_QC_TEMPLATE_INDICATOR);
+        }
+        // 校验是否被质检单据行引用（IQC/OQC/IPQC/RQC）
+        if (iqcLineService.getIqcLineCountByUnitMeasureId(id) > 0
+                || oqcLineService.getOqcLineCountByUnitMeasureId(id) > 0
+                || ipqcLineService.getIpqcLineCountByUnitMeasureId(id) > 0
+                || rqcLineService.getRqcLineCountByUnitMeasureId(id) > 0) {
+            throw exception(MD_UNIT_MEASURE_HAS_QC_LINE);
         }
 
         // 删除

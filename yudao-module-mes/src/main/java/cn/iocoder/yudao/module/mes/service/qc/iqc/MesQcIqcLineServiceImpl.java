@@ -127,4 +127,9 @@ public class MesQcIqcLineServiceImpl implements MesQcIqcLineService {
         iqcLineMapper.deleteByIqcId(iqcId);
     }
 
+    @Override
+    public Long getIqcLineCountByUnitMeasureId(Long unitMeasureId) {
+        return iqcLineMapper.selectCountByUnitMeasureId(unitMeasureId);
+    }
+
 }
