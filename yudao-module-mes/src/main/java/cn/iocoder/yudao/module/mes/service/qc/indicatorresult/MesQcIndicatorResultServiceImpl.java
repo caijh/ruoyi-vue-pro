@@ -21,6 +21,7 @@ import cn.iocoder.yudao.module.mes.service.qc.ipqc.MesQcIpqcService;
 import cn.iocoder.yudao.module.mes.service.qc.iqc.MesQcIqcService;
 import cn.iocoder.yudao.module.mes.service.qc.oqc.MesQcOqcService;
 import cn.iocoder.yudao.module.mes.service.qc.rqc.MesQcRqcService;
+import cn.iocoder.yudao.module.system.api.dict.DictDataApi;
 import jakarta.annotation.Resource;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
@@ -61,6 +62,9 @@ public class MesQcIndicatorResultServiceImpl implements MesQcIndicatorResultServ
     @Resource
     @Lazy
     private MesQcRqcService rqcService;
+
+    @Resource
+    private DictDataApi dictDataApi;
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -208,7 +212,14 @@ public class MesQcIndicatorResultServiceImpl implements MesQcIndicatorResultServ
                             "检测项[" + indicator.getName() + "]要求整数，实际值=" + item.getValue());
                 }
             }
-            // TEXT / DICT / FILE 不做格式校验
+            // DICT：校验值属于对应字典类型
+            if (Objects.equals(resultType, MesQcResultValueTypeEnum.DICT.getType())) {
+                String dictType = indicator.getResultSpecification();
+                if (StrUtil.isNotBlank(dictType)) {
+                    dictDataApi.validateDictDataList(dictType, Collections.singleton(item.getValue()));
+                }
+            }
+            // FILE / TEXT 不做格式校验
         }
     }
 

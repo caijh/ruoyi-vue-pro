@@ -3,6 +3,8 @@ package cn.iocoder.yudao.module.mes.service.qc.ipqc;
 import cn.hutool.core.util.ObjUtil;
 import cn.hutool.core.util.ObjectUtil;
 import cn.iocoder.yudao.framework.common.pojo.PageResult;
+import cn.iocoder.yudao.module.mes.dal.dataobject.wm.productproduce.MesWmProductProduceLineDO;
+import cn.iocoder.yudao.module.mes.enums.wm.MesWmQualityStatusEnum;
 import cn.iocoder.yudao.framework.common.util.object.BeanUtils;
 import cn.iocoder.yudao.module.mes.controller.admin.qc.ipqc.vo.MesQcIpqcPageReqVO;
 import cn.iocoder.yudao.module.mes.controller.admin.qc.ipqc.vo.MesQcIpqcSaveReqVO;
@@ -29,6 +31,7 @@ import cn.iocoder.yudao.module.mes.service.pro.workorder.MesProWorkOrderService;
 import cn.iocoder.yudao.module.mes.service.qc.defectrecord.MesQcDefectRecordService;
 import cn.iocoder.yudao.module.mes.service.qc.indicatorresult.MesQcIndicatorResultService;
 import cn.iocoder.yudao.module.mes.service.qc.template.MesQcTemplateItemService;
+import cn.iocoder.yudao.module.mes.service.wm.productproduce.MesWmProductProduceLineService;
 import cn.iocoder.yudao.module.system.api.user.AdminUserApi;
 import jakarta.annotation.Resource;
 import org.springframework.context.annotation.Lazy;
@@ -88,6 +91,9 @@ public class MesQcIpqcServiceImpl implements MesQcIpqcService {
     @Resource
     @Lazy
     private MesQcIndicatorResultService indicatorResultService;
+    @Resource
+    @Lazy
+    private MesWmProductProduceLineService productProduceLineService;
 
     @Resource
     private AdminUserApi adminUserApi;
@@ -105,7 +111,7 @@ public class MesQcIpqcServiceImpl implements MesQcIpqcService {
         Long templateId = templateItem.getTemplateId();
         // 1.4 获取来源单据编号
         String sourceDocCode = validateAndGetSourceDocCode(
-                createReqVO.getSourceDocType(), createReqVO.getSourceDocId());
+                createReqVO.getSourceDocType(), createReqVO.getSourceDocId(), createReqVO.getSourceLineId());
 
         // 2. 插入主表
         MesQcIpqcDO ipqc = BeanUtils.toBean(createReqVO, MesQcIpqcDO.class)
@@ -274,12 +280,27 @@ public class MesQcIpqcServiceImpl implements MesQcIpqcService {
         }
     }
 
-    private String validateAndGetSourceDocCode(Integer sourceDocType, Long sourceDocId) {
+    private String validateAndGetSourceDocCode(Integer sourceDocType, Long sourceDocId, Long sourceLineId) {
         if (sourceDocType == null || sourceDocId == null) {
             return null;
         }
         if (Objects.equals(sourceDocType, MesBizTypeConstants.PRO_FEEDBACK)) {
             MesProFeedbackDO feedback = feedbackService.validateFeedbackExists(sourceDocId);
+            // 校验该报工存在待检产出行
+            List<MesWmProductProduceLineDO> lines = productProduceLineService
+                    .getProductProduceLineListByFeedbackId(sourceDocId);
+            boolean hasPending = lines.stream().anyMatch(
+                    l -> Objects.equals(l.getQualityStatus(), MesWmQualityStatusEnum.PENDING.getStatus()));
+            if (!hasPending) {
+                throw exception(QC_IPQC_SOURCE_DOC_NO_PENDING_LINE);
+            }
+            // 校验 sourceLineId 属于该报工的产出行
+            if (sourceLineId != null) {
+                boolean belongs = lines.stream().anyMatch(l -> Objects.equals(l.getId(), sourceLineId));
+                if (!belongs) {
+                    throw exception(QC_IPQC_SOURCE_LINE_NOT_BELONG);
+                }
+            }
             return feedback.getCode();
         }
         // 未知来源类型应报错，而不是静默忽略
