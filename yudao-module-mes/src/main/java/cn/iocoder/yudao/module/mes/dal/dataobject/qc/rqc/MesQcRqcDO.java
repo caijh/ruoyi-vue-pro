@@ -51,15 +51,15 @@ public class MesQcRqcDO extends BaseDO {
     // ========== 来源单据 ==========
 
     /**
-     * 来源单据 ID
-     */
-    private Long sourceDocId;
-    /**
      * 来源单据类型
      *
      * 关联 {@link cn.iocoder.yudao.module.mes.enums.MesBizTypeConstants}
      */
     private Integer sourceDocType;
+    /**
+     * 来源单据 ID
+     */
+    private Long sourceDocId;
     /**
      * 来源单据行 ID
      */
