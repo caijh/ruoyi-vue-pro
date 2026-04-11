@@ -46,7 +46,7 @@ public class MesTmToolDO extends BaseDO {
     /**
      * 型号规格
      */
-    private String spec;
+    private String specification;
     /**
      * 工具类型编号
      *

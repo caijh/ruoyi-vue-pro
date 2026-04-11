@@ -56,7 +56,7 @@ public class MesProTaskRespVO {
     private String itemName;
 
     @Schema(description = "规格型号", example = "100x200mm")
-    private String itemSpec;
+    private String itemSpecification;
 
     @Schema(description = "排产数量", example = "100.00")
     private BigDecimal quantity;

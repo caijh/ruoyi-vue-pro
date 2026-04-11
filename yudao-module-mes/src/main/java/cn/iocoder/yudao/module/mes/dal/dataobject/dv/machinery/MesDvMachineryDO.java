@@ -44,7 +44,7 @@ public class MesDvMachineryDO extends BaseDO {
     /**
      * 规格型号
      */
-    private String spec;
+    private String specification;
     /**
      * 设备类型编号
      *

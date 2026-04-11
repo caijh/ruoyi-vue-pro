@@ -47,7 +47,7 @@ public class MesProTaskIssueRespVO {
     private String itemName;
 
     @Schema(description = "规格型号", example = "100x200mm")
-    private String itemSpec;
+    private String itemSpecification;
 
     @Schema(description = "单位编号", example = "1")
     private Long unitMeasureId;

@@ -31,7 +31,7 @@ public class MesTmToolSaveReqVO {
 
     @Schema(description = "型号规格", example = "M5-100")
     @Size(max = 255, message = "型号规格长度不能超过 255 个字符")
-    private String spec;
+    private String specification;
 
     @Schema(description = "工具类型编号", requiredMode = Schema.RequiredMode.REQUIRED, example = "100")
     @NotNull(message = "工具类型不能为空")

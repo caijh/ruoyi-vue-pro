@@ -161,7 +161,7 @@ public class MesProWorkOrderController {
         return BeanUtils.toBean(list, MesProWorkOrderRespVO.class, vo -> {
             MapUtils.findAndThen(itemMap, vo.getProductId(), item -> {
                 vo.setProductName(item.getName()).setProductCode(item.getCode())
-                        .setProductSpec(item.getSpecification());
+                        .setProductSpecification(item.getSpecification());
                 MapUtils.findAndThen(unitMeasureMap, item.getUnitMeasureId(),
                         unitMeasure -> vo.setUnitMeasureName(unitMeasure.getName()));
             });

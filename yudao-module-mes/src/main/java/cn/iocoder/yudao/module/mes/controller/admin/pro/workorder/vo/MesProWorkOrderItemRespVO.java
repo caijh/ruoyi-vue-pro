@@ -19,7 +19,7 @@ public class MesProWorkOrderItemRespVO {
     private String itemName;
 
     @Schema(description = "规格型号", example = "0603")
-    private String itemSpec;
+    private String itemSpecification;
 
     @Schema(description = "单位名称", example = "个")
     private String unitMeasureName;

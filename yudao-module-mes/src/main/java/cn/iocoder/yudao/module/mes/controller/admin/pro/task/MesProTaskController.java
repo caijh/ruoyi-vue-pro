@@ -240,7 +240,7 @@ public class MesProTaskController {
             findAndThen(processMap, task.getProcessId(), p ->
                     vo.setProcessName(p.getName()));
             findAndThen(itemMap, task.getItemId(), item ->
-                    vo.setItemCode(item.getCode()).setItemName(item.getName()).setItemSpec(item.getSpecification()));
+                    vo.setItemCode(item.getCode()).setItemName(item.getName()).setItemSpecification(item.getSpecification()));
             findAndThen(clientMap, task.getClientId(), c ->
                     vo.setClientName(c.getName()));
             findAndThen(routeProcessCheckFlagMap, task.getRouteId(), processCheckMap ->

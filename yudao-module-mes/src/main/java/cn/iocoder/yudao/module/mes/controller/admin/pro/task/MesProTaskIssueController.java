@@ -113,7 +113,7 @@ public class MesProTaskIssueController {
         return cn.iocoder.yudao.framework.common.util.collection.CollectionUtils.convertList(list, issue -> {
             MesProTaskIssueRespVO vo = BeanUtils.toBean(issue, MesProTaskIssueRespVO.class);
             findAndThen(itemMap, issue.getItemId(), item ->
-                    vo.setItemCode(item.getCode()).setItemName(item.getName()).setItemSpec(item.getSpecification()));
+                    vo.setItemCode(item.getCode()).setItemName(item.getName()).setItemSpecification(item.getSpecification()));
             findAndThen(unitMap, issue.getUnitMeasureId(), unit ->
                     vo.setUnitMeasureName(unit.getName()));
             return vo;
