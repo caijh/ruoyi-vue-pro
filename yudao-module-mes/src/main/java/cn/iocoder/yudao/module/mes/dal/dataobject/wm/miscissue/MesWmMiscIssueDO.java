@@ -45,6 +45,10 @@ public class MesWmMiscIssueDO extends BaseDO {
     private Integer type;
     // TODO @芋艿：这里还没定，关联哪些；
     /**
+     * 来源单据类型
+     */
+    private String sourceDocType;
+    /**
      * 来源单据 ID
      */
     private Long sourceDocId;
@@ -52,10 +56,6 @@ public class MesWmMiscIssueDO extends BaseDO {
      * 来源单据编号
      */
     private String sourceDocCode;
-    /**
-     * 来源单据类型
-     */
-    private String sourceDocType;
     /**
      * 出库日期
      */

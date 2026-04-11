@@ -48,12 +48,6 @@ public class MesWmTransactionDO extends BaseDO {
      * 枚举 {@link MesWmTransactionTypeEnum}
      */
     private Integer type;
-    /**
-     * 本次变动数量
-     *
-     * 正数=入库，负数=出库
-     */
-    private BigDecimal quantity;
 
     /**
      * 业务类型
@@ -95,6 +89,12 @@ public class MesWmTransactionDO extends BaseDO {
      * 关联 {@link MesMdItemDO#getId()}
      */
     private Long itemId;
+    /**
+     * 本次变动数量
+     *
+     * 正数=入库，负数=出库
+     */
+    private BigDecimal quantity;
     /**
      * 批次 ID
      *

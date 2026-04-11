@@ -51,19 +51,19 @@ public class MesQcOqcDO extends BaseDO {
     // ========== 来源单据 ==========
 
     /**
-     * 来源单据 ID
-     *
-     * 关联：根据 {@link #sourceDocType} 不同：
-     * 1. {@link cn.iocoder.yudao.module.mes.enums.qc.MesQcSourceDocTypeEnum#PRODUCT_SALES} 时，关联 {@link cn.iocoder.yudao.module.mes.dal.dataobject.wm.productsales.MesWmProductSalesDO#getId()}
-     */
-    private Long sourceDocId;
-    /**
      * 来源单据类型
      *
      * 字典 {@link DictTypeConstants#MES_QC_SOURCE_DOC_TYPE}
      * 枚举 {@link cn.iocoder.yudao.module.mes.enums.qc.MesQcSourceDocTypeEnum}
      */
     private Integer sourceDocType;
+    /**
+     * 来源单据 ID
+     *
+     * 关联：根据 {@link #sourceDocType} 不同：
+     * 1. {@link cn.iocoder.yudao.module.mes.enums.qc.MesQcSourceDocTypeEnum#PRODUCT_SALES} 时，关联 {@link cn.iocoder.yudao.module.mes.dal.dataobject.wm.productsales.MesWmProductSalesDO#getId()}
+     */
+    private Long sourceDocId;
     /**
      * 来源单据行 ID
      *

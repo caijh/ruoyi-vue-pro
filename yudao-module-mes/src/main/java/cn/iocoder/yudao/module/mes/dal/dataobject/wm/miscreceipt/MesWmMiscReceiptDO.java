@@ -45,6 +45,10 @@ public class MesWmMiscReceiptDO extends BaseDO {
      */
     private Integer type;
     /**
+     * 来源单据类型
+     */
+    private String sourceDocType;
+    /**
      * 来源单据 ID
      */
     private Long sourceDocId;
@@ -52,10 +56,6 @@ public class MesWmMiscReceiptDO extends BaseDO {
      * 来源单据编码
      */
     private String sourceDocCode;
-    /**
-     * 来源单据类型
-     */
-    private String sourceDocType;
     /**
      * 入库日期
      */

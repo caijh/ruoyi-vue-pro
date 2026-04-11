@@ -106,6 +106,33 @@ public class MesQcRqcDO extends BaseDO {
      */
     private BigDecimal unqualifiedQuantity;
 
+    // ========== 缺陷统计 ==========
+
+    /**
+     * 致命缺陷率（%）
+     */
+    private BigDecimal criticalRate;
+    /**
+     * 严重缺陷率（%）
+     */
+    private BigDecimal majorRate;
+    /**
+     * 轻微缺陷率（%）
+     */
+    private BigDecimal minorRate;
+    /**
+     * 致命缺陷数量
+     */
+    private Integer criticalQuantity;
+    /**
+     * 严重缺陷数量
+     */
+    private Integer majorQuantity;
+    /**
+     * 轻微缺陷数量
+     */
+    private Integer minorQuantity;
+
     // ========== 检验 ==========
 
     /**
@@ -136,32 +163,5 @@ public class MesQcRqcDO extends BaseDO {
      * 备注
      */
     private String remark;
-
-    // ========== 缺陷统计 ==========
-
-    /**
-     * 致命缺陷数量
-     */
-    private Integer criticalQuantity;
-    /**
-     * 严重缺陷数量
-     */
-    private Integer majorQuantity;
-    /**
-     * 轻微缺陷数量
-     */
-    private Integer minorQuantity;
-    /**
-     * 致命缺陷率（%）
-     */
-    private BigDecimal criticalRate;
-    /**
-     * 严重缺陷率（%）
-     */
-    private BigDecimal majorRate;
-    /**
-     * 轻微缺陷率（%）
-     */
-    private BigDecimal minorRate;
 
 }
