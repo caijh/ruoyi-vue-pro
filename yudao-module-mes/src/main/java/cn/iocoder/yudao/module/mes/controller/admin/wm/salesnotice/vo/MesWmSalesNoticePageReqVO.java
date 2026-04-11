@@ -13,10 +13,10 @@ import lombok.ToString;
 public class MesWmSalesNoticePageReqVO extends PageParam {
 
     @Schema(description = "通知单编码", example = "SN202603010001")
-    private String noticeCode;
+    private String code;
 
     @Schema(description = "通知单名称", example = "测试发货通知")
-    private String noticeName;
+    private String name;
 
     @Schema(description = "销售订单编号", example = "SO202603010001")
     private String salesOrderCode;

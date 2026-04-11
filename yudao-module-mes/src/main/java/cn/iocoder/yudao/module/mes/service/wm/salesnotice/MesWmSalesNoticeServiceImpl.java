@@ -132,15 +132,15 @@ public class MesWmSalesNoticeServiceImpl implements MesWmSalesNoticeService {
 
     private void validateSalesNoticeSave(MesWmSalesNoticeSaveReqVO saveReqVO) {
         // 校验编码唯一
-        validateNoticeCodeUnique(saveReqVO.getId(), saveReqVO.getNoticeCode());
+        validateNoticeCodeUnique(saveReqVO.getId(), saveReqVO.getCode());
         // 校验客户存在
         if (saveReqVO.getClientId() != null) {
             clientService.validateClientExistsAndEnable(saveReqVO.getClientId());
         }
     }
 
-    private void validateNoticeCodeUnique(Long id, String noticeCode) {
-        MesWmSalesNoticeDO notice = salesNoticeMapper.selectByNoticeCode(noticeCode);
+    private void validateNoticeCodeUnique(Long id, String code) {
+        MesWmSalesNoticeDO notice = salesNoticeMapper.selectByCode(code);
         if (notice == null) {
             return;
         }

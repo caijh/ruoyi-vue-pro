@@ -15,16 +15,16 @@ public interface MesWmSalesNoticeMapper extends BaseMapperX<MesWmSalesNoticeDO> 
 
     default PageResult<MesWmSalesNoticeDO> selectPage(MesWmSalesNoticePageReqVO reqVO) {
         return selectPage(reqVO, new LambdaQueryWrapperX<MesWmSalesNoticeDO>()
-                .likeIfPresent(MesWmSalesNoticeDO::getNoticeCode, reqVO.getNoticeCode())
-                .likeIfPresent(MesWmSalesNoticeDO::getNoticeName, reqVO.getNoticeName())
+                .likeIfPresent(MesWmSalesNoticeDO::getCode, reqVO.getCode())
+                .likeIfPresent(MesWmSalesNoticeDO::getName, reqVO.getName())
                 .likeIfPresent(MesWmSalesNoticeDO::getSalesOrderCode, reqVO.getSalesOrderCode())
                 .eqIfPresent(MesWmSalesNoticeDO::getClientId, reqVO.getClientId())
                 .eqIfPresent(MesWmSalesNoticeDO::getStatus, reqVO.getStatus())
                 .orderByDesc(MesWmSalesNoticeDO::getId));
     }
 
-    default MesWmSalesNoticeDO selectByNoticeCode(String noticeCode) {
-        return selectOne(MesWmSalesNoticeDO::getNoticeCode, noticeCode);
+    default MesWmSalesNoticeDO selectByCode(String code) {
+        return selectOne(MesWmSalesNoticeDO::getCode, code);
     }
 
 }

@@ -31,11 +31,11 @@ public class MesWmSalesNoticeDO extends BaseDO {
     /**
      * 通知单编码
      */
-    private String noticeCode;
+    private String code;
     /**
      * 通知单名称
      */
-    private String noticeName;
+    private String name;
     /**
      * 销售订单编号
      */
