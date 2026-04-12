@@ -51,6 +51,10 @@ public class MesWmReturnSalesLineDO extends BaseDO {
      */
     private Long batchId;
     /**
+     * 批次号
+     */
+    private String batchCode;
+    /**
      * 退货检验单 ID
      */
     private Long rqcId;

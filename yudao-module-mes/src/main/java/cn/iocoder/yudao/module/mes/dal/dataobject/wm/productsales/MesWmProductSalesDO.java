@@ -51,16 +51,15 @@ public class MesWmProductSalesDO extends BaseDO {
      */
     private String salesOrderCode;
     /**
-     * 出库日期
-     */
-    private LocalDateTime salesDate;
-
-    /**
      * 发货通知单 ID
      *
      * 关联 {@link MesWmSalesNoticeDO#getId()}
      */
     private Long noticeId;
+    /**
+     * 出库日期
+     */
+    private LocalDateTime salesDate;
 
     /**
      * 联系人
