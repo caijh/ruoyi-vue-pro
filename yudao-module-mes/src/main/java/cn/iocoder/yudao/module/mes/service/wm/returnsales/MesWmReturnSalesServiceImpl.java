@@ -190,7 +190,7 @@ public class MesWmReturnSalesServiceImpl implements MesWmReturnSalesService {
         wmTransactionService.createTransactionList(convertList(details, detail -> new MesWmTransactionSaveReqDTO()
                 .setType(MesWmTransactionTypeEnum.IN.getType()).setItemId(detail.getItemId())
                 .setQuantity(detail.getQuantity()) // 入库数量为正数
-                .setBatchId(detail.getBatchId())
+                .setBatchId(detail.getBatchId()).setBatchCode(detail.getBatchCode())
                 .setWarehouseId(detail.getWarehouseId()).setLocationId(detail.getLocationId()).setAreaId(detail.getAreaId())
                 .setBizType(MesBizTypeConstants.WM_RETURN_SALES).setBizId(returnSales.getId())
                 .setBizCode(returnSales.getCode()).setBizLineId(detail.getLineId())));

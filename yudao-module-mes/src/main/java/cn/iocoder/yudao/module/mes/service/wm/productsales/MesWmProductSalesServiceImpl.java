@@ -220,7 +220,7 @@ public class MesWmProductSalesServiceImpl implements MesWmProductSalesService {
         wmTransactionService.createTransactionList(convertList(details, detail -> new MesWmTransactionSaveReqDTO()
                 .setType(MesWmTransactionTypeEnum.OUT.getType()).setItemId(detail.getItemId())
                 .setQuantity(detail.getQuantity().negate()) // 出库数量为负数
-                .setBatchId(detail.getBatchId())
+                .setBatchId(detail.getBatchId()).setBatchCode(detail.getBatchCode())
                 .setWarehouseId(detail.getWarehouseId()).setLocationId(detail.getLocationId()).setAreaId(detail.getAreaId())
                 .setBizType(MesBizTypeConstants.WM_PRODUCT_SALES).setBizId(sales.getId())
                 .setBizCode(sales.getCode()).setBizLineId(detail.getLineId())));
