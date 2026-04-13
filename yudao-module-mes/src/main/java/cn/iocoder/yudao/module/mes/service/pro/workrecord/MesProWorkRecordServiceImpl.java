@@ -71,7 +71,7 @@ public class MesProWorkRecordServiceImpl implements MesProWorkRecordService {
         } else {
             workRecordMapper.updateById(new MesProWorkRecordDO().setId(record.getId())
                     .setWorkstationId(workstationId).setType(MesProWorkRecordTypeEnum.CLOCK_IN.getType())
-                    .setClockInTime(LocalDateTime.now()).setClockOutTime(null));
+                    .setClockInTime(LocalDateTime.now()));
         }
         return log.getId();
     }
