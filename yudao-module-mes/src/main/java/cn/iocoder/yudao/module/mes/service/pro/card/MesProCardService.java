@@ -43,6 +43,13 @@ public interface MesProCardService {
     void validateCardExists(Long id);
 
     /**
+     * 校验生产流转卡存在，且为草稿状态
+     *
+     * @param id 编号
+     */
+    void validateCardExistsAndPrepare(Long id);
+
+    /**
      * 获得生产流转卡
      *
      * @param id 编号

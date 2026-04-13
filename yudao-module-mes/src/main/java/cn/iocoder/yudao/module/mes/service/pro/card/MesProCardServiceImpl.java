@@ -63,8 +63,8 @@ public class MesProCardServiceImpl implements MesProCardService {
 
     @Override
     public void updateCard(MesProCardSaveReqVO updateReqVO) {
-        // 1.1 校验存在
-        validateCardExists(updateReqVO.getId());
+        // 1.1 校验存在 + 草稿状态
+        validateCardExistsAndPrepare(updateReqVO.getId());
         // 1.2 校验关联数据
         validateCardSaveData(updateReqVO);
 
@@ -76,8 +76,8 @@ public class MesProCardServiceImpl implements MesProCardService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void deleteCard(Long id) {
-        // 1. 校验存在
-        validateCardExists(id);
+        // 1. 校验存在 + 草稿状态
+        validateCardExistsAndPrepare(id);
 
         // 2. 删除流转卡 + 级联删除工序记录
         cardMapper.deleteById(id);
@@ -135,6 +135,14 @@ public class MesProCardServiceImpl implements MesProCardService {
     @Override
     public void validateCardExists(Long id) {
         validateCardExistsInternal(id);
+    }
+
+    @Override
+    public void validateCardExistsAndPrepare(Long id) {
+        MesProCardDO card = validateCardExistsInternal(id);
+        if (ObjUtil.notEqual(MesProWorkOrderStatusEnum.PREPARE.getStatus(), card.getStatus())) {
+            throw exception(PRO_CARD_NOT_PREPARE);
+        }
     }
 
     private MesProCardDO validateCardExistsInternal(Long id) {
