@@ -91,11 +91,10 @@ public interface MesProFeedbackService {
      *   </li>
      * </ol>
      *
-     * @param id     报工单编号
-     * @param userId 当前操作用户编号（审核人）
+     * @param id 报工单编号
      * @return true=已完成, false=待检验（需等质检回调）
      */
-    boolean approveFeedback(Long id, Long userId);
+    boolean approveFeedback(Long id);
 
     /**
      * IPQC 完成后回调：完成报工单并更新任务/工单进度

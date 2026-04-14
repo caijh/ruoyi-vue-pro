@@ -31,11 +31,9 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 import java.util.List;
 
 import static cn.iocoder.yudao.framework.common.exception.util.ServiceExceptionUtil.exception;
-import static cn.iocoder.yudao.framework.security.core.util.SecurityFrameworkUtils.getLoginUserId;
 import static cn.iocoder.yudao.module.mes.enums.ErrorCodeConstants.*;
 
 /**
@@ -116,11 +114,9 @@ public class MesProFeedbackServiceImpl implements MesProFeedbackService {
         // 1. 校验存在 + 草稿状态
         validateFeedbackStatusPrepare(id);
 
-        // 2. 更新状态为审批中，记录报工人和报工时间
+        // 2. 更新状态为审批中（报工人和报工时间由表单保存时确定，提交不覆盖）
         feedbackMapper.updateById(new MesProFeedbackDO().setId(id)
-                .setStatus(MesProFeedbackStatusEnum.APPROVING.getStatus())
-                .setFeedbackUserId(getLoginUserId())
-                .setFeedbackTime(LocalDateTime.now()));
+                .setStatus(MesProFeedbackStatusEnum.APPROVING.getStatus()));
     }
 
     @Override
@@ -135,33 +131,34 @@ public class MesProFeedbackServiceImpl implements MesProFeedbackService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public boolean approveFeedback(Long id, Long userId) {
-        // 1.1.a 校验存在 + 审批中状态
+    public boolean approveFeedback(Long id) {
+        // 1.1 校验存在 + 审批中状态
         MesProFeedbackDO feedback = validateFeedbackStatusApproving(id);
-        // 1.1.b 校验报工数量 > 0
+        // 1.2 校验报工数量 > 0
         if (feedback.getFeedbackQuantity() == null
                 || feedback.getFeedbackQuantity().compareTo(BigDecimal.ZERO) <= 0) {
             throw exception(PRO_FEEDBACK_QUANTITY_MUST_POSITIVE);
         }
-        // 1.2.a 校验任务未完成
+        // 1.3 校验任务未完成
         taskService.validateTaskNotFinished(feedback.getTaskId());
-        // 1.2.b 仍有待检数量时不能执行
-        if (feedback.getUncheckQuantity() != null
-                && feedback.getUncheckQuantity().compareTo(BigDecimal.ZERO) > 0) {
-            throw exception(PRO_FEEDBACK_UNCHECK_QUANTITY_EXISTS, feedback.getUncheckQuantity());
-        }
 
-        // 2. 物料消耗：根据工序 BOM 生成消耗记录并执行扣减
-        MesWmItemConsumeDO itemConsume = itemConsumeService.generateItemConsume(feedback);
-        if (itemConsume != null) {
-            itemConsumeService.finishItemConsume(itemConsume.getId());
-        }
-
-        // 3. 查询工序的关键工序标识 + 检验标识
+        // 2.1 查询工序的关键工序标识 + 检验标识（需在 uncheckQuantity 校验之前，因为质检工序允许 uncheckQuantity > 0）
         MesProRouteProcessDO routeProcess = routeProcessService.getRouteProcessByRouteIdAndProcessId(
                 feedback.getRouteId(), feedback.getProcessId());
         boolean keyFlag = routeProcess != null && Boolean.TRUE.equals(routeProcess.getKeyFlag());
         boolean checkFlag = routeProcess != null && Boolean.TRUE.equals(routeProcess.getCheckFlag());
+        // 2.2 非质检工序：仍有待检数量时不能审批（质检工序的 uncheckQuantity > 0 是正常状态，不做拦截）
+        if (!checkFlag
+                && feedback.getUncheckQuantity() != null
+                && feedback.getUncheckQuantity().compareTo(BigDecimal.ZERO) > 0) {
+            throw exception(PRO_FEEDBACK_UNCHECK_QUANTITY_EXISTS, feedback.getUncheckQuantity());
+        }
+
+        // 3. 物料消耗：根据工序 BOM 生成消耗记录并执行扣减
+        MesWmItemConsumeDO itemConsume = itemConsumeService.generateItemConsume(feedback);
+        if (itemConsume != null) {
+            itemConsumeService.finishItemConsume(itemConsume.getId());
+        }
 
         // 4. 关键工序：生成产出单，并根据是否需要检验决定入库方式
         if (keyFlag) {
@@ -179,10 +176,10 @@ public class MesProFeedbackServiceImpl implements MesProFeedbackService {
             updateTaskAndWorkOrderByFeedback(feedback);
         }
 
-        // 5. 非关键工序：不生成产出单，不更新任务/工单数量，直接完成
+        // 5. 非关键工序 / 关键非质检工序：直接完成（清零 uncheckQuantity 防止 !key+check 留脏数据）
         feedbackMapper.updateById(new MesProFeedbackDO().setId(id)
                 .setStatus(MesProFeedbackStatusEnum.FINISHED.getStatus())
-                .setApproveUserId(userId));
+                .setUncheckQuantity(BigDecimal.ZERO));
         return true; // 已完成
     }
 
