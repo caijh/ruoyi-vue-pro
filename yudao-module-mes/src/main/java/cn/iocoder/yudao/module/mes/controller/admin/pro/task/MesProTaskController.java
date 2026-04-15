@@ -217,6 +217,8 @@ public class MesProTaskController {
                 new ArrayList<>(convertSet(list, MesProTaskDO::getProcessId)));
         Map<Long, MesMdItemDO> itemMap = itemService.getItemMap(
                 convertSet(list, MesProTaskDO::getItemId));
+        Map<Long, MesMdUnitMeasureDO> unitMeasureMap = unitMeasureService.getUnitMeasureMap(
+                convertSet(itemMap.values(), MesMdItemDO::getUnitMeasureId));
         Map<Long, MesMdClientDO> clientMap = clientService.getClientMap(
                 convertSet(list, MesProTaskDO::getClientId));
         // 工序的 checkFlag：批量查询后构建 routeId -> processId -> checkFlag 的双层 Map
@@ -239,8 +241,11 @@ public class MesProTaskController {
                     vo.setWorkstationCode(ws.getCode()).setWorkstationName(ws.getName()));
             findAndThen(processMap, task.getProcessId(), p ->
                     vo.setProcessName(p.getName()));
-            findAndThen(itemMap, task.getItemId(), item ->
-                    vo.setItemCode(item.getCode()).setItemName(item.getName()).setItemSpecification(item.getSpecification()));
+            findAndThen(itemMap, task.getItemId(), item -> {
+                vo.setItemCode(item.getCode()).setItemName(item.getName()).setItemSpecification(item.getSpecification());
+                findAndThen(unitMeasureMap, item.getUnitMeasureId(), unit ->
+                        vo.setUnitMeasureName(unit.getName()));
+            });
             findAndThen(clientMap, task.getClientId(), c ->
                     vo.setClientName(c.getName()));
             findAndThen(routeProcessCheckFlagMap, task.getRouteId(), processCheckMap ->

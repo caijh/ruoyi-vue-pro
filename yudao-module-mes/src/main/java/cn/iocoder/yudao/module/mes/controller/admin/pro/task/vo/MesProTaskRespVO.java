@@ -58,6 +58,9 @@ public class MesProTaskRespVO {
     @Schema(description = "规格型号", example = "100x200mm")
     private String itemSpecification;
 
+    @Schema(description = "计量单位名称", example = "个")
+    private String unitMeasureName;
+
     @Schema(description = "排产数量", example = "100.00")
     private BigDecimal quantity;
 
