@@ -132,17 +132,6 @@ public class MesDvMachineryServiceImpl implements MesDvMachineryService {
         }
     }
 
-    @Override
-    public void validateMachineryExistsAndEnable(Long id) {
-        MesDvMachineryDO machinery = machineryMapper.selectById(id);
-        if (machinery == null) {
-            throw exception(DV_MACHINERY_NOT_EXISTS);
-        }
-        if (ObjUtil.notEqual(CommonStatusEnum.ENABLE.getStatus(), machinery.getStatus())) {
-            throw exception(DV_MACHINERY_IS_DISABLE);
-        }
-    }
-
     private void validateMachineryCodeUnique(Long id, String code) {
         if (code == null) {
             return;

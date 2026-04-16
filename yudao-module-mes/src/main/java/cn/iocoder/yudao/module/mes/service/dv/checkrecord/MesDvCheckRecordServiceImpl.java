@@ -170,7 +170,7 @@ public class MesDvCheckRecordServiceImpl implements MesDvCheckRecordService {
 
     private void validateCheckRecordSave(MesDvCheckRecordSaveReqVO reqVO) {
         // 校验设备是否存在
-        machineryService.validateMachineryExistsAndEnable(reqVO.getMachineryId());
+        machineryService.validateMachineryExists(reqVO.getMachineryId());
         // 校验点检计划是否存在
         if (reqVO.getPlanId() != null) {
             checkPlanService.validateCheckPlanExistsAndType(reqVO.getPlanId(), MesDvCheckPlanTypeEnum.CHECK.getType());
