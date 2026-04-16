@@ -519,6 +519,7 @@ CREATE TABLE IF NOT EXISTS "mes_wm_return_sales_line" (
     "item_id" bigint NOT NULL,
     "quantity" decimal(12,2) NOT NULL DEFAULT 0.00,
     "batch_id" bigint DEFAULT NULL,
+    "batch_code" varchar(255) DEFAULT NULL,
     "rqc_id" bigint DEFAULT NULL,
     "rqc_check_flag" bit NOT NULL DEFAULT FALSE,
     "quality_status" int DEFAULT NULL,
