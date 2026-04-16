@@ -69,6 +69,7 @@ public class MesDvMaintenRecordServiceImpl implements MesDvMaintenRecordService 
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public void submitMaintenRecord(Long id) {
         // 1.1 校验状态为草稿
         validateMaintenRecordDraft(id);
@@ -79,10 +80,16 @@ public class MesDvMaintenRecordServiceImpl implements MesDvMaintenRecordService 
         }
 
         // 2. 状态改为已提交
+        MesDvMaintenRecordDO record = maintenRecordMapper.selectById(id);
         MesDvMaintenRecordDO updateObj = new MesDvMaintenRecordDO();
         updateObj.setId(id);
         updateObj.setStatus(MesDvMaintenRecordStatusEnum.SUBMITTED.getStatus());
         maintenRecordMapper.updateById(updateObj);
+
+        // 3. 回写设备台账的【最近保养时间】
+        if (record.getMaintenTime() != null) {
+            machineryService.updateMachineryLastMaintenTime(record.getMachineryId(), record.getMaintenTime());
+        }
     }
 
     @Override

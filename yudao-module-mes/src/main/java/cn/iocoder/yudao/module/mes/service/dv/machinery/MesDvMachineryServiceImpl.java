@@ -27,6 +27,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
@@ -177,6 +178,16 @@ public class MesDvMachineryServiceImpl implements MesDvMachineryService {
     @Override
     public Long getMachineryCountByMachineryTypeId(Long machineryTypeId) {
         return machineryMapper.selectCountByMachineryTypeId(machineryTypeId);
+    }
+
+    @Override
+    public void updateMachineryLastCheckTime(Long machineryId, LocalDateTime lastCheckTime) {
+        machineryMapper.updateById(new MesDvMachineryDO().setId(machineryId).setLastCheckTime(lastCheckTime));
+    }
+
+    @Override
+    public void updateMachineryLastMaintenTime(Long machineryId, LocalDateTime lastMaintenTime) {
+        machineryMapper.updateById(new MesDvMachineryDO().setId(machineryId).setLastMaintenTime(lastMaintenTime));
     }
 
     @Override

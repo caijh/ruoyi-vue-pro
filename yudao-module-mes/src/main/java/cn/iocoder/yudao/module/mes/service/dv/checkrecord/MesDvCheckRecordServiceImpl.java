@@ -99,6 +99,7 @@ public class MesDvCheckRecordServiceImpl implements MesDvCheckRecordService {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public void submitCheckRecord(Long id) {
         // 1.1 校验状态为草稿
         validateCheckRecordDraft(id);
@@ -109,9 +110,15 @@ public class MesDvCheckRecordServiceImpl implements MesDvCheckRecordService {
         }
 
         // 2. 状态改为已完成
+        MesDvCheckRecordDO record = checkRecordMapper.selectById(id);
         MesDvCheckRecordDO updateObj = new MesDvCheckRecordDO()
                 .setId(id).setStatus(MesDvCheckRecordStatusEnum.FINISHED.getStatus());
         checkRecordMapper.updateById(updateObj);
+
+        // 3. 回写设备台账的【最近点检时间】
+        if (record.getCheckTime() != null) {
+            machineryService.updateMachineryLastCheckTime(record.getMachineryId(), record.getCheckTime());
+        }
     }
 
     @Override
