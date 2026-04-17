@@ -295,7 +295,7 @@ public class MesQcIpqcServiceImplTest extends BaseDbUnitTest {
     }
 
     /**
-     * 工位没有工序（processId=null）→ processId 应该留 null（与 KTG 对齐，不回退到任务工序）
+     * 工位没有工序（processId=null）→ processId 应该留 null（不回退到任务工序）
      */
     @Test
     public void testCreateIpqc_processId_workstationNoProcess_shouldBeNull() {
@@ -342,7 +342,7 @@ public class MesQcIpqcServiceImplTest extends BaseDbUnitTest {
         // 断言：processId 应该是 null，即使传入了 taskId 也不应该回退
         MesQcIpqcDO ipqc = ipqcMapper.selectById(ipqcId);
         assertNull(ipqc.getProcessId(),
-                "工位无工序时 processId 应为 null（与 KTG 对齐），不应回退到任务工序");
+                "工位无工序时 processId 应为 null，不应回退到任务工序");
         // 断言：不应该读取任务的 processId
         verify(routeProductService, never()).getRouteProductByItemId(any());
     }
