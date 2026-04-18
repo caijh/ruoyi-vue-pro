@@ -1,5 +1,7 @@
 package cn.iocoder.yudao.module.mes.service.qc.indicatorresult;
 
+import cn.hutool.core.collection.ListUtil;
+import cn.hutool.core.map.MapUtil;
 import cn.iocoder.yudao.framework.common.pojo.PageResult;
 import cn.iocoder.yudao.framework.test.core.ut.BaseDbUnitTest;
 import cn.iocoder.yudao.module.mes.controller.admin.qc.indicatorresult.vo.MesQcIndicatorResultPageReqVO;
@@ -17,12 +19,10 @@ import cn.iocoder.yudao.module.mes.service.qc.oqc.MesQcOqcService;
 import cn.iocoder.yudao.module.mes.service.qc.rqc.MesQcRqcService;
 import cn.iocoder.yudao.module.system.api.dict.DictDataApi;
 import org.junit.jupiter.api.Test;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
-import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
-import jakarta.annotation.Resource;
-import java.util.List;
-import java.util.Map;
+import javax.annotation.Resource;
 
 import static cn.iocoder.yudao.framework.common.util.object.ObjectUtils.cloneIgnoreId;
 import static cn.iocoder.yudao.framework.test.core.util.AssertUtils.assertPojoEquals;
@@ -31,7 +31,8 @@ import static cn.iocoder.yudao.framework.test.core.util.RandomUtils.randomLongId
 import static cn.iocoder.yudao.framework.test.core.util.RandomUtils.randomPojo;
 import static cn.iocoder.yudao.module.mes.enums.ErrorCodeConstants.*;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.ArgumentMatchers.anyList;
+import static org.mockito.ArgumentMatchers.anySet;
 import static org.mockito.Mockito.*;
 
 /**
@@ -48,19 +49,19 @@ public class MesQcIndicatorResultServiceImplTest extends BaseDbUnitTest {
     @Resource
     private MesQcIndicatorResultMapper resultMapper;
 
-    @MockitoBean
+    @MockBean
     private MesQcIndicatorResultDetailService resultDetailService;
-    @MockitoBean
+    @MockBean
     private MesQcIndicatorService indicatorService;
-    @MockitoBean
+    @MockBean
     private MesQcIqcService iqcService;
-    @MockitoBean
+    @MockBean
     private MesQcIpqcService ipqcService;
-    @MockitoBean
+    @MockBean
     private MesQcOqcService oqcService;
-    @MockitoBean
+    @MockBean
     private MesQcRqcService rqcService;
-    @MockitoBean
+    @MockBean
     private DictDataApi dictDataApi;
 
     @Test
@@ -116,7 +117,7 @@ public class MesQcIndicatorResultServiceImplTest extends BaseDbUnitTest {
         indicator.setName("检测项A");
         indicator.setResultType(MesQcResultValueTypeEnum.TEXT.getType());
         when(indicatorService.validateIndicatorListExists(anySet()))
-                .thenReturn(Map.of(indicator.getId(), indicator));
+                .thenReturn(MapUtil.of(indicator.getId(), indicator));
 
         // 调用
         indicatorResultService.updateIndicatorResult(reqVO);
@@ -269,7 +270,7 @@ public class MesQcIndicatorResultServiceImplTest extends BaseDbUnitTest {
         indicator.setName("检测项A");
         indicator.setResultType(resultType);
         when(indicatorService.validateIndicatorListExists(anySet()))
-                .thenReturn(Map.of(indicator.getId(), indicator));
+                .thenReturn(MapUtil.of(indicator.getId(), indicator));
     }
 
     private MesQcIndicatorResultSaveReqVO buildReqVO(String value, Integer resultType) {
@@ -281,7 +282,7 @@ public class MesQcIndicatorResultServiceImplTest extends BaseDbUnitTest {
         reqVO.setCode("SPL-001");
         reqVO.setQcId(1L);
         reqVO.setQcType(MesQcTypeEnum.IQC.getType());
-        reqVO.setItems(List.of(item));
+        reqVO.setItems(ListUtil.of(item));
         return reqVO;
     }
 

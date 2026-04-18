@@ -1,16 +1,16 @@
 package cn.iocoder.yudao.module.mes.dal.mysql.pro.task;
 
+import cn.hutool.core.collection.ListUtil;
 import cn.iocoder.yudao.framework.common.pojo.PageResult;
 import cn.iocoder.yudao.framework.test.core.ut.BaseDbUnitTest;
 import cn.iocoder.yudao.module.mes.controller.admin.pro.task.vo.MesProTaskPageReqVO;
 import cn.iocoder.yudao.module.mes.dal.dataobject.pro.route.MesProRouteProcessDO;
 import cn.iocoder.yudao.module.mes.dal.dataobject.pro.task.MesProTaskDO;
 import cn.iocoder.yudao.module.mes.dal.mysql.pro.route.MesProRouteProcessMapper;
-import jakarta.annotation.Resource;
 import org.junit.jupiter.api.Test;
 
+import javax.annotation.Resource;
 import java.math.BigDecimal;
-import java.util.List;
 import java.util.function.Consumer;
 
 import static cn.iocoder.yudao.framework.common.util.object.ObjectUtils.cloneIgnoreId;
@@ -122,7 +122,7 @@ public class MesProTaskMapperTest extends BaseDbUnitTest {
         taskMapper.insert(task3);
 
         MesProTaskPageReqVO reqVO = new MesProTaskPageReqVO();
-        reqVO.setStatuses(List.of(1, 2));
+        reqVO.setStatuses(ListUtil.of(1, 2));
         PageResult<MesProTaskDO> result = taskMapper.selectPage(reqVO);
 
         assertEquals(2, result.getTotal());
