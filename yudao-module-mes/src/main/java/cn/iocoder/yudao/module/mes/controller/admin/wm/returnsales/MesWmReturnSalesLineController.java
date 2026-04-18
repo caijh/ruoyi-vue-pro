@@ -43,10 +43,8 @@ public class MesWmReturnSalesLineController {
 
     @Resource
     private MesWmReturnSalesLineService returnSalesLineService;
-
     @Resource
     private MesMdItemService itemService;
-
     @Resource
     private MesMdUnitMeasureService unitMeasureService;
 

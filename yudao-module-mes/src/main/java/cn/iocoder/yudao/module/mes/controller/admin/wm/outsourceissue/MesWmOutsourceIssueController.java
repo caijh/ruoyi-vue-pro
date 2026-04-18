@@ -49,7 +49,6 @@ public class MesWmOutsourceIssueController {
 
     @Resource
     private MesWmOutsourceIssueService outsourceIssueService;
-
     @Resource
     private MesMdVendorService vendorService;
     @Resource

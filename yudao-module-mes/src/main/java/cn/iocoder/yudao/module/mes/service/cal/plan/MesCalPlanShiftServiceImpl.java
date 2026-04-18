@@ -33,6 +33,7 @@ public class MesCalPlanShiftServiceImpl implements MesCalPlanShiftService {
 
     @Resource
     private MesCalPlanShiftMapper planShiftMapper;
+
     @Resource
     @Lazy
     private MesCalPlanService planService;

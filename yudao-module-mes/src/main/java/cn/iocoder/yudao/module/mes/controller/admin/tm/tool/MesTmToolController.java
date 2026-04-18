@@ -42,7 +42,6 @@ public class MesTmToolController {
 
     @Resource
     private MesTmToolService toolService;
-
     @Resource
     private MesTmToolTypeService toolTypeService;
 
