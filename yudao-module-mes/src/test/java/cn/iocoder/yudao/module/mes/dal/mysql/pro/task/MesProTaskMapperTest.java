@@ -1,5 +1,6 @@
 package cn.iocoder.yudao.module.mes.dal.mysql.pro.task;
 
+import cn.hutool.core.collection.ListUtil;
 import cn.iocoder.yudao.framework.common.pojo.PageResult;
 import cn.iocoder.yudao.framework.test.core.ut.BaseDbUnitTest;
 import cn.iocoder.yudao.module.mes.controller.admin.pro.task.vo.MesProTaskPageReqVO;
@@ -122,7 +123,7 @@ public class MesProTaskMapperTest extends BaseDbUnitTest {
         taskMapper.insert(task3);
 
         MesProTaskPageReqVO reqVO = new MesProTaskPageReqVO();
-        reqVO.setStatuses(List.of(1, 2));
+        reqVO.setStatuses(ListUtil.of(1, 2));
         PageResult<MesProTaskDO> result = taskMapper.selectPage(reqVO);
 
         assertEquals(2, result.getTotal());

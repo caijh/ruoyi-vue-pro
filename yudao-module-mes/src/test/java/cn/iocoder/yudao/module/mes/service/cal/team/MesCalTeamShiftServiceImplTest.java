@@ -1,5 +1,6 @@
 package cn.iocoder.yudao.module.mes.service.cal.team;
 
+import cn.hutool.core.collection.ListUtil;
 import cn.iocoder.yudao.framework.test.core.ut.BaseDbUnitTest;
 import cn.iocoder.yudao.module.mes.dal.dataobject.cal.plan.MesCalPlanDO;
 import cn.iocoder.yudao.module.mes.dal.dataobject.cal.plan.MesCalPlanShiftDO;
@@ -61,12 +62,12 @@ public class MesCalTeamShiftServiceImplTest extends BaseDbUnitTest {
                 .shiftMethod(MesCalShiftMethodEnum.DAY.getMethod())
                 .shiftCount(1)
                 .build();
-        List<MesCalPlanShiftDO> shifts = List.of(
+        List<MesCalPlanShiftDO> shifts = ListUtil.of(
                 MesCalPlanShiftDO.builder().id(11L).planId(planId).sort(1).name("白班").startTime("08:00").endTime("16:00").build(),
                 MesCalPlanShiftDO.builder().id(12L).planId(planId).sort(2).name("中班").startTime("16:00").endTime("00:00").build(),
                 MesCalPlanShiftDO.builder().id(13L).planId(planId).sort(3).name("夜班").startTime("00:00").endTime("08:00").build()
         );
-        List<MesCalPlanTeamDO> teams = List.of(
+        List<MesCalPlanTeamDO> teams = ListUtil.of(
                 MesCalPlanTeamDO.builder().id(21L).planId(planId).teamId(101L).build(),
                 MesCalPlanTeamDO.builder().id(22L).planId(planId).teamId(102L).build(),
                 MesCalPlanTeamDO.builder().id(23L).planId(planId).teamId(103L).build()
