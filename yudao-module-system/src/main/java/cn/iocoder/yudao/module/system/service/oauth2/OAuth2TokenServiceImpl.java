@@ -151,6 +151,7 @@ public class OAuth2TokenServiceImpl implements OAuth2TokenService {
         oauth2AccessTokenRedisDAO.delete(accessToken);
         // 删除刷新令牌
         oauth2RefreshTokenMapper.deleteByRefreshToken(accessTokenDO.getRefreshToken());
+        oauth2AccessTokenRedisDAO.delete(accessTokenDO.getRefreshToken());
         return accessTokenDO;
     }
 
@@ -166,6 +167,7 @@ public class OAuth2TokenServiceImpl implements OAuth2TokenService {
             oauth2AccessTokenRedisDAO.delete(accessToken.getAccessToken());
             // 删除刷新令牌
             oauth2RefreshTokenMapper.deleteByRefreshToken(accessToken.getRefreshToken());
+            oauth2AccessTokenRedisDAO.delete(accessToken.getRefreshToken());
         });
     }
 
