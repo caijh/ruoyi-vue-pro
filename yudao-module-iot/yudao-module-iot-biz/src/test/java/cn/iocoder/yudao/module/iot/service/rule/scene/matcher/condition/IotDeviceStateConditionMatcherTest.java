@@ -1,6 +1,5 @@
 package cn.iocoder.yudao.module.iot.service.rule.scene.matcher.condition;
 
-import cn.iocoder.yudao.module.iot.core.enums.IotDeviceMessageMethodEnum;
 import cn.iocoder.yudao.module.iot.core.enums.device.IotDeviceStateEnum;
 import cn.iocoder.yudao.module.iot.core.mq.message.IotDeviceMessage;
 import cn.iocoder.yudao.module.iot.dal.dataobject.rule.IotSceneRuleDO;
@@ -9,9 +8,6 @@ import cn.iocoder.yudao.module.iot.enums.rule.IotSceneRuleConditionTypeEnum;
 import cn.iocoder.yudao.module.iot.service.rule.scene.matcher.IotBaseConditionMatcherTest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import java.util.HashMap;
-import java.util.Map;
 
 import static cn.iocoder.yudao.framework.test.core.util.RandomUtils.randomLongId;
 import static cn.iocoder.yudao.framework.test.core.util.RandomUtils.randomString;
@@ -346,10 +342,7 @@ public class IotDeviceStateConditionMatcherTest extends IotBaseConditionMatcherT
     private IotDeviceMessage createDeviceMessage(Integer deviceState) {
         IotDeviceMessage message = new IotDeviceMessage();
         message.setDeviceId(randomLongId());
-        message.setMethod(IotDeviceMessageMethodEnum.STATE_UPDATE.getMethod());
-        Map<String, Object> params = new HashMap<>();
-        params.put("state", deviceState);
-        message.setParams(params);
+        message.setParams(deviceState);
         return message;
     }
 

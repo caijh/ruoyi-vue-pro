@@ -10,9 +10,6 @@ import cn.iocoder.yudao.module.iot.service.rule.scene.matcher.IotBaseConditionMa
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import static cn.iocoder.yudao.framework.test.core.util.RandomUtils.randomLongId;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -251,9 +248,7 @@ public class IotDeviceStateUpdateTriggerMatcherTest extends IotBaseConditionMatc
         IotDeviceMessage message = new IotDeviceMessage();
         message.setDeviceId(randomLongId());
         message.setMethod(IotDeviceMessageMethodEnum.STATE_UPDATE.getMethod());
-        Map<String, Object> params = new HashMap<>();
-        params.put("state", state);
-        message.setParams(params);
+        message.setParams(state);
         return message;
     }
 

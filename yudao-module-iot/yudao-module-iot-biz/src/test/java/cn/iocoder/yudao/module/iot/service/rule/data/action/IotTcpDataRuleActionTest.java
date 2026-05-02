@@ -9,9 +9,6 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -45,9 +42,8 @@ class IotTcpDataRuleActionTest {
         assertEquals(expectedType, actualType);
     }
 
-    // TODO @puhui999：_ 后面是小写哈，单测的命名规则。
     @Test
-    public void testInitProducer_Success() throws Exception {
+    public void testInitProducer_success() throws Exception {
         // 准备参数
         IotDataSinkTcpConfig config = new IotDataSinkTcpConfig();
         config.setHost("localhost");
@@ -63,7 +59,7 @@ class IotTcpDataRuleActionTest {
     }
 
     @Test
-    public void testInitProducer_InvalidHost() {
+    public void testInitProducer_invalidHost() {
         // 准备参数
         IotDataSinkTcpConfig config = new IotDataSinkTcpConfig();
         config.setHost("");
@@ -81,7 +77,7 @@ class IotTcpDataRuleActionTest {
     }
 
     @Test
-    public void testInitProducer_InvalidPort() {
+    public void testInitProducer_invalidPort() {
         // 准备参数
         IotDataSinkTcpConfig config = new IotDataSinkTcpConfig();
         config.setHost("localhost");
@@ -108,7 +104,7 @@ class IotTcpDataRuleActionTest {
     }
 
     @Test
-    public void testExecute_WithValidConfig() {
+    public void testExecute_withValidConfig() {
         // 准备参数
         IotDeviceMessage message = IotDeviceMessage.requestOf("thing.property.report",
                 "{\"temperature\": 25.5, \"humidity\": 60}");
@@ -128,7 +124,7 @@ class IotTcpDataRuleActionTest {
     }
 
     @Test
-    public void testConfig_DefaultValues() {
+    public void testConfig_defaultValues() {
         // 准备参数
         IotDataSinkTcpConfig config = new IotDataSinkTcpConfig();
 
@@ -146,12 +142,10 @@ class IotTcpDataRuleActionTest {
     @Test
     public void testMessageSerialization() {
         // 准备参数
-        Map<String, Object> params = new HashMap<>();
-        params.put("temperature", 25.5);
         IotDeviceMessage message = IotDeviceMessage.builder()
                 .deviceId(123L)
                 .method("thing.property.report")
-                .params(params)
+                .params("{\"temperature\": 25.5}")
                 .build();
 
         // 调用方法

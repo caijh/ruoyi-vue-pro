@@ -1,7 +1,6 @@
 package cn.iocoder.yudao.module.iot.service.rule.scene;
 
 import cn.hutool.core.collection.ListUtil;
-import cn.hutool.extra.spring.SpringUtil;
 import cn.iocoder.yudao.framework.common.enums.CommonStatusEnum;
 import cn.iocoder.yudao.framework.test.core.ut.BaseMockitoUnitTest;
 import cn.iocoder.yudao.module.iot.core.enums.device.IotDeviceStateEnum;
@@ -15,12 +14,13 @@ import cn.iocoder.yudao.module.iot.enums.rule.IotSceneRuleTriggerTypeEnum;
 import cn.iocoder.yudao.module.iot.service.device.IotDeviceService;
 import cn.iocoder.yudao.module.iot.service.device.property.IotDevicePropertyService;
 import cn.iocoder.yudao.module.iot.service.rule.scene.action.IotSceneRuleAction;
+import cn.iocoder.yudao.module.iot.service.rule.scene.matcher.IotSceneRuleMatcherManager;
 import cn.iocoder.yudao.module.iot.service.rule.scene.timer.IotSceneRuleTimerHandler;
 import cn.iocoder.yudao.module.iot.service.rule.scene.timer.IotTimerConditionEvaluator;
+import cn.iocoder.yudao.module.iot.service.product.IotProductService;
 import org.junit.jupiter.api.*;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.springframework.context.support.GenericApplicationContext;
 
 import java.lang.reflect.Field;
 import java.util.*;
@@ -63,6 +63,12 @@ public class IotSceneRuleTimerConditionIntegrationTest extends BaseMockitoUnitTe
     @Mock
     private IotSceneRuleTimerHandler timerHandler;
 
+    @Mock
+    private IotSceneRuleMatcherManager sceneRuleMatcherManager;
+
+    @Mock
+    private IotProductService productService;
+
     private IotTimerConditionEvaluator timerConditionEvaluator;
 
     // 测试常量
@@ -70,12 +76,6 @@ public class IotSceneRuleTimerConditionIntegrationTest extends BaseMockitoUnitTe
     private static final Long TENANT_ID = 1L;
     private static final Long DEVICE_ID = 100L;
     private static final String PROPERTY_IDENTIFIER = "temperature";
-
-    @BeforeAll
-    static void initSpringContext() {
-        // SpringExpressionUtils 依赖 SpringUtil 持有的 ApplicationContext
-        new SpringUtil().setApplicationContext(new GenericApplicationContext());
-    }
 
     @BeforeEach
     void setUp() {
@@ -144,15 +144,14 @@ public class IotSceneRuleTimerConditionIntegrationTest extends BaseMockitoUnitTe
         IotDevicePropertyDO property = new IotDevicePropertyDO();
         property.setValue(value);
         properties.put(identifier, property);
-        // 多条件组 OR 短路时部分 stub 用不上，使用 lenient 容忍未消费的 stub
-        lenient().when(devicePropertyService.getLatestDeviceProperties(deviceId)).thenReturn(properties);
+        when(devicePropertyService.getLatestDeviceProperties(deviceId)).thenReturn(properties);
     }
 
     private void mockDeviceState(Long deviceId, Integer state) {
         IotDeviceDO device = new IotDeviceDO();
         device.setId(deviceId);
         device.setState(state);
-        lenient().when(deviceService.getDevice(deviceId)).thenReturn(device);
+        when(deviceService.getDevice(deviceId)).thenReturn(device);
     }
 
     /**
