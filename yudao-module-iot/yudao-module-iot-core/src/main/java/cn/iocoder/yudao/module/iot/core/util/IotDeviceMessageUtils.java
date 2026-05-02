@@ -1,7 +1,6 @@
 package cn.iocoder.yudao.module.iot.core.util;
 
 import cn.hutool.core.lang.Assert;
-import cn.hutool.core.map.MapUtil;
 import cn.hutool.core.util.IdUtil;
 import cn.hutool.core.util.ReflectUtil;
 import cn.hutool.core.util.StrUtil;
@@ -10,7 +9,9 @@ import cn.iocoder.yudao.framework.common.util.json.JsonUtils;
 import cn.iocoder.yudao.module.iot.core.enums.IotDeviceMessageMethodEnum;
 import cn.iocoder.yudao.module.iot.core.mq.message.IotDeviceMessage;
 
+import java.util.LinkedHashSet;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * IoT 设备【消息】的工具类
@@ -87,6 +88,25 @@ public class IotDeviceMessageUtils {
         } catch (Exception ignored) {
             return null;
         }
+    }
+
+    /**
+     * 获取属性上报消息中包含的所有属性标识符
+     *
+     * 仅支持扁平结构：{ temperature: 25.5, humidity: 60 }，顶层 key 即属性标识符
+     *
+     * @param message 设备消息
+     * @return 属性标识符集合，不为 null
+     */
+    public static Set<String> getPropertyIdentifiers(IotDeviceMessage message) {
+        if (message == null) {
+            return new LinkedHashSet<>();
+        }
+        Map<String, Object> params = parseParamsToMap(message.getParams());
+        if (params == null) {
+            return new LinkedHashSet<>();
+        }
+        return new LinkedHashSet<>(params.keySet());
     }
 
     /**

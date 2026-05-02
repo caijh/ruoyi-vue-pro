@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -289,4 +290,62 @@ public class IotDeviceMessageUtilsTest {
         assertTrue(notContainsResult);
         assertEquals(!containsResult, notContainsResult);
     }
+
+    // ========== getPropertyIdentifiers 测试 ==========
+
+    @Test
+    public void testGetPropertyIdentifiers_flatStructure() {
+        // 扁平结构：顶层 key 即标识符
+        IotDeviceMessage message = new IotDeviceMessage();
+        Map<String, Object> params = new HashMap<>();
+        params.put("temperature", 25.5);
+        params.put("humidity", 60);
+        message.setParams(params);
+
+        Set<String> identifiers = IotDeviceMessageUtils.getPropertyIdentifiers(message);
+        assertEquals(2, identifiers.size());
+        assertTrue(identifiers.contains("temperature"));
+        assertTrue(identifiers.contains("humidity"));
+    }
+
+    @Test
+    public void testGetPropertyIdentifiers_nullMessage() {
+        // 入参为 null：返回空集合
+        Set<String> identifiers = IotDeviceMessageUtils.getPropertyIdentifiers(null);
+        assertNotNull(identifiers);
+        assertTrue(identifiers.isEmpty());
+    }
+
+    @Test
+    public void testGetPropertyIdentifiers_nullParams() {
+        // params 为 null：返回空集合
+        IotDeviceMessage message = new IotDeviceMessage();
+        message.setParams(null);
+
+        Set<String> identifiers = IotDeviceMessageUtils.getPropertyIdentifiers(message);
+        assertTrue(identifiers.isEmpty());
+    }
+
+    @Test
+    public void testGetPropertyIdentifiers_emptyParams() {
+        // params 为空 Map：返回空集合
+        IotDeviceMessage message = new IotDeviceMessage();
+        message.setParams(new HashMap<>());
+
+        Set<String> identifiers = IotDeviceMessageUtils.getPropertyIdentifiers(message);
+        assertTrue(identifiers.isEmpty());
+    }
+
+    @Test
+    public void testGetPropertyIdentifiers_jsonStringParams() {
+        // params 为 JSON 字符串：parseParamsToMap 解析后正常提取顶层标识符
+        IotDeviceMessage message = new IotDeviceMessage();
+        message.setParams("{\"temperature\":25.5,\"humidity\":60}");
+
+        Set<String> identifiers = IotDeviceMessageUtils.getPropertyIdentifiers(message);
+        assertEquals(2, identifiers.size());
+        assertTrue(identifiers.contains("temperature"));
+        assertTrue(identifiers.contains("humidity"));
+    }
+
 }
