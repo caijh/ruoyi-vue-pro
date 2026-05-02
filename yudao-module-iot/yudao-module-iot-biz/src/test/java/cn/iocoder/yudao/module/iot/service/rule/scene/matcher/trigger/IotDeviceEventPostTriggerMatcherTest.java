@@ -1,13 +1,15 @@
 package cn.iocoder.yudao.module.iot.service.rule.scene.matcher.trigger;
 
+import cn.hutool.core.collection.ListUtil;
 import cn.hutool.core.map.MapUtil;
 import cn.iocoder.yudao.module.iot.core.enums.IotDeviceMessageMethodEnum;
 import cn.iocoder.yudao.module.iot.core.mq.message.IotDeviceMessage;
+import cn.iocoder.yudao.module.iot.core.topic.event.IotDeviceEventPostReqDTO;
 import cn.iocoder.yudao.module.iot.dal.dataobject.rule.IotSceneRuleDO;
+import cn.iocoder.yudao.module.iot.enums.rule.IotSceneRuleConditionOperatorEnum;
 import cn.iocoder.yudao.module.iot.enums.rule.IotSceneRuleTriggerTypeEnum;
 import cn.iocoder.yudao.module.iot.service.rule.scene.matcher.IotBaseConditionMatcherTest;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.util.HashMap;
@@ -23,7 +25,6 @@ import static org.junit.jupiter.api.Assertions.*;
  *
  * @author HUIHUI
  */
-@Disabled // TODO @puhui999：单测有报错，先屏蔽
 public class IotDeviceEventPostTriggerMatcherTest extends IotBaseConditionMatcherTest {
 
     private IotDeviceEventPostTriggerMatcher matcher;
@@ -353,6 +354,184 @@ public class IotDeviceEventPostTriggerMatcherTest extends IotBaseConditionMatche
         // 断言
         // 根据实际实现，这里可能需要调整期望结果
         // 如果实现是大小写敏感的，则应该为 false
+        assertFalse(result);
+    }
+
+    @Test
+    public void testMatches_scalarValueEqualsSuccess() {
+        // 标量事件值 + operator='=' + value 命中：必须匹配；防止"把整个 params Map 当作源值"的回归
+        String eventIdentifier = randomString();
+        Map<String, Object> eventParams = MapUtil.builder(new HashMap<String, Object>())
+                .put("identifier", eventIdentifier)
+                .put("value", "normal")
+                .build();
+        IotDeviceMessage message = createEventPostMessage(eventParams);
+        IotSceneRuleDO.Trigger trigger = createValidTrigger(eventIdentifier);
+        trigger.setOperator(IotSceneRuleConditionOperatorEnum.EQUALS.getOperator());
+        trigger.setValue("normal");
+
+        boolean result = matcher.matches(message, trigger);
+
+        assertTrue(result);
+    }
+
+    @Test
+    public void testMatches_scalarValueEqualsMismatch() {
+        // 标量事件值不等于配置值：应不匹配
+        String eventIdentifier = randomString();
+        Map<String, Object> eventParams = MapUtil.builder(new HashMap<String, Object>())
+                .put("identifier", eventIdentifier)
+                .put("value", "abnormal")
+                .build();
+        IotDeviceMessage message = createEventPostMessage(eventParams);
+        IotSceneRuleDO.Trigger trigger = createValidTrigger(eventIdentifier);
+        trigger.setOperator(IotSceneRuleConditionOperatorEnum.EQUALS.getOperator());
+        trigger.setValue("normal");
+
+        boolean result = matcher.matches(message, trigger);
+
+        assertFalse(result);
+    }
+
+    @Test
+    public void testMatches_pojoParamsScalarValueSuccess() {
+        // 本地总线场景：params 是 IotDeviceEventPostReqDTO POJO 而非 Map，仍应能正确匹配
+        String eventIdentifier = randomString();
+        IotDeviceMessage message = new IotDeviceMessage();
+        message.setDeviceId(randomLongId());
+        message.setMethod(IotDeviceMessageMethodEnum.EVENT_POST.getMethod());
+        message.setParams(IotDeviceEventPostReqDTO.of(eventIdentifier, "normal"));
+        IotSceneRuleDO.Trigger trigger = createValidTrigger(eventIdentifier);
+        trigger.setOperator(IotSceneRuleConditionOperatorEnum.EQUALS.getOperator());
+        trigger.setValue("normal");
+
+        boolean result = matcher.matches(message, trigger);
+
+        assertTrue(result);
+    }
+
+    @Test
+    public void testMatches_structValueEqualsSuccess() {
+        // 结构体事件值 + 比较值是 JSON 对象字面量：JSON 反序列化后整体相等
+        String eventIdentifier = randomString();
+        Map<String, Object> eventValue = MapUtil.builder(new HashMap<String, Object>())
+                .put("level", "high")
+                .put("message", "over temperature")
+                .build();
+        Map<String, Object> eventParams = MapUtil.builder(new HashMap<String, Object>())
+                .put("identifier", eventIdentifier)
+                .put("value", eventValue)
+                .build();
+        IotDeviceMessage message = createEventPostMessage(eventParams);
+        IotSceneRuleDO.Trigger trigger = createValidTrigger(eventIdentifier);
+        trigger.setOperator(IotSceneRuleConditionOperatorEnum.EQUALS.getOperator());
+        trigger.setValue("{\"level\":\"high\",\"message\":\"over temperature\"}");
+
+        boolean result = matcher.matches(message, trigger);
+
+        assertTrue(result);
+    }
+
+    @Test
+    public void testMatches_structValueEqualsKeyOrderInsensitive() {
+        // 比较值的 JSON 字段顺序与事件 value 不同，应仍然匹配（HashMap.equals 与顺序无关）
+        String eventIdentifier = randomString();
+        Map<String, Object> eventValue = MapUtil.builder(new HashMap<String, Object>())
+                .put("level", "high")
+                .put("code", 500)
+                .build();
+        Map<String, Object> eventParams = MapUtil.builder(new HashMap<String, Object>())
+                .put("identifier", eventIdentifier)
+                .put("value", eventValue)
+                .build();
+        IotDeviceMessage message = createEventPostMessage(eventParams);
+        IotSceneRuleDO.Trigger trigger = createValidTrigger(eventIdentifier);
+        trigger.setOperator(IotSceneRuleConditionOperatorEnum.EQUALS.getOperator());
+        trigger.setValue("{\"code\":500,\"level\":\"high\"}");
+
+        boolean result = matcher.matches(message, trigger);
+
+        assertTrue(result);
+    }
+
+    @Test
+    public void testMatches_structValueEqualsMismatch() {
+        // 结构体值字段不一致：应不匹配
+        String eventIdentifier = randomString();
+        Map<String, Object> eventValue = MapUtil.builder(new HashMap<String, Object>())
+                .put("level", "low")
+                .build();
+        Map<String, Object> eventParams = MapUtil.builder(new HashMap<String, Object>())
+                .put("identifier", eventIdentifier)
+                .put("value", eventValue)
+                .build();
+        IotDeviceMessage message = createEventPostMessage(eventParams);
+        IotSceneRuleDO.Trigger trigger = createValidTrigger(eventIdentifier);
+        trigger.setOperator(IotSceneRuleConditionOperatorEnum.EQUALS.getOperator());
+        trigger.setValue("{\"level\":\"high\"}");
+
+        boolean result = matcher.matches(message, trigger);
+
+        assertFalse(result);
+    }
+
+    @Test
+    public void testMatches_structValueNotEqualsSuccess() {
+        // 结构体值 + != 操作符：内容不一致时应匹配
+        String eventIdentifier = randomString();
+        Map<String, Object> eventValue = MapUtil.builder(new HashMap<String, Object>())
+                .put("level", "low")
+                .build();
+        Map<String, Object> eventParams = MapUtil.builder(new HashMap<String, Object>())
+                .put("identifier", eventIdentifier)
+                .put("value", eventValue)
+                .build();
+        IotDeviceMessage message = createEventPostMessage(eventParams);
+        IotSceneRuleDO.Trigger trigger = createValidTrigger(eventIdentifier);
+        trigger.setOperator(IotSceneRuleConditionOperatorEnum.NOT_EQUALS.getOperator());
+        trigger.setValue("{\"level\":\"high\"}");
+
+        boolean result = matcher.matches(message, trigger);
+
+        assertTrue(result);
+    }
+
+    @Test
+    public void testMatches_arrayValueEqualsSuccess() {
+        // 数组事件值：JSON 解析后按序相等
+        String eventIdentifier = randomString();
+        Map<String, Object> eventParams = MapUtil.builder(new HashMap<String, Object>())
+                .put("identifier", eventIdentifier)
+                .put("value", ListUtil.of("a", "b", "c"))
+                .build();
+        IotDeviceMessage message = createEventPostMessage(eventParams);
+        IotSceneRuleDO.Trigger trigger = createValidTrigger(eventIdentifier);
+        trigger.setOperator(IotSceneRuleConditionOperatorEnum.EQUALS.getOperator());
+        trigger.setValue("[\"a\",\"b\",\"c\"]");
+
+        boolean result = matcher.matches(message, trigger);
+
+        assertTrue(result);
+    }
+
+    @Test
+    public void testMatches_structValueInvalidJsonComparator() {
+        // 比较值不是合法 JSON：结构体场景下视为不匹配，不抛异常
+        String eventIdentifier = randomString();
+        Map<String, Object> eventValue = MapUtil.builder(new HashMap<String, Object>())
+                .put("level", "high")
+                .build();
+        Map<String, Object> eventParams = MapUtil.builder(new HashMap<String, Object>())
+                .put("identifier", eventIdentifier)
+                .put("value", eventValue)
+                .build();
+        IotDeviceMessage message = createEventPostMessage(eventParams);
+        IotSceneRuleDO.Trigger trigger = createValidTrigger(eventIdentifier);
+        trigger.setOperator(IotSceneRuleConditionOperatorEnum.EQUALS.getOperator());
+        trigger.setValue("not a json");
+
+        boolean result = matcher.matches(message, trigger);
+
         assertFalse(result);
     }
 

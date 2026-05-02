@@ -5,10 +5,12 @@ import cn.iocoder.yudao.module.iot.core.mq.message.IotDeviceMessage;
 import cn.iocoder.yudao.module.iot.dal.dataobject.rule.config.IotDataSinkTcpConfig;
 import cn.iocoder.yudao.module.iot.service.rule.data.action.tcp.IotTcpClient;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -18,7 +20,6 @@ import static org.mockito.Mockito.*;
  *
  * @author HUIHUI
  */
-@Disabled // TODO @puhui999：单测有报错，先屏蔽
 class IotTcpDataRuleActionTest {
 
     private IotTcpDataRuleAction tcpDataRuleAction;
@@ -145,10 +146,12 @@ class IotTcpDataRuleActionTest {
     @Test
     public void testMessageSerialization() {
         // 准备参数
+        Map<String, Object> params = new HashMap<>();
+        params.put("temperature", 25.5);
         IotDeviceMessage message = IotDeviceMessage.builder()
                 .deviceId(123L)
                 .method("thing.property.report")
-                .params("{\"temperature\": 25.5}")
+                .params(params)
                 .build();
 
         // 调用方法
