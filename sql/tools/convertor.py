@@ -236,7 +236,8 @@ class Convertor(ABC):
                 yield field, comment_string
 
     def table_comment(self, table_sql: str) -> str:
-        match = re.search(r"COMMENT \='([^']+)';", table_sql)
+        # 兼容 COMMENT='xxx' / COMMENT = 'xxx' 等等号两侧空格变体；允许 COMMENT 内含转义单引号
+        match = re.search(r"COMMENT\s*=\s*'((?:[^'\\]|\\.)*)'", table_sql)
         return match.group(1) if match else None
 
     def print(self):
@@ -278,11 +279,13 @@ class Convertor(ABC):
 
             # 解析注释
             # 从原始 SQL 提取注释（支持中文等 DDLParser 不能处理的内容）
-            orig_tables = re.findall(r"CREATE TABLE [^;]*;", self.original_content)
-            orig_table_sql = next(
-                (t for t in orig_tables if f"`{table_name}`" in t or f"`{table_name.upper()}`" in t),
-                table_sql,
+            # 按表名定位完整建表段（以「换行 + )」起始的 ENGINE 行作为终止），避免被列 COMMENT 内的分号截断
+            orig_match = re.search(
+                rf"CREATE TABLE\s+`{re.escape(table_name)}`[\s\S]*?\n\)[^;]*;",
+                self.original_content,
+                flags=re.IGNORECASE,
             )
+            orig_table_sql = orig_match.group() if orig_match else table_sql
             comments_dict = dict(Convertor.filed_comments(orig_table_sql))
             for column in table_ddl["columns"]:
                 column["comment"] = comments_dict.get(column["name"], "")
