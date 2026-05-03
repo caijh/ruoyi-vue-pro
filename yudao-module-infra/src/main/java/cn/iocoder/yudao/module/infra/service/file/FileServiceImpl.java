@@ -47,7 +47,14 @@ public class FileServiceImpl implements FileService {
      * 目的：保证文件的唯一性，避免覆盖
      * 定制：可按需调整成 UUID、或者其他方式
      */
-    static boolean PATH_SUFFIX_TIMESTAMP_ENABLE = true;
+    static boolean PATH_SUFFIX_TIMESTAMP_ENABLE = false;
+    /**
+     * 时间戳是否作为上级目录
+     *
+     * true：{@code yyyyMMdd/timestamp/原文件名.ext}；保留原文件名
+     * false：{@code yyyyMMdd/原文件名_timestamp.ext}；时间戳拼到文件名
+     */
+    static boolean PATH_TIMESTAMP_AS_DIRECTORY = true;
 
     @Resource
     private FileConfigService fileConfigService;
@@ -102,12 +109,22 @@ public class FileServiceImpl implements FileService {
         }
         String suffix = null;
         if (PATH_SUFFIX_TIMESTAMP_ENABLE) {
+            // 5 位随机数，避免同一毫秒内的重复
             suffix = String.valueOf(System.currentTimeMillis()) + RandomUtil.randomInt(10000, 100000);
         }
 
         // 2.1 先拼接 suffix 后缀
         if (StrUtil.isNotEmpty(suffix)) {
-            name = suffix + StrUtil.SLASH + name;
+            if (PATH_TIMESTAMP_AS_DIRECTORY) {
+                name = suffix + StrUtil.SLASH + name;
+            } else {
+                String ext = FileUtil.extName(name);
+                if (StrUtil.isNotEmpty(ext)) {
+                    name = FileUtil.mainName(name) + StrUtil.C_UNDERLINE + suffix + StrUtil.DOT + ext;
+                } else {
+                    name = name + StrUtil.C_UNDERLINE + suffix;
+                }
+            }
         }
         // 2.2 再拼接 prefix 前缀
         if (StrUtil.isNotEmpty(prefix)) {
