@@ -705,12 +705,12 @@ public class SimpleModelUtils {
                 }
                 // 构造规则表达式
                 List<String> list = convertList(item.getRules(), (rule) -> {
+                    // TODO @芋艿：官方文档中无convertByType方法，https://flowable.me/blog/2025/04/02/back-end-expressions/
                     String rightSide = NumberUtil.isNumber(rule.getRightSide()) ? rule.getRightSide()
                             : "\"" + rule.getRightSide() + "\""; // 如果非数值类型加引号
-                    return String.format(" vars:getOrDefault(%s, null) %s var:convertByType(%s,%s) ",
+                    return String.format(BpmConditionOpCodeEnum.fromCode(rule.getOpCode()).getSymbol(),
                             rule.getLeftSide(), // 左侧：读取变量
-                            rule.getOpCode(), // 中间：操作符，比较
-                            rule.getLeftSide(), rightSide); // 右侧：转换变量，VariableConvertByTypeExpressionFunction
+                            rightSide); // 右侧：取值变量
                 });
                 // 构造条件组的表达式
                 Boolean and = item.getAnd();
