@@ -705,7 +705,6 @@ public class SimpleModelUtils {
                 }
                 // 构造规则表达式
                 List<String> list = convertList(item.getRules(), (rule) -> {
-                    // TODO @芋艿：官方文档中无convertByType方法，https://flowable.me/blog/2025/04/02/back-end-expressions/
                     String rightSide = NumberUtil.isNumber(rule.getRightSide()) ? rule.getRightSide()
                             : "\"" + rule.getRightSide() + "\""; // 如果非数值类型加引号
                     return String.format(BpmConditionOpCodeEnum.fromCode(rule.getOpCode()).getSymbol(),

@@ -11,12 +11,14 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 @Getter
 public enum BpmConditionOpCodeEnum {
+
     EQ("==", "等于", " var:getOrDefault(%s, null) == %s "),
     NE("!=", "不等于", " var:getOrDefault(%s, null) != %s "),
     GT(">", "大于", " var:getOrDefault(%s, null) > %s "),
     GE(">=", "大于等于", " var:getOrDefault(%s, null) >= %s "),
     LT("<", "小于", " var:getOrDefault(%s, null) < %s "),
     LE("<=", "小于等于", " var:getOrDefault(%s, null) <= %s "),
+
     CONTAINS("contain", "包含", " var:contains(%s, %s) "),
     NOT_CONTAINS("!contain", "不包含", " !var:contains(%s, %s) ");
 

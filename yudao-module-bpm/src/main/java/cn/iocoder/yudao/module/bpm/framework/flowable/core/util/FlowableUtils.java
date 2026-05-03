@@ -275,13 +275,10 @@ public class FlowableUtils {
     /**
      * 递归解析表单字段
      */
-    private static void parseFormField(BpmFormFieldVO formField,
-                                       Map<String, BpmFormFieldVO> formFieldsMap) {
-
+    private static void parseFormField(BpmFormFieldVO formField, Map<String, BpmFormFieldVO> formFieldsMap) {
         if (formField == null) {
             return;
         }
-
         // 如果存在 children -> 说明是布局组件
         if (formField.getChildren() != null && !formField.getChildren().isEmpty()) {
             for (BpmFormFieldVO child : formField.getChildren()) {
@@ -289,7 +286,6 @@ public class FlowableUtils {
             }
             return;
         }
-
         // 真实字段才加入 map
         if (StrUtil.isNotBlank(formField.getField())) {
             formFieldsMap.put(formField.getField(), formField);
