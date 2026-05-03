@@ -73,6 +73,7 @@ export function export${simpleClassName}Excel(params) {
     responseType: 'blob'
   })
 }
+#if ($importEnable)
 
 // 下载${table.classComment}导入模板
 export function import${simpleClassName}Template() {
@@ -91,6 +92,7 @@ export function import${simpleClassName}(data) {
     data
   })
 }
+#end
 ## 特殊：主子表专属逻辑
 #foreach ($subTable in $subTables)
   #set ($index = $foreach.count - 1)

@@ -11,8 +11,10 @@ import {
   delete${simpleClassName},
   export${simpleClassName},
   get${simpleClassName}Page,
+#if ($importEnable)
   import${simpleClassName},
   import${simpleClassName}Template,
+#end
 } from '@/api/${table.moduleName}/${table.businessName}'
 
 defineOptions({ name: '${table.className}' })
@@ -20,8 +22,10 @@ defineOptions({ name: '${table.className}' })
 const { t } = useI18n()
 const { createConfirm, createMessage } = useMessage()
 const [registerModal, { openModal }] = useModal()
+#if ($importEnable)
 const importFileRef = ref<HTMLInputElement>()
 const importLoading = ref(false)
+#end
 
 const [registerTable, { getForm, reload }] = useTable({
   title: '${table.classComment}列表',
@@ -57,6 +61,7 @@ async function handleExport() {
     },
   })
 }
+#if ($importEnable)
 
 function handleImport() {
   importFileRef.value?.click()
@@ -93,6 +98,7 @@ async function handleImportFileChange(event: Event) {
     importLoading.value = false
   }
 }
+#end
 
 async function handleDelete(record: Recordable) {
   await delete${simpleClassName}(record.id)
@@ -107,12 +113,14 @@ async function handleDelete(record: Recordable) {
         <a-button type="primary" v-auth="['${permissionPrefix}:create']" :preIcon="IconEnum.ADD" @click="handleCreate">
           {{ t('action.create') }}
         </a-button>
+#if ($importEnable)
         <a-button v-auth="['${permissionPrefix}:import']" :loading="importLoading" @click="handleImport">
           导入
         </a-button>
         <a-button v-auth="['${permissionPrefix}:import']" @click="handleImportTemplateDownload">
           导入模板
         </a-button>
+#end
         <a-button v-auth="['${permissionPrefix}:export']" :preIcon="IconEnum.EXPORT" @click="handleExport">
           {{ t('action.export') }}
         </a-button>
@@ -138,7 +146,9 @@ async function handleDelete(record: Recordable) {
         </template>
       </template>
     </BasicTable>
+#if ($importEnable)
     <input ref="importFileRef" type="file" accept=".xls,.xlsx" class="hidden" @change="handleImportFileChange" />
+#end
     <${simpleClassName}Modal @register="registerModal" @success="reload()" />
   </div>
 </template>

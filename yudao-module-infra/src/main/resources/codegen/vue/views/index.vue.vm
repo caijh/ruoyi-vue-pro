@@ -49,6 +49,7 @@
         <el-button type="primary" plain icon="el-icon-plus" size="mini" @click="openForm(undefined)"
                    v-hasPermi="['${permissionPrefix}:create']">新增</el-button>
       </el-col>
+#if ($importEnable)
       <el-col :span="1.5">
         <el-button type="info" plain icon="el-icon-upload2" size="mini" @click="handleImport"
                    :loading="importLoading" v-hasPermi="['${permissionPrefix}:import']">导入</el-button>
@@ -57,6 +58,7 @@
         <el-button type="info" plain icon="el-icon-document" size="mini" @click="handleImportTemplate"
                    v-hasPermi="['${permissionPrefix}:import']">导入模板</el-button>
       </el-col>
+#end
       <el-col :span="1.5">
         <el-button type="warning" plain icon="el-icon-download" size="mini" @click="handleExport" :loading="exportLoading"
                    v-hasPermi="['${permissionPrefix}:export']">导出</el-button>
@@ -86,7 +88,9 @@
     #end
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
+#if ($importEnable)
     <input ref="importFileRef" type="file" style="display: none" accept=".xls,.xlsx" @change="handleImportFileChange" />
+#end
 
       ## 特殊：主子表专属逻辑
       #if ( $table.templateType == 11 && $subTables && $subTables.size() > 0 )
@@ -253,8 +257,10 @@ export default {
       loading: true,
       // 导出遮罩层
       exportLoading: false,
+#if ($importEnable)
       // 导入遮罩层
       importLoading: false,
+#end
       // 显示搜索条件
       showSearch: true,
       ## 特殊：树表专属逻辑（树不需要分页接口）
@@ -333,6 +339,7 @@ export default {
     openForm(id) {
       this.#[[$]]#refs["formRef"].open(id);
     },
+#if ($importEnable)
     /** 导入按钮操作 */
     handleImport() {
       this.$refs.importFileRef && this.$refs.importFileRef.click();
@@ -369,6 +376,7 @@ export default {
         this.importLoading = false;
       }
     },
+#end
     /** 删除按钮操作 */
     async handleDelete(row) {
       const ${primaryColumn.javaField} = row.${primaryColumn.javaField};
