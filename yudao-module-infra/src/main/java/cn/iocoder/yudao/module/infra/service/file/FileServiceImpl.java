@@ -42,19 +42,19 @@ public class FileServiceImpl implements FileService {
      */
     static boolean PATH_PREFIX_DATE_ENABLE = true;
     /**
-     * 上传文件的后缀，是否包含时间戳
+     * 上传文件的后缀，是否启用
      *
-     * 目的：保证文件的唯一性，避免覆盖
+     * 算法：当前时间戳（毫秒）+ 5 位随机数；目的是保证文件的唯一性，避免覆盖
      * 定制：可按需调整成 UUID、或者其他方式
      */
     static boolean PATH_SUFFIX_TIMESTAMP_ENABLE = false;
     /**
-     * 时间戳是否作为上级目录
+     * 后缀是否作为上级目录
      *
-     * true：{@code yyyyMMdd/timestamp/原文件名.ext}；保留原文件名
-     * false：{@code yyyyMMdd/原文件名_timestamp.ext}；时间戳拼到文件名
+     * true：{@code yyyyMMdd/<后缀>/原文件名.ext}；保留原文件名
+     * false：{@code yyyyMMdd/原文件名_<后缀>.ext}；后缀拼到文件名
      */
-    static boolean PATH_TIMESTAMP_AS_DIRECTORY = true;
+    static boolean PATH_SUFFIX_AS_DIRECTORY = true;
 
     @Resource
     private FileConfigService fileConfigService;
@@ -115,7 +115,7 @@ public class FileServiceImpl implements FileService {
 
         // 2.1 先拼接 suffix 后缀
         if (StrUtil.isNotEmpty(suffix)) {
-            if (PATH_TIMESTAMP_AS_DIRECTORY) {
+            if (PATH_SUFFIX_AS_DIRECTORY) {
                 name = suffix + StrUtil.SLASH + name;
             } else {
                 String ext = FileUtil.extName(name);

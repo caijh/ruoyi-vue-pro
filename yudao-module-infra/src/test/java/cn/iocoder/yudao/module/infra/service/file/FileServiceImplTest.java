@@ -42,7 +42,7 @@ public class FileServiceImplTest extends BaseDbUnitTest {
     public void setUp() {
         FileServiceImpl.PATH_PREFIX_DATE_ENABLE = true;
         FileServiceImpl.PATH_SUFFIX_TIMESTAMP_ENABLE = true;
-        FileServiceImpl.PATH_TIMESTAMP_AS_DIRECTORY = true;
+        FileServiceImpl.PATH_SUFFIX_AS_DIRECTORY = true;
     }
 
     @Test
@@ -201,7 +201,7 @@ public class FileServiceImplTest extends BaseDbUnitTest {
         String path = fileService.generateUploadPath(name, directory);
 
         // 断言
-        // 格式为：avatar/yyyyMMdd/timestamp/test.jpg
+        // 格式为：avatar/yyyyMMdd/{时间戳+随机数}/test.jpg
         assertTrue(path.startsWith(directory + "/"));
         // 包含日期格式：8 位数字，如 20240517
         assertTrue(path.matches(directory + "/\\d{8}/\\d+/test\\.jpg"));
@@ -237,7 +237,7 @@ public class FileServiceImplTest extends BaseDbUnitTest {
         String path = fileService.generateUploadPath(name, directory);
 
         // 断言
-        // 格式为：avatar/timestamp/test.jpg
+        // 格式为：avatar/{时间戳+随机数}/test.jpg
         assertTrue(path.startsWith(directory + "/"));
         assertTrue(path.matches(directory + "/\\d+/test\\.jpg"));
     }
@@ -270,7 +270,7 @@ public class FileServiceImplTest extends BaseDbUnitTest {
         String path = fileService.generateUploadPath(name, directory);
 
         // 断言
-        // 格式为：avatar/yyyyMMdd/timestamp/test
+        // 格式为：avatar/yyyyMMdd/{时间戳+随机数}/test
         assertTrue(path.startsWith(directory + "/"));
         assertTrue(path.matches(directory + "/\\d{8}/\\d+/test"));
     }
@@ -287,58 +287,58 @@ public class FileServiceImplTest extends BaseDbUnitTest {
         String path = fileService.generateUploadPath(name, directory);
 
         // 断言
-        // 格式为：yyyyMMdd/timestamp/test.jpg
+        // 格式为：yyyyMMdd/{时间戳+随机数}/test.jpg
         assertTrue(path.matches("\\d{8}/\\d+/test\\.jpg"));
     }
 
     @Test
-    public void testGenerateUploadPath_TimestampAsName_AllEnabled() {
+    public void testGenerateUploadPath_SuffixAsName_AllEnabled() {
         // 准备参数
         String name = "test.jpg";
         String directory = "avatar";
         FileServiceImpl.PATH_PREFIX_DATE_ENABLE = true;
         FileServiceImpl.PATH_SUFFIX_TIMESTAMP_ENABLE = true;
-        FileServiceImpl.PATH_TIMESTAMP_AS_DIRECTORY = false;
+        FileServiceImpl.PATH_SUFFIX_AS_DIRECTORY = false;
 
         // 调用
         String path = fileService.generateUploadPath(name, directory);
 
         // 断言
-        // 格式为：avatar/yyyyMMdd/test_timestamp.jpg
+        // 格式为：avatar/yyyyMMdd/test_{时间戳+随机数}.jpg
         assertTrue(path.matches(directory + "/\\d{8}/test_\\d+\\.jpg"));
     }
 
     @Test
-    public void testGenerateUploadPath_TimestampAsName_PrefixDisabled() {
+    public void testGenerateUploadPath_SuffixAsName_PrefixDisabled() {
         // 准备参数
         String name = "test.jpg";
         String directory = "avatar";
         FileServiceImpl.PATH_PREFIX_DATE_ENABLE = false;
         FileServiceImpl.PATH_SUFFIX_TIMESTAMP_ENABLE = true;
-        FileServiceImpl.PATH_TIMESTAMP_AS_DIRECTORY = false;
+        FileServiceImpl.PATH_SUFFIX_AS_DIRECTORY = false;
 
         // 调用
         String path = fileService.generateUploadPath(name, directory);
 
         // 断言
-        // 格式为：avatar/test_timestamp.jpg
+        // 格式为：avatar/test_{时间戳+随机数}.jpg
         assertTrue(path.matches(directory + "/test_\\d+\\.jpg"));
     }
 
     @Test
-    public void testGenerateUploadPath_TimestampAsName_NoExtension() {
+    public void testGenerateUploadPath_SuffixAsName_NoExtension() {
         // 准备参数
         String name = "test";
         String directory = "avatar";
         FileServiceImpl.PATH_PREFIX_DATE_ENABLE = true;
         FileServiceImpl.PATH_SUFFIX_TIMESTAMP_ENABLE = true;
-        FileServiceImpl.PATH_TIMESTAMP_AS_DIRECTORY = false;
+        FileServiceImpl.PATH_SUFFIX_AS_DIRECTORY = false;
 
         // 调用
         String path = fileService.generateUploadPath(name, directory);
 
         // 断言
-        // 格式为：avatar/yyyyMMdd/test_timestamp
+        // 格式为：avatar/yyyyMMdd/test_{时间戳+随机数}
         assertTrue(path.matches(directory + "/\\d{8}/test_\\d+"));
     }
 
@@ -354,7 +354,7 @@ public class FileServiceImplTest extends BaseDbUnitTest {
         String path = fileService.generateUploadPath(name, directory);
 
         // 断言
-        // 格式为：yyyyMMdd/timestamp/test.jpg
+        // 格式为：yyyyMMdd/{时间戳+随机数}/test.jpg
         assertTrue(path.matches("\\d{8}/\\d+/test\\.jpg"));
     }
 
