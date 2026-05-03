@@ -86,7 +86,7 @@ public class IotDevicePropertyServiceImplTest extends BaseMockitoUnitTest {
         service.saveDeviceProperty(device, message);
 
         // 断言：没有合法属性，不会写入 TDengine 与 Redis
-        verify(devicePropertyMapper, never()).insert(any(), any(), anyLong());
+        verify(devicePropertyMapper, never()).insert(any(), any(), anyLong(), anyLong());
         verify(deviceDataRedisDAO, never()).putAll(anyLong(), any());
     }
 
@@ -187,7 +187,7 @@ public class IotDevicePropertyServiceImplTest extends BaseMockitoUnitTest {
     @SuppressWarnings("unchecked")
     private Map<String, Object> captureMapperInsertProperties() {
         ArgumentCaptor<Map<String, Object>> captor = ArgumentCaptor.forClass(Map.class);
-        verify(devicePropertyMapper).insert(any(IotDeviceDO.class), captor.capture(), anyLong());
+        verify(devicePropertyMapper).insert(any(IotDeviceDO.class), captor.capture(), anyLong(), anyLong());
         return captor.getValue();
     }
 
