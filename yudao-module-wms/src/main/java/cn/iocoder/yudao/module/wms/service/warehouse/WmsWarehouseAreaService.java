@@ -1,0 +1,72 @@
+package cn.iocoder.yudao.module.wms.service.warehouse;
+
+import cn.iocoder.yudao.framework.common.pojo.PageResult;
+import cn.iocoder.yudao.module.wms.controller.admin.warehouse.vo.area.WmsWarehouseAreaPageReqVO;
+import cn.iocoder.yudao.module.wms.controller.admin.warehouse.vo.area.WmsWarehouseAreaSaveReqVO;
+import cn.iocoder.yudao.module.wms.dal.dataobject.warehouse.WmsWarehouseAreaDO;
+import jakarta.validation.Valid;
+
+import java.util.List;
+
+/**
+ * WMS 库区 Service 接口
+ *
+ * @author 芋道源码
+ */
+public interface WmsWarehouseAreaService {
+
+    /**
+     * 创建库区
+     *
+     * @param createReqVO 创建信息
+     * @return 编号
+     */
+    Long createWarehouseArea(@Valid WmsWarehouseAreaSaveReqVO createReqVO);
+
+    /**
+     * 更新库区
+     *
+     * @param updateReqVO 更新信息
+     */
+    void updateWarehouseArea(@Valid WmsWarehouseAreaSaveReqVO updateReqVO);
+
+    /**
+     * 删除库区
+     *
+     * @param id 编号
+     */
+    void deleteWarehouseArea(Long id);
+
+    /**
+     * 校验库区存在
+     *
+     * @param id 编号
+     * @return 库区
+     */
+    WmsWarehouseAreaDO validateWarehouseAreaExists(Long id);
+
+    /**
+     * 获得库区
+     *
+     * @param id 编号
+     * @return 库区
+     */
+    WmsWarehouseAreaDO getWarehouseArea(Long id);
+
+    /**
+     * 获得库区分页
+     *
+     * @param pageReqVO 分页查询
+     * @return 库区分页
+     */
+    PageResult<WmsWarehouseAreaDO> getWarehouseAreaPage(WmsWarehouseAreaPageReqVO pageReqVO);
+
+    /**
+     * 获得库区列表
+     *
+     * @param warehouseId 仓库编号
+     * @return 库区列表
+     */
+    List<WmsWarehouseAreaDO> getWarehouseAreaList(Long warehouseId);
+
+}
