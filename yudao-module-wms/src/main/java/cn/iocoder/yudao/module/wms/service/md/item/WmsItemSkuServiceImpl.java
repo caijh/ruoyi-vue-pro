@@ -1,0 +1,123 @@
+package cn.iocoder.yudao.module.wms.service.md.item;
+
+import cn.hutool.core.collection.CollUtil;
+import cn.hutool.core.util.StrUtil;
+import cn.iocoder.yudao.framework.common.util.object.BeanUtils;
+import cn.iocoder.yudao.module.wms.controller.admin.md.item.vo.sku.WmsItemSkuSaveReqVO;
+import cn.iocoder.yudao.module.wms.dal.dataobject.md.item.WmsItemSkuDO;
+import cn.iocoder.yudao.module.wms.dal.mysql.md.item.WmsItemSkuMapper;
+import cn.iocoder.yudao.module.wms.util.WmsUtils;
+import jakarta.annotation.Resource;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.validation.annotation.Validated;
+
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
+import static cn.iocoder.yudao.framework.common.exception.util.ServiceExceptionUtil.exception;
+import static cn.iocoder.yudao.framework.common.util.collection.CollectionUtils.*;
+import static cn.iocoder.yudao.module.wms.enums.ErrorCodeConstants.*;
+
+/**
+ * WMS 商品 SKU Service 实现类
+ *
+ * @author 芋道源码
+ */
+@Service
+@Validated
+public class WmsItemSkuServiceImpl implements WmsItemSkuService {
+
+    @Resource
+    private WmsItemSkuMapper itemSkuMapper;
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void createItemSkuList(Long itemId, List<WmsItemSkuSaveReqVO> skus) {
+        validateItemSkuList(skus);
+        List<WmsItemSkuDO> list = BeanUtils.toBean(skus, WmsItemSkuDO.class, sku -> sku.setItemId(itemId));
+        if (CollUtil.isNotEmpty(convertList(list, WmsItemSkuDO::getId))) {
+            throw exception(ITEM_SKU_NOT_EXISTS);
+        }
+        fillEmptyBarCode(list);
+        itemSkuMapper.insertBatch(list);
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void updateItemSkuList(Long itemId, List<WmsItemSkuSaveReqVO> skus) {
+        validateItemSkuList(skus);
+
+        // 第一步，对比新老数据，获得添加、修改、删除的列表
+        List<WmsItemSkuDO> oldList = itemSkuMapper.selectListByItemId(itemId);
+        List<WmsItemSkuDO> newList = BeanUtils.toBean(skus, WmsItemSkuDO.class);
+        List<List<WmsItemSkuDO>> diffList = diffList(oldList, newList, // id 不同，就认为是不同的记录
+                (oldVal, newVal) -> oldVal.getId().equals(newVal.getId()));
+
+        // 第二步，批量添加、修改、删除
+        if (CollUtil.isNotEmpty(diffList.get(2))) {
+            // TODO 库存模块实现后，校验商品规格下不存在库存业务数据后再删除
+            itemSkuMapper.deleteByIds(convertList(diffList.get(2), WmsItemSkuDO::getId));
+        }
+        if (CollUtil.isNotEmpty(diffList.get(0))) {
+            if (CollUtil.isNotEmpty(convertList(diffList.get(0), WmsItemSkuDO::getId))) {
+                throw exception(ITEM_SKU_NOT_EXISTS);
+            }
+            diffList.get(0).forEach(sku -> sku.setItemId(itemId));
+            fillEmptyBarCode(diffList.get(0));
+            itemSkuMapper.insertBatch(diffList.get(0));
+        }
+        if (CollUtil.isNotEmpty(diffList.get(1))) {
+            diffList.get(1).forEach(sku -> sku.setItemId(itemId));
+            fillEmptyBarCode(diffList.get(1));
+            itemSkuMapper.updateBatch(diffList.get(1));
+        }
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void deleteItemSkuListByItemId(Long itemId) {
+        // TODO 库存模块实现后，校验商品规格下不存在库存业务数据后再删除
+        itemSkuMapper.deleteByItemId(itemId);
+    }
+
+    @Override
+    public List<WmsItemSkuDO> getItemSkuList(Long itemId) {
+        return itemSkuMapper.selectListByItemId(itemId);
+    }
+
+    @Override
+    public List<WmsItemSkuDO> getItemSkuList(Collection<Long> itemIds) {
+        return itemSkuMapper.selectListByItemIds(itemIds);
+    }
+
+    private void validateItemSkuList(List<WmsItemSkuSaveReqVO> skus) {
+        // 校验至少存在一个商品 SKU
+        if (CollUtil.isEmpty(skus)) {
+            throw exception(ITEM_SKU_REQUIRED);
+        }
+        // 校验 SKU 名称不重复
+        Set<String> names = new HashSet<>();
+        for (WmsItemSkuSaveReqVO sku : skus) {
+            if (!names.add(sku.getName())) {
+                throw exception(ITEM_SKU_NAME_DUPLICATE, sku.getName());
+            }
+        }
+    }
+
+    /**
+     * 填充空的条形码
+     *
+     * @param skus 商品 SKU 列表
+     */
+    private void fillEmptyBarCode(List<WmsItemSkuDO> skus) {
+        skus.forEach(sku -> {
+            if (StrUtil.isBlank(sku.getBarCode())) {
+                sku.setBarCode(WmsUtils.generateBarCode());
+            }
+        });
+    }
+
+}

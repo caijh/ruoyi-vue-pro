@@ -5,7 +5,12 @@ import cn.iocoder.yudao.module.wms.controller.admin.md.item.vo.category.WmsItemC
 import cn.iocoder.yudao.module.wms.dal.dataobject.md.item.WmsItemCategoryDO;
 import jakarta.validation.Valid;
 
+import java.util.Collection;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import static cn.iocoder.yudao.framework.common.util.collection.CollectionUtils.convertMap;
 
 /**
  * WMS 商品分类 Service 接口
@@ -59,5 +64,31 @@ public interface WmsItemCategoryService {
      * @return 商品分类列表
      */
     List<WmsItemCategoryDO> getItemCategoryList(WmsItemCategoryListReqVO listReqVO);
+
+    /**
+     * 按编号集合获得商品分类列表
+     *
+     * @param ids 编号集合
+     * @return 商品分类列表
+     */
+    List<WmsItemCategoryDO> getItemCategoryList(Collection<Long> ids);
+
+    /**
+     * 获得指定商品分类及其所有子分类编号集合
+     *
+     * @param id 商品分类编号
+     * @return 商品分类编号集合；当 id 为空时，返回 null
+     */
+    Set<Long> getSelfAndChildItemCategoryIdList(Long id);
+
+    /**
+     * 按编号集合获得商品分类 Map
+     *
+     * @param ids 编号集合
+     * @return 商品分类 Map
+     */
+    default Map<Long, WmsItemCategoryDO> getItemCategoryMap(Collection<Long> ids) {
+        return convertMap(getItemCategoryList(ids), WmsItemCategoryDO::getId);
+    }
 
 }

@@ -6,6 +6,7 @@ import cn.iocoder.yudao.module.wms.controller.admin.md.item.vo.category.WmsItemC
 import cn.iocoder.yudao.module.wms.dal.dataobject.md.item.WmsItemCategoryDO;
 import org.apache.ibatis.annotations.Mapper;
 
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -27,6 +28,13 @@ public interface WmsItemCategoryMapper extends BaseMapperX<WmsItemCategoryDO> {
 
     default WmsItemCategoryDO selectByParentIdAndName(Long parentId, String name) {
         return selectOne(WmsItemCategoryDO::getParentId, parentId, WmsItemCategoryDO::getName, name);
+    }
+
+    default List<WmsItemCategoryDO> selectListByParentIds(Collection<Long> parentIds) {
+        return selectList(new LambdaQueryWrapperX<WmsItemCategoryDO>()
+                .in(WmsItemCategoryDO::getParentId, parentIds)
+                .orderByAsc(WmsItemCategoryDO::getSort)
+                .orderByAsc(WmsItemCategoryDO::getId));
     }
 
     default Long selectCountByParentId(Long parentId) {

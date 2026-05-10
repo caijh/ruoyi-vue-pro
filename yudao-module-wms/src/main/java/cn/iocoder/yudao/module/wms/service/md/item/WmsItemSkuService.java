@@ -1,0 +1,69 @@
+package cn.iocoder.yudao.module.wms.service.md.item;
+
+import cn.iocoder.yudao.module.wms.controller.admin.md.item.vo.sku.WmsItemSkuSaveReqVO;
+import cn.iocoder.yudao.module.wms.dal.dataobject.md.item.WmsItemSkuDO;
+import jakarta.validation.Valid;
+
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+
+import static cn.iocoder.yudao.framework.common.util.collection.CollectionUtils.convertMultiMap;
+
+/**
+ * WMS 商品 SKU Service 接口
+ *
+ * @author 芋道源码
+ */
+public interface WmsItemSkuService {
+
+    /**
+     * 创建商品 SKU 列表
+     *
+     * @param itemId 商品编号
+     * @param skus SKU 列表
+     */
+    void createItemSkuList(Long itemId, @Valid List<WmsItemSkuSaveReqVO> skus);
+
+    /**
+     * 更新商品 SKU 列表
+     *
+     * @param itemId 商品编号
+     * @param skus SKU 列表
+     */
+    void updateItemSkuList(Long itemId, @Valid List<WmsItemSkuSaveReqVO> skus);
+
+    /**
+     * 按商品编号删除 SKU 列表
+     *
+     * @param itemId 商品编号
+     */
+    void deleteItemSkuListByItemId(Long itemId);
+
+    /**
+     * 按商品编号获得 SKU 列表
+     *
+     * @param itemId 商品编号
+     * @return SKU 列表
+     */
+    List<WmsItemSkuDO> getItemSkuList(Long itemId);
+
+    /**
+     * 按商品编号集合获得 SKU 列表
+     *
+     * @param itemIds 商品编号集合
+     * @return SKU 列表
+     */
+    List<WmsItemSkuDO> getItemSkuList(Collection<Long> itemIds);
+
+    /**
+     * 按商品编号集合获得 SKU MultiMap
+     *
+     * @param itemIds 商品编号集合
+     * @return 商品编号与 SKU 列表的映射
+     */
+    default Map<Long, List<WmsItemSkuDO>> getItemSkuMultiMap(Collection<Long> itemIds) {
+        return convertMultiMap(getItemSkuList(itemIds), WmsItemSkuDO::getItemId);
+    }
+
+}

@@ -1,5 +1,7 @@
 package cn.iocoder.yudao.module.wms.service.md.item;
 
+import cn.hutool.core.collection.CollUtil;
+import cn.hutool.core.util.ObjectUtil;
 import cn.iocoder.yudao.framework.common.util.object.BeanUtils;
 import cn.iocoder.yudao.module.wms.controller.admin.md.item.vo.category.WmsItemCategoryListReqVO;
 import cn.iocoder.yudao.module.wms.controller.admin.md.item.vo.category.WmsItemCategorySaveReqVO;
@@ -9,10 +11,14 @@ import jakarta.annotation.Resource;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
-import java.util.Objects;
+import java.util.Set;
 
 import static cn.iocoder.yudao.framework.common.exception.util.ServiceExceptionUtil.exception;
+import static cn.iocoder.yudao.framework.common.util.collection.CollectionUtils.convertSet;
 import static cn.iocoder.yudao.module.wms.enums.ErrorCodeConstants.*;
 
 /**
@@ -26,6 +32,9 @@ public class WmsItemCategoryServiceImpl implements WmsItemCategoryService {
 
     @Resource
     private WmsItemCategoryMapper categoryMapper;
+
+    @Resource
+    private WmsItemService itemService;
 
     @Override
     public Long createItemCategory(WmsItemCategorySaveReqVO createReqVO) {
@@ -64,7 +73,7 @@ public class WmsItemCategoryServiceImpl implements WmsItemCategoryService {
         if (id == null) {
             throw exception(ITEM_CATEGORY_NAME_DUPLICATE);
         }
-        if (!Objects.equals(category.getId(), id)) {
+        if (ObjectUtil.notEqual(category.getId(), id)) {
             throw exception(ITEM_CATEGORY_NAME_DUPLICATE);
         }
     }
@@ -74,7 +83,7 @@ public class WmsItemCategoryServiceImpl implements WmsItemCategoryService {
             return;
         }
         // 1. 不能设置自己为父分类
-        if (Objects.equals(parentId, id)) {
+        if (ObjectUtil.equal(parentId, id)) {
             throw exception(ITEM_CATEGORY_PARENT_ERROR);
         }
         // 2. 父分类不存在
@@ -89,7 +98,7 @@ public class WmsItemCategoryServiceImpl implements WmsItemCategoryService {
         for (int i = 0; i < Short.MAX_VALUE; i++) {
             // 3.1 校验环路
             parentId = parentCategory.getParentId();
-            if (Objects.equals(id, parentId)) {
+            if (ObjectUtil.equal(id, parentId)) {
                 throw exception(ITEM_CATEGORY_PARENT_IS_CHILD);
             }
             // 3.2 继续递归上级父分类
@@ -111,7 +120,10 @@ public class WmsItemCategoryServiceImpl implements WmsItemCategoryService {
         if (categoryMapper.selectCountByParentId(id) > 0) {
             throw exception(ITEM_CATEGORY_HAS_CHILDREN);
         }
-        // TODO 商品管理实现后，校验分类下不存在商品后再删除
+        // 校验分类下不存在商品
+        if (itemService.getItemCountByCategoryId(id) > 0) {
+            throw exception(ITEM_CATEGORY_HAS_ITEM);
+        }
 
         // 删除
         categoryMapper.deleteById(id);
@@ -134,6 +146,33 @@ public class WmsItemCategoryServiceImpl implements WmsItemCategoryService {
     @Override
     public List<WmsItemCategoryDO> getItemCategoryList(WmsItemCategoryListReqVO listReqVO) {
         return categoryMapper.selectList(listReqVO);
+    }
+
+    @Override
+    public List<WmsItemCategoryDO> getItemCategoryList(Collection<Long> ids) {
+        if (CollUtil.isEmpty(ids)) {
+            return Collections.emptyList();
+        }
+        return categoryMapper.selectByIds(ids);
+    }
+
+    @Override
+    public Set<Long> getSelfAndChildItemCategoryIdList(Long id) {
+        if (id == null) {
+            return null;
+        }
+        Set<Long> ids = new HashSet<>();
+        ids.add(id);
+        Collection<Long> parentIds = Collections.singleton(id);
+        for (int i = 0; i < Short.MAX_VALUE; i++) {
+            List<WmsItemCategoryDO> children = categoryMapper.selectListByParentIds(parentIds);
+            if (CollUtil.isEmpty(children)) {
+                break;
+            }
+            ids.addAll(convertSet(children, WmsItemCategoryDO::getId));
+            parentIds = convertSet(children, WmsItemCategoryDO::getId);
+        }
+        return ids;
     }
 
 }

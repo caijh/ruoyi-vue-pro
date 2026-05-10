@@ -1,5 +1,6 @@
 package cn.iocoder.yudao.module.wms.service.md.item;
 
+import cn.hutool.core.collection.CollUtil;
 import cn.iocoder.yudao.framework.common.pojo.PageResult;
 import cn.iocoder.yudao.framework.common.util.object.BeanUtils;
 import cn.iocoder.yudao.module.wms.controller.admin.md.item.vo.brand.WmsItemBrandPageReqVO;
@@ -10,9 +11,12 @@ import jakarta.annotation.Resource;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 import static cn.iocoder.yudao.framework.common.exception.util.ServiceExceptionUtil.exception;
+import static cn.iocoder.yudao.module.wms.enums.ErrorCodeConstants.ITEM_BRAND_HAS_ITEM;
 import static cn.iocoder.yudao.module.wms.enums.ErrorCodeConstants.ITEM_BRAND_NOT_EXISTS;
 
 /**
@@ -26,6 +30,8 @@ public class WmsItemBrandServiceImpl implements WmsItemBrandService {
 
     @Resource
     private WmsItemBrandMapper brandMapper;
+    @Resource
+    private WmsItemService itemService;
 
     @Override
     public Long createItemBrand(WmsItemBrandSaveReqVO createReqVO) {
@@ -48,6 +54,10 @@ public class WmsItemBrandServiceImpl implements WmsItemBrandService {
     public void deleteItemBrand(Long id) {
         // 校验存在
         validateItemBrandExists(id);
+        // 校验品牌下不存在商品
+        if (itemService.getItemCountByBrandId(id) > 0) {
+            throw exception(ITEM_BRAND_HAS_ITEM);
+        }
 
         // 删除
         brandMapper.deleteById(id);
@@ -75,6 +85,14 @@ public class WmsItemBrandServiceImpl implements WmsItemBrandService {
     @Override
     public List<WmsItemBrandDO> getItemBrandList() {
         return brandMapper.selectList();
+    }
+
+    @Override
+    public List<WmsItemBrandDO> getItemBrandList(Collection<Long> ids) {
+        if (CollUtil.isEmpty(ids)) {
+            return Collections.emptyList();
+        }
+        return brandMapper.selectByIds(ids);
     }
 
 }
