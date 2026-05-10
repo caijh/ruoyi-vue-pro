@@ -1,0 +1,81 @@
+package cn.iocoder.yudao.module.wms.service.md.merchant;
+
+import cn.iocoder.yudao.framework.common.pojo.PageResult;
+import cn.iocoder.yudao.framework.common.util.object.BeanUtils;
+import cn.iocoder.yudao.module.wms.controller.admin.md.merchant.vo.WmsMerchantPageReqVO;
+import cn.iocoder.yudao.module.wms.controller.admin.md.merchant.vo.WmsMerchantSaveReqVO;
+import cn.iocoder.yudao.module.wms.dal.dataobject.md.merchant.WmsMerchantDO;
+import cn.iocoder.yudao.module.wms.dal.mysql.md.merchant.WmsMerchantMapper;
+import jakarta.annotation.Resource;
+import org.springframework.stereotype.Service;
+import org.springframework.validation.annotation.Validated;
+
+import java.util.List;
+
+import static cn.iocoder.yudao.framework.common.exception.util.ServiceExceptionUtil.exception;
+import static cn.iocoder.yudao.module.wms.enums.ErrorCodeConstants.MERCHANT_NOT_EXISTS;
+
+/**
+ * WMS 往来企业 Service 实现类
+ *
+ * @author 芋道源码
+ */
+@Service
+@Validated
+public class WmsMerchantServiceImpl implements WmsMerchantService {
+
+    @Resource
+    private WmsMerchantMapper merchantMapper;
+
+    @Override
+    public Long createMerchant(WmsMerchantSaveReqVO createReqVO) {
+        WmsMerchantDO merchant = BeanUtils.toBean(createReqVO, WmsMerchantDO.class);
+        merchantMapper.insert(merchant);
+        return merchant.getId();
+    }
+
+    @Override
+    public void updateMerchant(WmsMerchantSaveReqVO updateReqVO) {
+        // 校验存在
+        validateMerchantExists(updateReqVO.getId());
+
+        // 更新
+        WmsMerchantDO updateObj = BeanUtils.toBean(updateReqVO, WmsMerchantDO.class);
+        merchantMapper.updateById(updateObj);
+    }
+
+    @Override
+    public void deleteMerchant(Long id) {
+        // 校验存在
+        validateMerchantExists(id);
+        // TODO 入库/出库单实现后，校验往来企业不存在业务关联后再删除
+
+        // 删除
+        merchantMapper.deleteById(id);
+    }
+
+    @Override
+    public WmsMerchantDO validateMerchantExists(Long id) {
+        WmsMerchantDO merchant = merchantMapper.selectById(id);
+        if (merchant == null) {
+            throw exception(MERCHANT_NOT_EXISTS);
+        }
+        return merchant;
+    }
+
+    @Override
+    public WmsMerchantDO getMerchant(Long id) {
+        return merchantMapper.selectById(id);
+    }
+
+    @Override
+    public PageResult<WmsMerchantDO> getMerchantPage(WmsMerchantPageReqVO pageReqVO) {
+        return merchantMapper.selectPage(pageReqVO);
+    }
+
+    @Override
+    public List<WmsMerchantDO> getMerchantList(WmsMerchantPageReqVO pageReqVO) {
+        return merchantMapper.selectList(pageReqVO);
+    }
+
+}

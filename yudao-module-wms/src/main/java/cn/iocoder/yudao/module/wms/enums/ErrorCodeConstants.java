@@ -43,7 +43,7 @@ public interface ErrorCodeConstants {
     ErrorCode ITEM_SKU_NAME_DUPLICATE = new ErrorCode(1_060_104_003, "商品规格名称【{}】重复");
     ErrorCode ITEM_SKU_NOT_EXISTS = new ErrorCode(1_060_104_004, "商品规格不存在");
 
-    // ========== WMS 基础数据-供应商 1-060-105-000 ==========
-    ErrorCode MERCHANT_NOT_EXISTS = new ErrorCode(1_060_105_000, "供应商不存在");
+    // ========== WMS 基础数据-往来企业 1-060-105-000 ==========
+    ErrorCode MERCHANT_NOT_EXISTS = new ErrorCode(1_060_105_000, "往来企业不存在");
 
 }
