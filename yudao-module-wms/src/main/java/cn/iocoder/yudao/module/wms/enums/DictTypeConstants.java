@@ -7,6 +7,7 @@ package cn.iocoder.yudao.module.wms.enums;
  */
 public interface DictTypeConstants {
 
+    String MERCHANT_TYPE = "merchant_type";
     String RECEIPT_STATUS = "wms_receipt_status";
     String RECEIPT_TYPE = "wms_receipt_type";
     String SHIPMENT_STATUS = "wms_shipment_status";
