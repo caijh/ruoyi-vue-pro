@@ -23,4 +23,15 @@ public interface ErrorCodeConstants {
     ErrorCode WAREHOUSE_AREA_NAME_DUPLICATE = new ErrorCode(1_060_101_001, "库区名称重复");
     ErrorCode WAREHOUSE_AREA_CODE_DUPLICATE = new ErrorCode(1_060_101_002, "库区编号重复");
 
+    // ========== WMS 基础数据-商品分类 1-060-102-000 ==========
+    ErrorCode ITEM_CATEGORY_NOT_EXISTS = new ErrorCode(1_060_102_000, "商品分类不存在");
+    ErrorCode ITEM_CATEGORY_NAME_DUPLICATE = new ErrorCode(1_060_102_001, "商品分类名称重复");
+    ErrorCode ITEM_CATEGORY_PARENT_NOT_EXISTS = new ErrorCode(1_060_102_002, "父商品分类不存在");
+    ErrorCode ITEM_CATEGORY_PARENT_ERROR = new ErrorCode(1_060_102_003, "不能设置自己为父商品分类");
+    ErrorCode ITEM_CATEGORY_PARENT_IS_CHILD = new ErrorCode(1_060_102_004, "不能设置自己的子商品分类为父商品分类");
+    ErrorCode ITEM_CATEGORY_HAS_CHILDREN = new ErrorCode(1_060_102_005, "删除失败！请先删除该分类下的子分类！");
+
+    // ========== WMS 基础数据-商品品牌 1-060-103-000 ==========
+    ErrorCode ITEM_BRAND_NOT_EXISTS = new ErrorCode(1_060_103_000, "商品品牌不存在");
+
 }
