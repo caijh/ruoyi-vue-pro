@@ -1,9 +1,9 @@
-package cn.iocoder.yudao.module.wms.service.warehouse;
+package cn.iocoder.yudao.module.wms.service.md.warehouse;
 
 import cn.iocoder.yudao.framework.common.pojo.PageResult;
-import cn.iocoder.yudao.module.wms.controller.admin.warehouse.vo.area.WmsWarehouseAreaPageReqVO;
-import cn.iocoder.yudao.module.wms.controller.admin.warehouse.vo.area.WmsWarehouseAreaSaveReqVO;
-import cn.iocoder.yudao.module.wms.dal.dataobject.warehouse.WmsWarehouseAreaDO;
+import cn.iocoder.yudao.module.wms.controller.admin.md.warehouse.vo.area.WmsWarehouseAreaPageReqVO;
+import cn.iocoder.yudao.module.wms.controller.admin.md.warehouse.vo.area.WmsWarehouseAreaSaveReqVO;
+import cn.iocoder.yudao.module.wms.dal.dataobject.md.warehouse.WmsWarehouseAreaDO;
 import jakarta.validation.Valid;
 
 import java.util.List;

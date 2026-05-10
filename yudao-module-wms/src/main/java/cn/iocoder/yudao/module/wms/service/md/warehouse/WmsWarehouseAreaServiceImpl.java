@@ -1,13 +1,13 @@
-package cn.iocoder.yudao.module.wms.service.warehouse;
+package cn.iocoder.yudao.module.wms.service.md.warehouse;
 
 import cn.hutool.core.util.ObjUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.iocoder.yudao.framework.common.pojo.PageResult;
 import cn.iocoder.yudao.framework.common.util.object.BeanUtils;
-import cn.iocoder.yudao.module.wms.controller.admin.warehouse.vo.area.WmsWarehouseAreaPageReqVO;
-import cn.iocoder.yudao.module.wms.controller.admin.warehouse.vo.area.WmsWarehouseAreaSaveReqVO;
-import cn.iocoder.yudao.module.wms.dal.dataobject.warehouse.WmsWarehouseAreaDO;
-import cn.iocoder.yudao.module.wms.dal.mysql.warehouse.WmsWarehouseAreaMapper;
+import cn.iocoder.yudao.module.wms.controller.admin.md.warehouse.vo.area.WmsWarehouseAreaPageReqVO;
+import cn.iocoder.yudao.module.wms.controller.admin.md.warehouse.vo.area.WmsWarehouseAreaSaveReqVO;
+import cn.iocoder.yudao.module.wms.dal.dataobject.md.warehouse.WmsWarehouseAreaDO;
+import cn.iocoder.yudao.module.wms.dal.mysql.md.warehouse.WmsWarehouseAreaMapper;
 import cn.iocoder.yudao.module.wms.framework.config.WmsProperties;
 import jakarta.annotation.Resource;
 import org.springframework.stereotype.Service;

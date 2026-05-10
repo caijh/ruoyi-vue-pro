@@ -1,4 +1,4 @@
-package cn.iocoder.yudao.module.wms.controller.admin.warehouse.vo.area;
+package cn.iocoder.yudao.module.wms.controller.admin.md.warehouse.vo.area;
 
 import cn.idev.excel.annotation.ExcelIgnoreUnannotated;
 import cn.idev.excel.annotation.ExcelProperty;

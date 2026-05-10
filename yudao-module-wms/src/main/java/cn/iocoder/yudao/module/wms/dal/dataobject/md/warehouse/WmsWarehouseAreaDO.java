@@ -1,4 +1,4 @@
-package cn.iocoder.yudao.module.wms.dal.dataobject.warehouse;
+package cn.iocoder.yudao.module.wms.dal.dataobject.md.warehouse;
 
 import cn.iocoder.yudao.framework.mybatis.core.dataobject.BaseDO;
 import com.baomidou.mybatisplus.annotation.KeySequence;
@@ -7,19 +7,19 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.*;
 
 /**
- * WMS 仓库 DO
+ * WMS 库区 DO
  *
  * @author 芋道源码
  */
-@TableName("wms_warehouse")
-@KeySequence("wms_warehouse_seq")
+@TableName("wms_warehouse_area")
+@KeySequence("wms_warehouse_area_seq")
 @Data
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class WmsWarehouseDO extends BaseDO {
+public class WmsWarehouseAreaDO extends BaseDO {
 
     /**
      * 主键编号
@@ -27,7 +27,7 @@ public class WmsWarehouseDO extends BaseDO {
     @TableId
     private Long id;
     /**
-     * 仓库编号
+     * 库区编号
      */
     private String code;
     /**
@@ -35,12 +35,14 @@ public class WmsWarehouseDO extends BaseDO {
      */
     private String name;
     /**
+     * 所属仓库编号
+     *
+     * 关联 {@link WmsWarehouseDO#getId()}
+     */
+    private Long warehouseId;
+    /**
      * 备注
      */
     private String remark;
-    /**
-     * 排序
-     */
-    private Integer sort;
 
 }

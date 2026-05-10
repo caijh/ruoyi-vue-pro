@@ -1,13 +1,13 @@
-package cn.iocoder.yudao.module.wms.controller.admin.warehouse;
+package cn.iocoder.yudao.module.wms.controller.admin.md.warehouse;
 
 import cn.iocoder.yudao.framework.common.pojo.CommonResult;
 import cn.iocoder.yudao.framework.common.pojo.PageResult;
 import cn.iocoder.yudao.framework.common.util.object.BeanUtils;
-import cn.iocoder.yudao.module.wms.controller.admin.warehouse.vo.WmsWarehousePageReqVO;
-import cn.iocoder.yudao.module.wms.controller.admin.warehouse.vo.WmsWarehouseRespVO;
-import cn.iocoder.yudao.module.wms.controller.admin.warehouse.vo.WmsWarehouseSaveReqVO;
-import cn.iocoder.yudao.module.wms.dal.dataobject.warehouse.WmsWarehouseDO;
-import cn.iocoder.yudao.module.wms.service.warehouse.WmsWarehouseService;
+import cn.iocoder.yudao.module.wms.controller.admin.md.warehouse.vo.WmsWarehousePageReqVO;
+import cn.iocoder.yudao.module.wms.controller.admin.md.warehouse.vo.WmsWarehouseRespVO;
+import cn.iocoder.yudao.module.wms.controller.admin.md.warehouse.vo.WmsWarehouseSaveReqVO;
+import cn.iocoder.yudao.module.wms.dal.dataobject.md.warehouse.WmsWarehouseDO;
+import cn.iocoder.yudao.module.wms.service.md.warehouse.WmsWarehouseService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;

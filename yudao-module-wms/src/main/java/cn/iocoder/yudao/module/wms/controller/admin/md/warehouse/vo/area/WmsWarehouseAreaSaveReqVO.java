@@ -1,4 +1,4 @@
-package cn.iocoder.yudao.module.wms.controller.admin.warehouse.vo.area;
+package cn.iocoder.yudao.module.wms.controller.admin.md.warehouse.vo.area;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotEmpty;
