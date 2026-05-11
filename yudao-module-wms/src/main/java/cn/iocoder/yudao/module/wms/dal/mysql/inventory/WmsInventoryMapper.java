@@ -35,6 +35,30 @@ public interface WmsInventoryMapper extends BaseMapperX<WmsInventoryDO> {
         return selectJoinPage(reqVO, WmsInventoryDO.class, query);
     }
 
+    default PageResult<WmsInventoryDO> selectPageGroupByWarehouse(WmsInventoryPageReqVO reqVO) {
+        MPJLambdaWrapperX<WmsInventoryDO> query = new MPJLambdaWrapperX<WmsInventoryDO>()
+                .selectMin(WmsInventoryDO::getId, WmsInventoryDO::getId)
+                .selectAs(WmsInventoryDO::getWarehouseId, WmsInventoryDO::getWarehouseId)
+                .selectAs("0", WmsInventoryDO::getAreaId)
+                .selectAs(WmsInventoryDO::getSkuId, WmsInventoryDO::getSkuId)
+                .selectSum(WmsInventoryDO::getQuantity, WmsInventoryDO::getQuantity)
+                .innerJoin(WmsItemSkuDO.class, WmsItemSkuDO::getId, WmsInventoryDO::getSkuId)
+                .innerJoin(WmsItemDO.class, WmsItemDO::getId, WmsItemSkuDO::getItemId)
+                .likeIfPresent(WmsItemDO::getCode, reqVO.getItemCode())
+                .likeIfPresent(WmsItemDO::getName, reqVO.getItemName())
+                .eqIfPresent(WmsInventoryDO::getSkuId, reqVO.getSkuId())
+                .likeIfPresent(WmsItemSkuDO::getCode, reqVO.getSkuCode())
+                .likeIfPresent(WmsItemSkuDO::getName, reqVO.getSkuName())
+                .eqIfPresent(WmsInventoryDO::getWarehouseId, reqVO.getWarehouseId());
+        query.groupBy(WmsInventoryDO::getWarehouseId, WmsInventoryDO::getSkuId);
+        if (reqVO.getMinQuantity() != null) {
+            query.having("SUM(t.quantity) >= {0}", reqVO.getMinQuantity());
+        }
+        query.orderByAsc(WmsInventoryDO::getWarehouseId)
+                .orderByAsc(WmsInventoryDO::getSkuId);
+        return selectJoinPage(reqVO, WmsInventoryDO.class, query);
+    }
+
     default Long selectCountBySkuId(Long skuId) {
         return selectCount(WmsInventoryDO::getSkuId, skuId);
     }

@@ -1,5 +1,6 @@
 package cn.iocoder.yudao.module.wms.service.inventory;
 
+import cn.hutool.core.util.StrUtil;
 import cn.iocoder.yudao.framework.common.pojo.PageResult;
 import cn.iocoder.yudao.module.wms.controller.admin.inventory.vo.WmsInventoryPageReqVO;
 import cn.iocoder.yudao.module.wms.dal.dataobject.inventory.WmsInventoryDO;
@@ -22,6 +23,9 @@ public class WmsInventoryServiceImpl implements WmsInventoryService {
 
     @Override
     public PageResult<WmsInventoryDO> getInventoryPage(WmsInventoryPageReqVO pageReqVO) {
+        if (StrUtil.equals(WmsInventoryPageReqVO.TYPE_WAREHOUSE, pageReqVO.getType())) {
+            return inventoryMapper.selectPageGroupByWarehouse(pageReqVO);
+        }
         return inventoryMapper.selectPage(pageReqVO);
     }
 
