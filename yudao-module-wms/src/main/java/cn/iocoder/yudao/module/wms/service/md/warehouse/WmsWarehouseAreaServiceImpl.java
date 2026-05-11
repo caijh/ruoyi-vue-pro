@@ -1,5 +1,6 @@
 package cn.iocoder.yudao.module.wms.service.md.warehouse;
 
+import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.ObjUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.iocoder.yudao.framework.common.pojo.PageResult;
@@ -13,6 +14,8 @@ import jakarta.annotation.Resource;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 import static cn.iocoder.yudao.framework.common.exception.util.ServiceExceptionUtil.exception;
@@ -125,6 +128,15 @@ public class WmsWarehouseAreaServiceImpl implements WmsWarehouseAreaService {
     public List<WmsWarehouseAreaDO> getWarehouseAreaList(Long warehouseId) {
         validateAreaEnabled();
         return warehouseAreaMapper.selectListByWarehouseId(warehouseId);
+    }
+
+    @Override
+    public List<WmsWarehouseAreaDO> getWarehouseAreaList(Collection<Long> ids) {
+        validateAreaEnabled();
+        if (CollUtil.isEmpty(ids)) {
+            return Collections.emptyList();
+        }
+        return warehouseAreaMapper.selectByIds(ids);
     }
 
     private void validateAreaEnabled() {

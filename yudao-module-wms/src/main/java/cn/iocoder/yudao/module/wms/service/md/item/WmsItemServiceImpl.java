@@ -1,5 +1,6 @@
 package cn.iocoder.yudao.module.wms.service.md.item;
 
+import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.ObjectUtil;
 import cn.iocoder.yudao.framework.common.pojo.PageResult;
 import cn.iocoder.yudao.framework.common.util.object.BeanUtils;
@@ -13,6 +14,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 import static cn.iocoder.yudao.framework.common.exception.util.ServiceExceptionUtil.exception;
@@ -132,6 +135,14 @@ public class WmsItemServiceImpl implements WmsItemService {
     public List<WmsItemDO> getItemList(WmsItemPageReqVO pageReqVO) {
         return itemMapper.selectList(pageReqVO,
                 categoryService.getSelfAndChildItemCategoryIdList(pageReqVO.getCategoryId()));
+    }
+
+    @Override
+    public List<WmsItemDO> getItemList(Collection<Long> ids) {
+        if (CollUtil.isEmpty(ids)) {
+            return Collections.emptyList();
+        }
+        return itemMapper.selectByIds(ids);
     }
 
     @Override

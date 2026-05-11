@@ -6,7 +6,11 @@ import cn.iocoder.yudao.module.wms.controller.admin.md.warehouse.vo.area.WmsWare
 import cn.iocoder.yudao.module.wms.dal.dataobject.md.warehouse.WmsWarehouseAreaDO;
 import jakarta.validation.Valid;
 
+import java.util.Collection;
 import java.util.List;
+import java.util.Map;
+
+import static cn.iocoder.yudao.framework.common.util.collection.CollectionUtils.convertMap;
 
 /**
  * WMS 库区 Service 接口
@@ -68,5 +72,23 @@ public interface WmsWarehouseAreaService {
      * @return 库区列表
      */
     List<WmsWarehouseAreaDO> getWarehouseAreaList(Long warehouseId);
+
+    /**
+     * 按编号集合获得库区列表
+     *
+     * @param ids 编号集合
+     * @return 库区列表
+     */
+    List<WmsWarehouseAreaDO> getWarehouseAreaList(Collection<Long> ids);
+
+    /**
+     * 按编号集合获得库区 Map
+     *
+     * @param ids 编号集合
+     * @return 库区 Map
+     */
+    default Map<Long, WmsWarehouseAreaDO> getWarehouseAreaMap(Collection<Long> ids) {
+        return convertMap(getWarehouseAreaList(ids), WmsWarehouseAreaDO::getId);
+    }
 
 }

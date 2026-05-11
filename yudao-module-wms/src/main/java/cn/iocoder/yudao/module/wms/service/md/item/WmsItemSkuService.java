@@ -8,6 +8,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
+import static cn.iocoder.yudao.framework.common.util.collection.CollectionUtils.convertMap;
 import static cn.iocoder.yudao.framework.common.util.collection.CollectionUtils.convertMultiMap;
 
 /**
@@ -55,6 +56,34 @@ public interface WmsItemSkuService {
      * @return SKU 列表
      */
     List<WmsItemSkuDO> getItemSkuList(Collection<Long> itemIds);
+
+    /**
+     * 获得 SKU 列表
+     *
+     * @param itemIds 商品编号集合
+     * @param code SKU 编号
+     * @param name SKU 名称
+     * @return SKU 列表
+     */
+    List<WmsItemSkuDO> getItemSkuList(Collection<Long> itemIds, String code, String name);
+
+    /**
+     * 按编号集合获得 SKU 列表
+     *
+     * @param ids 编号集合
+     * @return SKU 列表
+     */
+    List<WmsItemSkuDO> getItemSkuListByIds(Collection<Long> ids);
+
+    /**
+     * 按编号集合获得 SKU Map
+     *
+     * @param ids 编号集合
+     * @return SKU Map
+     */
+    default Map<Long, WmsItemSkuDO> getItemSkuMap(Collection<Long> ids) {
+        return convertMap(getItemSkuListByIds(ids), WmsItemSkuDO::getId);
+    }
 
     /**
      * 按商品编号集合获得 SKU MultiMap

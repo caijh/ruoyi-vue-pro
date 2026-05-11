@@ -21,7 +21,7 @@ public class WmsProperties {
      * 是否启用库区模式
      */
     @NotNull(message = "是否启用库区模式不能为空")
-    private Boolean areaEnable = false;
+    private Boolean areaEnable = true;
 
     /**
      * 是否启用批次/效期/库存明细模式
@@ -29,7 +29,7 @@ public class WmsProperties {
      * 依赖 {@link #areaEnable} 为 true
      */
     @NotNull(message = "是否启用批次/效期/库存明细模式不能为空")
-    private Boolean batchEnable = false;
+    private Boolean batchEnable = true;
 
     public boolean isAreaEnabled() {
         return Boolean.TRUE.equals(areaEnable);

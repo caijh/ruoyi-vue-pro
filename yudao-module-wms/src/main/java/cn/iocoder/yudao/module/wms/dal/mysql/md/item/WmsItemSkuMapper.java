@@ -33,6 +33,17 @@ public interface WmsItemSkuMapper extends BaseMapperX<WmsItemSkuDO> {
                 .orderByAsc(WmsItemSkuDO::getId));
     }
 
+    default List<WmsItemSkuDO> selectList(Collection<Long> itemIds, String code, String name) {
+        if (itemIds != null && CollUtil.isEmpty(itemIds)) {
+            return Collections.emptyList();
+        }
+        return selectList(new LambdaQueryWrapperX<WmsItemSkuDO>()
+                .inIfPresent(WmsItemSkuDO::getItemId, itemIds)
+                .likeIfPresent(WmsItemSkuDO::getCode, code)
+                .likeIfPresent(WmsItemSkuDO::getName, name)
+                .orderByAsc(WmsItemSkuDO::getId));
+    }
+
     default void deleteByItemId(Long itemId) {
         delete(WmsItemSkuDO::getItemId, itemId);
     }

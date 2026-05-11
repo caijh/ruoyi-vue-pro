@@ -6,8 +6,10 @@ import cn.iocoder.yudao.framework.common.util.object.BeanUtils;
 import cn.iocoder.yudao.module.wms.controller.admin.md.item.vo.sku.WmsItemSkuSaveReqVO;
 import cn.iocoder.yudao.module.wms.dal.dataobject.md.item.WmsItemSkuDO;
 import cn.iocoder.yudao.module.wms.dal.mysql.md.item.WmsItemSkuMapper;
+import cn.iocoder.yudao.module.wms.service.inventory.WmsInventoryService;
 import cn.iocoder.yudao.module.wms.util.WmsUtils;
 import jakarta.annotation.Resource;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
@@ -32,6 +34,9 @@ public class WmsItemSkuServiceImpl implements WmsItemSkuService {
 
     @Resource
     private WmsItemSkuMapper itemSkuMapper;
+    @Resource
+    @Lazy // 延迟加载，避免循环依赖
+    private WmsInventoryService inventoryService;
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -58,8 +63,9 @@ public class WmsItemSkuServiceImpl implements WmsItemSkuService {
 
         // 第二步，批量添加、修改、删除
         if (CollUtil.isNotEmpty(diffList.get(2))) {
-            // TODO 库存模块实现后，校验商品规格下不存在库存业务数据后再删除
-            itemSkuMapper.deleteByIds(convertList(diffList.get(2), WmsItemSkuDO::getId));
+            List<Long> deleteSkuIds = convertList(diffList.get(2), WmsItemSkuDO::getId);
+            validateItemSkuUnused(diffList.get(2));
+            itemSkuMapper.deleteByIds(deleteSkuIds);
         }
         if (CollUtil.isNotEmpty(diffList.get(0))) {
             if (CollUtil.isNotEmpty(convertList(diffList.get(0), WmsItemSkuDO::getId))) {
@@ -79,7 +85,8 @@ public class WmsItemSkuServiceImpl implements WmsItemSkuService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void deleteItemSkuListByItemId(Long itemId) {
-        // TODO 库存模块实现后，校验商品规格下不存在库存业务数据后再删除
+        List<WmsItemSkuDO> skus = itemSkuMapper.selectListByItemId(itemId);
+        validateItemSkuUnused(skus);
         itemSkuMapper.deleteByItemId(itemId);
     }
 
@@ -93,6 +100,19 @@ public class WmsItemSkuServiceImpl implements WmsItemSkuService {
         return itemSkuMapper.selectListByItemIds(itemIds);
     }
 
+    @Override
+    public List<WmsItemSkuDO> getItemSkuList(Collection<Long> itemIds, String code, String name) {
+        return itemSkuMapper.selectList(itemIds, code, name);
+    }
+
+    @Override
+    public List<WmsItemSkuDO> getItemSkuListByIds(Collection<Long> ids) {
+        if (CollUtil.isEmpty(ids)) {
+            return List.of();
+        }
+        return itemSkuMapper.selectByIds(ids);
+    }
+
     private void validateItemSkuList(List<WmsItemSkuSaveReqVO> skus) {
         // 校验至少存在一个商品 SKU
         if (CollUtil.isEmpty(skus)) {
@@ -103,6 +123,17 @@ public class WmsItemSkuServiceImpl implements WmsItemSkuService {
         for (WmsItemSkuSaveReqVO sku : skus) {
             if (!names.add(sku.getName())) {
                 throw exception(ITEM_SKU_NAME_DUPLICATE, sku.getName());
+            }
+        }
+    }
+
+    private void validateItemSkuUnused(List<WmsItemSkuDO> skus) {
+        if (CollUtil.isEmpty(skus)) {
+            return;
+        }
+        for (WmsItemSkuDO sku : skus) {
+            if (inventoryService.getInventoryCountBySkuId(sku.getId()) > 0) {
+                throw exception(ITEM_SKU_HAS_INVENTORY, sku.getName());
             }
         }
     }
