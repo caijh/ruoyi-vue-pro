@@ -10,6 +10,10 @@ import cn.iocoder.yudao.module.wms.dal.dataobject.md.item.WmsItemDO;
 import cn.iocoder.yudao.module.wms.dal.dataobject.md.item.WmsItemSkuDO;
 import org.apache.ibatis.annotations.Mapper;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+
 /**
  * WMS 库存明细 Mapper
  *
@@ -31,10 +35,19 @@ public interface WmsInventoryDetailMapper extends BaseMapperX<WmsInventoryDetail
                 .eqIfPresent(WmsInventoryDetailDO::getWarehouseId, reqVO.getWarehouseId())
                 .eqIfPresent(WmsInventoryDetailDO::getAreaId, reqVO.getAreaId())
                 .likeIfPresent(WmsInventoryDetailDO::getBatchNo, reqVO.getBatchNo())
-                .betweenIfPresent(WmsInventoryDetailDO::getExpirationDate, reqVO.getExpirationDate())
                 .betweenIfPresent(WmsInventoryDetailDO::getCreateTime, reqVO.getCreateTime());
+        appendDaysToExpiresQuery(query, reqVO.getDaysToExpires());
         appendDimensionOrder(query, reqVO.getType());
         return selectJoinPage(reqVO, WmsInventoryDetailDO.class, query);
+    }
+
+    private static void appendDaysToExpiresQuery(MPJLambdaWrapperX<WmsInventoryDetailDO> query, Integer daysToExpires) {
+        if (daysToExpires == null) {
+            return;
+        }
+        LocalDateTime startTime = LocalDateTime.of(LocalDate.now(), LocalTime.MIN);
+        query.geIfPresent(WmsInventoryDetailDO::getExpirationDate, startTime)
+                .leIfPresent(WmsInventoryDetailDO::getExpirationDate, startTime.plusDays(daysToExpires));
     }
 
     private static void appendDimensionOrder(MPJLambdaWrapperX<WmsInventoryDetailDO> query, String type) {

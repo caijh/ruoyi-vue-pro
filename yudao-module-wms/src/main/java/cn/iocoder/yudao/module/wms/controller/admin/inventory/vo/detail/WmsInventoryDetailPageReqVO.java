@@ -53,9 +53,8 @@ public class WmsInventoryDetailPageReqVO extends PageParam {
     @Schema(description = "批号", example = "BATCH001")
     private String batchNo;
 
-    @Schema(description = "过期日期")
-    @DateTimeFormat(pattern = FORMAT_YEAR_MONTH_DAY_HOUR_MINUTE_SECOND)
-    private LocalDateTime[] expirationDate;
+    @Schema(description = "距离过期天数", example = "30")
+    private Integer daysToExpires;
 
     @Schema(description = "创建时间")
     @DateTimeFormat(pattern = FORMAT_YEAR_MONTH_DAY_HOUR_MINUTE_SECOND)
