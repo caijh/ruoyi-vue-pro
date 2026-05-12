@@ -15,9 +15,10 @@ import java.util.Arrays;
 @AllArgsConstructor
 public enum WmsReceiptOrderTypeEnum implements ArrayValuable<Integer> {
 
-    PURCHASE(1, "采购入库"),
-    OUTSOURCING(2, "外协入库"),
-    RETURN(3, "退货入库");
+    PRODUCTION(WmsOrderTypeConstants.RECEIPT_PRODUCTION, "生产入库"),
+    PURCHASE(WmsOrderTypeConstants.RECEIPT_PURCHASE, "采购入库"),
+    RETURN(WmsOrderTypeConstants.RECEIPT_RETURN, "退货入库"),
+    GIVE_BACK(WmsOrderTypeConstants.RECEIPT_GIVE_BACK, "归还入库");
 
     public static final Integer[] ARRAYS = Arrays.stream(values()).map(WmsReceiptOrderTypeEnum::getType).toArray(Integer[]::new);
 

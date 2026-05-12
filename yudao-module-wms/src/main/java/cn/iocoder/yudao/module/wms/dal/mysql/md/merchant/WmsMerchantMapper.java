@@ -22,6 +22,7 @@ public interface WmsMerchantMapper extends BaseMapperX<WmsMerchantDO> {
                 .eqIfPresent(WmsMerchantDO::getCode, reqVO.getCode())
                 .likeIfPresent(WmsMerchantDO::getName, reqVO.getName())
                 .eqIfPresent(WmsMerchantDO::getType, reqVO.getType())
+                .inIfPresent(WmsMerchantDO::getType, reqVO.getTypes())
                 .orderByDesc(WmsMerchantDO::getId));
     }
 
@@ -30,6 +31,7 @@ public interface WmsMerchantMapper extends BaseMapperX<WmsMerchantDO> {
                 .eqIfPresent(WmsMerchantDO::getCode, reqVO.getCode())
                 .likeIfPresent(WmsMerchantDO::getName, reqVO.getName())
                 .eqIfPresent(WmsMerchantDO::getType, reqVO.getType())
+                .inIfPresent(WmsMerchantDO::getType, reqVO.getTypes())
                 .orderByDesc(WmsMerchantDO::getId));
     }
 

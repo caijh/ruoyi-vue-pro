@@ -50,7 +50,7 @@ public class WmsReceiptOrderPageReqVO extends PageParam {
     @Schema(description = "最大总金额", example = "1000.00")
     private BigDecimal totalAmountMax;
 
-    @Schema(description = "入库类型", example = "1")
+    @Schema(description = "入库类型", example = "101")
     @InEnum(WmsReceiptOrderTypeEnum.class)
     private Integer type;
 

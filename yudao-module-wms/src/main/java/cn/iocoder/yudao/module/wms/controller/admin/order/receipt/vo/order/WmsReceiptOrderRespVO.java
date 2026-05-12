@@ -25,7 +25,7 @@ public class WmsReceiptOrderRespVO {
     @ExcelProperty("入库单号")
     private String no;
 
-    @Schema(description = "入库类型", requiredMode = Schema.RequiredMode.REQUIRED, example = "1")
+    @Schema(description = "入库类型", requiredMode = Schema.RequiredMode.REQUIRED, example = "101")
     @ExcelProperty(value = "入库类型", converter = DictConvert.class)
     @DictFormat(DictTypeConstants.RECEIPT_ORDER_TYPE)
     private Integer type;

@@ -5,6 +5,7 @@ import cn.iocoder.yudao.module.wms.dal.dataobject.md.merchant.WmsMerchantDO;
 import cn.iocoder.yudao.module.wms.dal.dataobject.md.warehouse.WmsWarehouseAreaDO;
 import cn.iocoder.yudao.module.wms.dal.dataobject.md.warehouse.WmsWarehouseDO;
 import cn.iocoder.yudao.module.wms.enums.DictTypeConstants;
+import cn.iocoder.yudao.module.wms.enums.order.WmsReceiptOrderTypeEnum;
 import com.baomidou.mybatisplus.annotation.KeySequence;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
@@ -39,6 +40,7 @@ public class WmsReceiptOrderDO extends BaseDO {
     /**
      * 入库类型
      *
+     * 枚举 {@link WmsReceiptOrderTypeEnum}
      * 字典 {@link DictTypeConstants#RECEIPT_ORDER_TYPE}
      */
     private Integer type;

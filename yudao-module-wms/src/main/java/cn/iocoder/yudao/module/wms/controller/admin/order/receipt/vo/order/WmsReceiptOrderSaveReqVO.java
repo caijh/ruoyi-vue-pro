@@ -25,7 +25,7 @@ public class WmsReceiptOrderSaveReqVO {
     @Size(max = 64, message = "入库单号长度不能超过 64 个字符")
     private String no;
 
-    @Schema(description = "入库类型", requiredMode = Schema.RequiredMode.REQUIRED, example = "1")
+    @Schema(description = "入库类型", requiredMode = Schema.RequiredMode.REQUIRED, example = "101")
     @NotNull(message = "入库类型不能为空")
     @InEnum(WmsReceiptOrderTypeEnum.class)
     private Integer type;

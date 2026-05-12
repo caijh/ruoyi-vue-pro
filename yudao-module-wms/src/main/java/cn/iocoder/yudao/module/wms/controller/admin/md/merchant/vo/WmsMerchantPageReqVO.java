@@ -8,6 +8,8 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
+import java.util.List;
+
 @Schema(description = "管理后台 - WMS 往来企业分页 Request VO")
 @Data
 @EqualsAndHashCode(callSuper = true)
@@ -23,5 +25,9 @@ public class WmsMerchantPageReqVO extends PageParam {
     @Schema(description = "往来企业类型", example = "2")
     @InEnum(value = WmsMerchantTypeEnum.class, message = "往来企业类型必须是 {value}")
     private Integer type;
+
+    @Schema(description = "往来企业类型数组", example = "2,3")
+    @InEnum(value = WmsMerchantTypeEnum.class, message = "往来企业类型必须是 {value}")
+    private List<Integer> types;
 
 }
