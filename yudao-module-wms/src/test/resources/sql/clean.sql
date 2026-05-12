@@ -1,3 +1,6 @@
+DELETE FROM "wms_receipt_order_detail";
+DELETE FROM "wms_receipt_order";
+DELETE FROM "wms_inventory_history";
 DELETE FROM "wms_inventory_detail";
 DELETE FROM "wms_inventory";
 DELETE FROM "wms_item_sku";

@@ -8,7 +8,10 @@ import cn.iocoder.yudao.module.wms.controller.admin.inventory.vo.WmsInventoryPag
 import cn.iocoder.yudao.module.wms.dal.dataobject.inventory.WmsInventoryDO;
 import cn.iocoder.yudao.module.wms.dal.dataobject.md.item.WmsItemDO;
 import cn.iocoder.yudao.module.wms.dal.dataobject.md.item.WmsItemSkuDO;
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import org.apache.ibatis.annotations.Mapper;
+
+import java.math.BigDecimal;
 
 /**
  * WMS 库存 Mapper
@@ -61,6 +64,32 @@ public interface WmsInventoryMapper extends BaseMapperX<WmsInventoryDO> {
 
     default Long selectCountBySkuId(Long skuId) {
         return selectCount(WmsInventoryDO::getSkuId, skuId);
+    }
+
+    default WmsInventoryDO selectBySkuIdAndWarehouseIdAndAreaId(Long skuId, Long warehouseId, Long areaId) {
+        return selectOne(WmsInventoryDO::getSkuId, skuId,
+                WmsInventoryDO::getWarehouseId, warehouseId,
+                WmsInventoryDO::getAreaId, areaId);
+    }
+
+    default WmsInventoryDO selectBySkuIdAndWarehouseIdAndAreaIdForUpdate(Long skuId, Long warehouseId, Long areaId) {
+        return selectOneForUpdate(WmsInventoryDO::getSkuId, skuId,
+                WmsInventoryDO::getWarehouseId, warehouseId,
+                WmsInventoryDO::getAreaId, areaId);
+    }
+
+    /**
+     * 增量更新库存数量
+     *
+     * @param id       库存编号
+     * @param quantity 变更数量
+     * @return 更新行数
+     */
+    @SuppressWarnings("UnusedReturnValue")
+    default int updateQuantity(Long id, BigDecimal quantity) {
+        return update(null, new LambdaUpdateWrapper<WmsInventoryDO>()
+                .eq(WmsInventoryDO::getId, id)
+                .setSql("quantity = quantity + (" + quantity + ")"));
     }
 
     private static void appendDimensionOrder(MPJLambdaWrapperX<WmsInventoryDO> query, String type) {
