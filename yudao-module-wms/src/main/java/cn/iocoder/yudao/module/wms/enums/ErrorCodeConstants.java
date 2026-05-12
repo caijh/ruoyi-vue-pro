@@ -55,6 +55,7 @@ public interface ErrorCodeConstants {
     ErrorCode RECEIPT_ORDER_STATUS_NOT_PREPARE = new ErrorCode(1_060_200_002, "入库单状态不是草稿，不能操作");
     ErrorCode RECEIPT_ORDER_DETAIL_REQUIRED = new ErrorCode(1_060_200_003, "入库单至少包含一条明细");
     ErrorCode RECEIPT_ORDER_AREA_REQUIRED = new ErrorCode(1_060_200_004, "库区模式下，入库单库区不能为空");
+    ErrorCode RECEIPT_ORDER_STATUS_NOT_DELETABLE = new ErrorCode(1_060_200_005, "入库单状态不是草稿或已作废，不能删除");
     ErrorCode RECEIPT_ORDER_DETAIL_NOT_EXISTS = new ErrorCode(1_060_200_007, "入库单明细不存在");
 
 }

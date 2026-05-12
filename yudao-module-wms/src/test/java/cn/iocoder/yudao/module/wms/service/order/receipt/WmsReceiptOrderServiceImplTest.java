@@ -26,8 +26,10 @@ import java.math.BigDecimal;
 import static cn.iocoder.yudao.framework.test.core.util.AssertUtils.assertServiceException;
 import static cn.iocoder.yudao.module.wms.enums.ErrorCodeConstants.RECEIPT_ORDER_AREA_REQUIRED;
 import static cn.iocoder.yudao.module.wms.enums.ErrorCodeConstants.RECEIPT_ORDER_DETAIL_REQUIRED;
+import static cn.iocoder.yudao.module.wms.enums.ErrorCodeConstants.RECEIPT_ORDER_STATUS_NOT_DELETABLE;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -122,6 +124,32 @@ public class WmsReceiptOrderServiceImplTest extends BaseDbUnitTest {
         assertNotNull(dbOrder);
         assertEquals(WmsOrderStatusEnum.CANCELED.getStatus(), dbOrder.getStatus());
         verify(inventoryService, never()).changeInventory(any());
+    }
+
+    @Test
+    public void testDeleteReceiptOrder_canceled() {
+        // mock 数据
+        WmsReceiptOrderDO order = createReceiptOrder(100L).setStatus(WmsOrderStatusEnum.CANCELED.getStatus());
+        receiptOrderMapper.insert(order);
+        receiptOrderDetailMapper.insert(createReceiptOrderDetail(order.getId(), 200L, 100L, 300L));
+
+        // 调用
+        receiptOrderService.deleteReceiptOrder(order.getId());
+
+        // 断言
+        assertNull(receiptOrderMapper.selectById(order.getId()));
+        assertEquals(0, receiptOrderDetailMapper.selectListByOrderId(order.getId()).size());
+    }
+
+    @Test
+    public void testDeleteReceiptOrder_finished() {
+        // mock 数据
+        WmsReceiptOrderDO order = createReceiptOrder(100L).setStatus(WmsOrderStatusEnum.FINISHED.getStatus());
+        receiptOrderMapper.insert(order);
+
+        // 调用，并断言
+        assertServiceException(() -> receiptOrderService.deleteReceiptOrder(order.getId()),
+                RECEIPT_ORDER_STATUS_NOT_DELETABLE);
     }
 
     private static WmsReceiptOrderDO createReceiptOrder(Long warehouseId) {

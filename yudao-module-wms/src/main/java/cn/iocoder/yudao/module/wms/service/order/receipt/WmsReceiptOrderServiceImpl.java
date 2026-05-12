@@ -78,8 +78,12 @@ public class WmsReceiptOrderServiceImpl implements WmsReceiptOrderService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void deleteReceiptOrder(Long id) {
-        // 1. 校验存在，且草稿
-        validateReceiptOrderPrepare(id);
+        // 1. 校验存在，且可删除
+        WmsReceiptOrderDO order = validateReceiptOrderExists(id);
+        if (ObjectUtil.notEqual(order.getStatus(), WmsOrderStatusEnum.PREPARE.getStatus())
+                && ObjectUtil.notEqual(order.getStatus(), WmsOrderStatusEnum.CANCELED.getStatus())) {
+            throw exception(RECEIPT_ORDER_STATUS_NOT_DELETABLE);
+        }
 
         // 2.1 删除入库单
         receiptOrderMapper.deleteById(id);
@@ -130,7 +134,9 @@ public class WmsReceiptOrderServiceImpl implements WmsReceiptOrderService {
         // 校验仓库存在
         warehouseService.validateWarehouseExists(reqVO.getWarehouseId());
         // 校验供应商类型
-        validateReceiptOrderMerchant(reqVO.getMerchantId());
+        if (reqVO.getMerchantId() != null) {
+            merchantService.validateSupplierMerchantExists(reqVO.getMerchantId());
+        }
     }
 
     private void validateReceiptOrderNoUnique(Long id, String no) {
@@ -163,13 +169,6 @@ public class WmsReceiptOrderServiceImpl implements WmsReceiptOrderService {
             throw exception(RECEIPT_ORDER_STATUS_NOT_PREPARE);
         }
         return order;
-    }
-
-    private void validateReceiptOrderMerchant(Long merchantId) {
-        if (merchantId == null) {
-            return;
-        }
-        merchantService.validateSupplierMerchantExists(merchantId);
     }
 
     private void createInventory(WmsReceiptOrderDO order, List<WmsReceiptOrderDetailDO> details) {
