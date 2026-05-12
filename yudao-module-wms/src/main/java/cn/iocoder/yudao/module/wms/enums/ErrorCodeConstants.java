@@ -55,5 +55,7 @@ public interface ErrorCodeConstants {
     ErrorCode RECEIPT_ORDER_AREA_REQUIRED = new ErrorCode(1_060_200_004, "库区模式下，入库单库区不能为空");
     ErrorCode RECEIPT_ORDER_AREA_NOT_MATCH_WAREHOUSE = new ErrorCode(1_060_200_005, "库区不属于入库仓库");
     ErrorCode RECEIPT_ORDER_COMPLETED_CANNOT_DELETE = new ErrorCode(1_060_200_006, "入库单已完成，不能删除");
+    ErrorCode RECEIPT_ORDER_DETAIL_NOT_EXISTS = new ErrorCode(1_060_200_007, "入库单明细不存在");
+    ErrorCode RECEIPT_ORDER_MERCHANT_NOT_SUPPLIER = new ErrorCode(1_060_200_008, "入库单供应商必须选择供应商或客户/供应商类型的往来企业");
 
 }

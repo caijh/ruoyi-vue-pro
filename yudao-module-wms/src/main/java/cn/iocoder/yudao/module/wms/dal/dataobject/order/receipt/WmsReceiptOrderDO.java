@@ -53,7 +53,7 @@ public class WmsReceiptOrderDO extends BaseDO {
      */
     private String bizOrderNo;
     /**
-     * 往来企业编号
+     * 供应商编号
      *
      * 关联 {@link WmsMerchantDO#getId()}
      */
