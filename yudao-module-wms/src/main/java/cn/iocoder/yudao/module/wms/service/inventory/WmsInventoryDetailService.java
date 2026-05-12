@@ -4,6 +4,8 @@ import cn.iocoder.yudao.framework.common.pojo.PageResult;
 import cn.iocoder.yudao.module.wms.controller.admin.inventory.vo.detail.WmsInventoryDetailPageReqVO;
 import cn.iocoder.yudao.module.wms.dal.dataobject.inventory.WmsInventoryDetailDO;
 
+import java.util.List;
+
 /**
  * WMS 库存明细 Service 接口
  *
@@ -18,5 +20,12 @@ public interface WmsInventoryDetailService {
      * @return 库存明细分页
      */
     PageResult<WmsInventoryDetailDO> getInventoryDetailPage(WmsInventoryDetailPageReqVO pageReqVO);
+
+    /**
+     * 创建库存明细列表
+     *
+     * @param list 库存明细列表
+     */
+    void createInventoryDetailList(List<WmsInventoryDetailDO> list);
 
 }

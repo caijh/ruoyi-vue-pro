@@ -1,5 +1,7 @@
 package cn.iocoder.yudao.module.wms.service.md.merchant;
 
+import cn.hutool.core.collection.CollUtil;
+import cn.hutool.core.collection.ListUtil;
 import cn.iocoder.yudao.framework.common.pojo.PageResult;
 import cn.iocoder.yudao.framework.common.util.object.BeanUtils;
 import cn.iocoder.yudao.module.wms.controller.admin.md.merchant.vo.WmsMerchantPageReqVO;
@@ -10,6 +12,7 @@ import jakarta.annotation.Resource;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
+import java.util.Collection;
 import java.util.List;
 
 import static cn.iocoder.yudao.framework.common.exception.util.ServiceExceptionUtil.exception;
@@ -76,6 +79,14 @@ public class WmsMerchantServiceImpl implements WmsMerchantService {
     @Override
     public List<WmsMerchantDO> getMerchantList(WmsMerchantPageReqVO pageReqVO) {
         return merchantMapper.selectList(pageReqVO);
+    }
+
+    @Override
+    public List<WmsMerchantDO> getMerchantList(Collection<Long> ids) {
+        if (CollUtil.isEmpty(ids)) {
+            return ListUtil.of();
+        }
+        return merchantMapper.selectByIds(ids);
     }
 
 }

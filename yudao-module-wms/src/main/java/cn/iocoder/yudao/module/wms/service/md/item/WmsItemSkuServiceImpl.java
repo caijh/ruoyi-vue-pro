@@ -1,6 +1,7 @@
 package cn.iocoder.yudao.module.wms.service.md.item;
 
 import cn.hutool.core.collection.CollUtil;
+import cn.hutool.core.collection.ListUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.iocoder.yudao.framework.common.util.object.BeanUtils;
 import cn.iocoder.yudao.module.wms.controller.admin.md.item.vo.sku.WmsItemSkuSaveReqVO;
@@ -91,6 +92,15 @@ public class WmsItemSkuServiceImpl implements WmsItemSkuService {
     }
 
     @Override
+    public WmsItemSkuDO validateItemSkuExists(Long id) {
+        WmsItemSkuDO sku = itemSkuMapper.selectById(id);
+        if (sku == null) {
+            throw exception(ITEM_SKU_NOT_EXISTS);
+        }
+        return sku;
+    }
+
+    @Override
     public List<WmsItemSkuDO> getItemSkuList(Long itemId) {
         return itemSkuMapper.selectListByItemId(itemId);
     }
@@ -108,7 +118,7 @@ public class WmsItemSkuServiceImpl implements WmsItemSkuService {
     @Override
     public List<WmsItemSkuDO> getItemSkuListByIds(Collection<Long> ids) {
         if (CollUtil.isEmpty(ids)) {
-            return List.of();
+            return ListUtil.of();
         }
         return itemSkuMapper.selectByIds(ids);
     }

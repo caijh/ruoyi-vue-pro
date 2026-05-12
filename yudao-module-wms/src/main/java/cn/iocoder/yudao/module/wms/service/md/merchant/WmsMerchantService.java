@@ -6,7 +6,11 @@ import cn.iocoder.yudao.module.wms.controller.admin.md.merchant.vo.WmsMerchantSa
 import cn.iocoder.yudao.module.wms.dal.dataobject.md.merchant.WmsMerchantDO;
 import jakarta.validation.Valid;
 
+import java.util.Collection;
 import java.util.List;
+import java.util.Map;
+
+import static cn.iocoder.yudao.framework.common.util.collection.CollectionUtils.convertMap;
 
 /**
  * WMS 往来企业 Service 接口
@@ -68,5 +72,23 @@ public interface WmsMerchantService {
      * @return 往来企业列表
      */
     List<WmsMerchantDO> getMerchantList(WmsMerchantPageReqVO pageReqVO);
+
+    /**
+     * 按编号集合获得往来企业列表
+     *
+     * @param ids 编号集合
+     * @return 往来企业列表
+     */
+    List<WmsMerchantDO> getMerchantList(Collection<Long> ids);
+
+    /**
+     * 按编号集合获得往来企业 Map
+     *
+     * @param ids 编号集合
+     * @return 往来企业 Map
+     */
+    default Map<Long, WmsMerchantDO> getMerchantMap(Collection<Long> ids) {
+        return convertMap(getMerchantList(ids), WmsMerchantDO::getId);
+    }
 
 }

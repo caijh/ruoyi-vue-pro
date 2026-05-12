@@ -47,4 +47,13 @@ public interface ErrorCodeConstants {
     // ========== WMS 基础数据-往来企业 1-060-105-000 ==========
     ErrorCode MERCHANT_NOT_EXISTS = new ErrorCode(1_060_105_000, "往来企业不存在");
 
+    // ========== WMS 入库单 1-060-200-000 ==========
+    ErrorCode RECEIPT_ORDER_NOT_EXISTS = new ErrorCode(1_060_200_000, "入库单不存在");
+    ErrorCode RECEIPT_ORDER_NO_DUPLICATE = new ErrorCode(1_060_200_001, "入库单号重复");
+    ErrorCode RECEIPT_ORDER_STATUS_NOT_PENDING = new ErrorCode(1_060_200_002, "入库单状态不是暂存，不能操作");
+    ErrorCode RECEIPT_ORDER_DETAIL_REQUIRED = new ErrorCode(1_060_200_003, "入库单至少包含一条明细");
+    ErrorCode RECEIPT_ORDER_AREA_REQUIRED = new ErrorCode(1_060_200_004, "库区模式下，入库单库区不能为空");
+    ErrorCode RECEIPT_ORDER_AREA_NOT_MATCH_WAREHOUSE = new ErrorCode(1_060_200_005, "库区不属于入库仓库");
+    ErrorCode RECEIPT_ORDER_COMPLETED_CANNOT_DELETE = new ErrorCode(1_060_200_006, "入库单已完成，不能删除");
+
 }

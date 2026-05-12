@@ -42,6 +42,14 @@ public interface WmsItemSkuService {
     void deleteItemSkuListByItemId(Long itemId);
 
     /**
+     * 校验 SKU 存在
+     *
+     * @param id 编号
+     * @return SKU
+     */
+    WmsItemSkuDO validateItemSkuExists(Long id);
+
+    /**
      * 按商品编号获得 SKU 列表
      *
      * @param itemId 商品编号
