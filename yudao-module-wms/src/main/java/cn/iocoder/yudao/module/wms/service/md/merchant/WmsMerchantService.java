@@ -50,6 +50,14 @@ public interface WmsMerchantService {
     WmsMerchantDO validateMerchantExists(Long id);
 
     /**
+     * 校验供应商存在
+     *
+     * @param id 编号
+     * @return 往来企业
+     */
+    WmsMerchantDO validateSupplierMerchantExists(Long id);
+
+    /**
      * 获得往来企业
      *
      * @param id 编号

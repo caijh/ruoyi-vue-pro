@@ -1,5 +1,6 @@
 package cn.iocoder.yudao.module.wms.service.order.receipt;
 
+import cn.iocoder.yudao.module.wms.controller.admin.order.receipt.vo.order.WmsReceiptOrderSaveReqVO;
 import cn.iocoder.yudao.module.wms.dal.dataobject.order.receipt.WmsReceiptOrderDetailDO;
 
 import java.util.Collection;
@@ -16,17 +17,17 @@ public interface WmsReceiptOrderDetailService {
      * 创建入库单明细列表
      *
      * @param orderId 入库单编号
-     * @param list 明细列表
+     * @param reqVO 入库单保存信息
      */
-    void createReceiptOrderDetailList(Long orderId, List<WmsReceiptOrderDetailDO> list);
+    void createReceiptOrderDetailList(Long orderId, WmsReceiptOrderSaveReqVO reqVO);
 
     /**
      * 更新入库单明细列表
      *
      * @param orderId 入库单编号
-     * @param list 明细列表
+     * @param reqVO 入库单保存信息
      */
-    void updateReceiptOrderDetailList(Long orderId, List<WmsReceiptOrderDetailDO> list);
+    void updateReceiptOrderDetailList(Long orderId, WmsReceiptOrderSaveReqVO reqVO);
 
     /**
      * 按入库单编号删除明细列表
@@ -50,5 +51,13 @@ public interface WmsReceiptOrderDetailService {
      * @return 明细列表
      */
     List<WmsReceiptOrderDetailDO> getReceiptOrderDetailList(Collection<Long> orderIds);
+
+    /**
+     * 校验入库单明细列表存在
+     *
+     * @param orderId 入库单编号
+     * @return 明细列表
+     */
+    List<WmsReceiptOrderDetailDO> validateReceiptOrderDetailListExists(Long orderId);
 
 }

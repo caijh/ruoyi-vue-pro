@@ -22,6 +22,11 @@ import lombok.*;
 public class WmsWarehouseAreaDO extends BaseDO {
 
     /**
+     * 空库区编号
+     */
+    public static final Long ID_EMPTY = 0L;
+
+    /**
      * 主键编号
      */
     @TableId

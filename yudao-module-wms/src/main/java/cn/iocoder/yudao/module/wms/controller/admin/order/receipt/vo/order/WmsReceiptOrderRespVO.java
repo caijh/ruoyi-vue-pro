@@ -32,7 +32,7 @@ public class WmsReceiptOrderRespVO {
 
     @Schema(description = "入库状态", requiredMode = Schema.RequiredMode.REQUIRED, example = "0")
     @ExcelProperty(value = "入库状态", converter = DictConvert.class)
-    @DictFormat(DictTypeConstants.RECEIPT_ORDER_STATUS)
+    @DictFormat(DictTypeConstants.ORDER_STATUS)
     private Integer status;
 
     @Schema(description = "业务单号", example = "PO202605110001")

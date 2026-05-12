@@ -50,6 +50,15 @@ public interface WmsWarehouseAreaService {
     WmsWarehouseAreaDO validateWarehouseAreaExists(Long id);
 
     /**
+     * 校验并标准化库区编号
+     *
+     * @param id 库区编号
+     * @param warehouseId 仓库编号
+     * @return 库区编号；未启用库区模式或为空时，返回 {@link WmsWarehouseAreaDO#ID_EMPTY}
+     */
+    Long validateAndNormalizeWarehouseAreaId(Long id, Long warehouseId);
+
+    /**
      * 获得库区
      *
      * @param id 编号

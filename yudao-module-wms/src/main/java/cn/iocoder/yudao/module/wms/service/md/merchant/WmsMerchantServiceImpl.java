@@ -2,12 +2,14 @@ package cn.iocoder.yudao.module.wms.service.md.merchant;
 
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.collection.ListUtil;
+import cn.hutool.core.util.ObjectUtil;
 import cn.iocoder.yudao.framework.common.pojo.PageResult;
 import cn.iocoder.yudao.framework.common.util.object.BeanUtils;
 import cn.iocoder.yudao.module.wms.controller.admin.md.merchant.vo.WmsMerchantPageReqVO;
 import cn.iocoder.yudao.module.wms.controller.admin.md.merchant.vo.WmsMerchantSaveReqVO;
 import cn.iocoder.yudao.module.wms.dal.dataobject.md.merchant.WmsMerchantDO;
 import cn.iocoder.yudao.module.wms.dal.mysql.md.merchant.WmsMerchantMapper;
+import cn.iocoder.yudao.module.wms.enums.md.WmsMerchantTypeEnum;
 import jakarta.annotation.Resource;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
@@ -16,7 +18,7 @@ import java.util.Collection;
 import java.util.List;
 
 import static cn.iocoder.yudao.framework.common.exception.util.ServiceExceptionUtil.exception;
-import static cn.iocoder.yudao.module.wms.enums.ErrorCodeConstants.MERCHANT_NOT_EXISTS;
+import static cn.iocoder.yudao.module.wms.enums.ErrorCodeConstants.*;
 
 /**
  * WMS 往来企业 Service 实现类
@@ -62,6 +64,16 @@ public class WmsMerchantServiceImpl implements WmsMerchantService {
         WmsMerchantDO merchant = merchantMapper.selectById(id);
         if (merchant == null) {
             throw exception(MERCHANT_NOT_EXISTS);
+        }
+        return merchant;
+    }
+
+    @Override
+    public WmsMerchantDO validateSupplierMerchantExists(Long id) {
+        WmsMerchantDO merchant = validateMerchantExists(id);
+        if (ObjectUtil.notEqual(merchant.getType(), WmsMerchantTypeEnum.SUPPLIER.getType())
+                && ObjectUtil.notEqual(merchant.getType(), WmsMerchantTypeEnum.CUSTOMER_SUPPLIER.getType())) {
+            throw exception(MERCHANT_NOT_SUPPLIER);
         }
         return merchant;
     }

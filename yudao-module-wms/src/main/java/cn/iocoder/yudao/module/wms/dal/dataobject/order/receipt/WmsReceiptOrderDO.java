@@ -45,7 +45,7 @@ public class WmsReceiptOrderDO extends BaseDO {
     /**
      * 入库状态
      *
-     * 字典 {@link DictTypeConstants#RECEIPT_ORDER_STATUS}
+     * 字典 {@link DictTypeConstants#ORDER_STATUS}
      */
     private Integer status;
     /**

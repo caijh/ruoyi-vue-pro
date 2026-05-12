@@ -2,7 +2,7 @@ package cn.iocoder.yudao.module.wms.controller.admin.order.receipt.vo.order;
 
 import cn.iocoder.yudao.framework.common.pojo.PageParam;
 import cn.iocoder.yudao.framework.common.validation.InEnum;
-import cn.iocoder.yudao.module.wms.enums.order.WmsReceiptOrderStatusEnum;
+import cn.iocoder.yudao.module.wms.enums.order.WmsOrderStatusEnum;
 import cn.iocoder.yudao.module.wms.enums.order.WmsReceiptOrderTypeEnum;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
@@ -25,7 +25,7 @@ public class WmsReceiptOrderPageReqVO extends PageParam {
     private String no;
 
     @Schema(description = "单据状态", example = "0")
-    @InEnum(WmsReceiptOrderStatusEnum.class)
+    @InEnum(WmsOrderStatusEnum.class)
     private Integer status;
 
     @Schema(description = "仓库编号", example = "1024")

@@ -1,10 +1,11 @@
 package cn.iocoder.yudao.module.wms.service.md.warehouse;
 
 import cn.hutool.core.collection.CollUtil;
-import cn.hutool.core.util.ObjUtil;
+import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.iocoder.yudao.framework.common.pojo.PageResult;
 import cn.iocoder.yudao.framework.common.util.object.BeanUtils;
+import cn.iocoder.yudao.framework.common.util.object.ObjectUtils;
 import cn.iocoder.yudao.module.wms.controller.admin.md.warehouse.vo.area.WmsWarehouseAreaPageReqVO;
 import cn.iocoder.yudao.module.wms.controller.admin.md.warehouse.vo.area.WmsWarehouseAreaSaveReqVO;
 import cn.iocoder.yudao.module.wms.dal.dataobject.md.warehouse.WmsWarehouseAreaDO;
@@ -74,7 +75,7 @@ public class WmsWarehouseAreaServiceImpl implements WmsWarehouseAreaService {
         if (area == null) {
             return;
         }
-        if (ObjUtil.notEqual(area.getId(), id)) {
+        if (ObjectUtil.notEqual(area.getId(), id)) {
             throw exception(WAREHOUSE_AREA_NAME_DUPLICATE);
         }
     }
@@ -87,7 +88,7 @@ public class WmsWarehouseAreaServiceImpl implements WmsWarehouseAreaService {
         if (area == null) {
             return;
         }
-        if (ObjUtil.notEqual(area.getId(), id)) {
+        if (ObjectUtil.notEqual(area.getId(), id)) {
             throw exception(WAREHOUSE_AREA_CODE_DUPLICATE);
         }
     }
@@ -110,6 +111,21 @@ public class WmsWarehouseAreaServiceImpl implements WmsWarehouseAreaService {
             throw exception(WAREHOUSE_AREA_NOT_EXISTS);
         }
         return area;
+    }
+
+    @Override
+    public Long validateAndNormalizeWarehouseAreaId(Long id, Long warehouseId) {
+        if (!wmsProperties.isAreaEnabled()) {
+            return WmsWarehouseAreaDO.ID_EMPTY;
+        }
+        if (ObjectUtils.equalsAny(id, null, WmsWarehouseAreaDO.ID_EMPTY)) {
+            return WmsWarehouseAreaDO.ID_EMPTY;
+        }
+        WmsWarehouseAreaDO area = validateWarehouseAreaExists(id);
+        if (ObjectUtil.notEqual(area.getWarehouseId(), warehouseId)) {
+            throw exception(WAREHOUSE_AREA_NOT_MATCH_WAREHOUSE);
+        }
+        return id;
     }
 
     @Override

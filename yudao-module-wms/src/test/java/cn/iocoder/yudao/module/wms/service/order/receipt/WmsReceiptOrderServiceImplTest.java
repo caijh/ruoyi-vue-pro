@@ -6,7 +6,7 @@ import cn.iocoder.yudao.module.wms.dal.dataobject.order.receipt.WmsReceiptOrderD
 import cn.iocoder.yudao.module.wms.dal.mysql.order.receipt.WmsReceiptOrderDetailMapper;
 import cn.iocoder.yudao.module.wms.dal.mysql.order.receipt.WmsReceiptOrderMapper;
 import cn.iocoder.yudao.module.wms.enums.inventory.WmsInventoryOrderTypeEnum;
-import cn.iocoder.yudao.module.wms.enums.order.WmsReceiptOrderStatusEnum;
+import cn.iocoder.yudao.module.wms.enums.order.WmsOrderStatusEnum;
 import cn.iocoder.yudao.module.wms.enums.order.WmsReceiptOrderTypeEnum;
 import cn.iocoder.yudao.module.wms.framework.config.WmsProperties;
 import cn.iocoder.yudao.module.wms.service.inventory.WmsInventoryService;
@@ -23,6 +23,9 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 import java.math.BigDecimal;
 
+import static cn.iocoder.yudao.framework.test.core.util.AssertUtils.assertServiceException;
+import static cn.iocoder.yudao.module.wms.enums.ErrorCodeConstants.RECEIPT_ORDER_AREA_REQUIRED;
+import static cn.iocoder.yudao.module.wms.enums.ErrorCodeConstants.RECEIPT_ORDER_DETAIL_REQUIRED;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
@@ -58,7 +61,7 @@ public class WmsReceiptOrderServiceImplTest extends BaseDbUnitTest {
         Long skuId = 200L;
         WmsReceiptOrderDO order = createReceiptOrder(warehouseId);
         receiptOrderMapper.insert(order);
-        receiptOrderDetailMapper.insert(createReceiptOrderDetail(order.getId(), skuId, warehouseId));
+        receiptOrderDetailMapper.insert(createReceiptOrderDetail(order.getId(), skuId, warehouseId, 300L));
 
         // 调用
         receiptOrderService.completeReceiptOrder(order.getId());
@@ -66,7 +69,7 @@ public class WmsReceiptOrderServiceImplTest extends BaseDbUnitTest {
         // 断言：入库单
         WmsReceiptOrderDO dbOrder = receiptOrderMapper.selectById(order.getId());
         assertNotNull(dbOrder);
-        assertEquals(WmsReceiptOrderStatusEnum.COMPLETED.getStatus(), dbOrder.getStatus());
+        assertEquals(WmsOrderStatusEnum.FINISHED.getStatus(), dbOrder.getStatus());
         // 断言：库存变更
         ArgumentCaptor<WmsInventoryChangeReqDTO> captor = ArgumentCaptor.forClass(WmsInventoryChangeReqDTO.class);
         verify(inventoryService).changeInventory(captor.capture());
@@ -81,6 +84,31 @@ public class WmsReceiptOrderServiceImplTest extends BaseDbUnitTest {
     }
 
     @Test
+    public void testCompleteReceiptOrder_detailRequired() {
+        // mock 数据
+        WmsReceiptOrderDO order = createReceiptOrder(100L);
+        receiptOrderMapper.insert(order);
+
+        // 调用，并断言
+        assertServiceException(() -> receiptOrderService.completeReceiptOrder(order.getId()),
+                RECEIPT_ORDER_DETAIL_REQUIRED);
+        verify(inventoryService, never()).changeInventory(any());
+    }
+
+    @Test
+    public void testCompleteReceiptOrder_areaRequired() {
+        // mock 数据
+        WmsReceiptOrderDO order = createReceiptOrder(100L);
+        receiptOrderMapper.insert(order);
+        receiptOrderDetailMapper.insert(createReceiptOrderDetail(order.getId(), 200L, 100L, 0L));
+
+        // 调用，并断言
+        assertServiceException(() -> receiptOrderService.completeReceiptOrder(order.getId()),
+                RECEIPT_ORDER_AREA_REQUIRED);
+        verify(inventoryService, never()).changeInventory(any());
+    }
+
+    @Test
     public void testCancelReceiptOrder_success() {
         // mock 数据
         WmsReceiptOrderDO order = createReceiptOrder(100L);
@@ -92,7 +120,7 @@ public class WmsReceiptOrderServiceImplTest extends BaseDbUnitTest {
         // 断言
         WmsReceiptOrderDO dbOrder = receiptOrderMapper.selectById(order.getId());
         assertNotNull(dbOrder);
-        assertEquals(WmsReceiptOrderStatusEnum.CANCELED.getStatus(), dbOrder.getStatus());
+        assertEquals(WmsOrderStatusEnum.CANCELED.getStatus(), dbOrder.getStatus());
         verify(inventoryService, never()).changeInventory(any());
     }
 
@@ -100,19 +128,20 @@ public class WmsReceiptOrderServiceImplTest extends BaseDbUnitTest {
         return new WmsReceiptOrderDO()
                 .setNo("RK202605120001")
                 .setType(WmsReceiptOrderTypeEnum.PURCHASE.getType())
-                .setStatus(WmsReceiptOrderStatusEnum.PENDING.getStatus())
+                .setStatus(WmsOrderStatusEnum.PREPARE.getStatus())
                 .setWarehouseId(warehouseId)
                 .setAreaId(0L)
                 .setTotalQuantity(new BigDecimal("2.00"))
                 .setTotalAmount(new BigDecimal("20.00"));
     }
 
-    private static WmsReceiptOrderDetailDO createReceiptOrderDetail(Long orderId, Long skuId, Long warehouseId) {
+    private static WmsReceiptOrderDetailDO createReceiptOrderDetail(Long orderId, Long skuId, Long warehouseId,
+                                                                    Long areaId) {
         return WmsReceiptOrderDetailDO.builder()
                 .orderId(orderId)
                 .skuId(skuId)
                 .warehouseId(warehouseId)
-                .areaId(0L)
+                .areaId(areaId)
                 .quantity(new BigDecimal("2.00"))
                 .amount(new BigDecimal("20.00"))
                 .build();
