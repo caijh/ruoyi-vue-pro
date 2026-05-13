@@ -30,11 +30,6 @@ public class WmsShipmentOrderDetailDO extends BaseDO {
      */
     @TableId
     private Long id;
-    /**
-     * 备注
-     */
-    private String remark;
-
     // ========= 单据商品字段 =========
 
     /**
