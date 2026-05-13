@@ -40,12 +40,6 @@ public class WmsInventoryHistoryRespVO {
     private BigDecimal beforeQuantity;
     @Schema(description = "变化后库存数量", example = "100.00")
     private BigDecimal afterQuantity;
-    @Schema(description = "批号", example = "BATCH001")
-    private String batchNo;
-    @Schema(description = "生产日期")
-    private LocalDateTime productionDate;
-    @Schema(description = "过期日期")
-    private LocalDateTime expirationDate;
     @Schema(description = "金额", example = "1000.00")
     private BigDecimal amount;
     @Schema(description = "备注", example = "备注")

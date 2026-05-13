@@ -9,7 +9,6 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.*;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 
 /**
  * WMS 移库单明细 DO
@@ -68,21 +67,6 @@ public class WmsMovementOrderDetailDO extends BaseDO {
      * 关联 {@link WmsWarehouseDO#getId()}
      */
     private Long targetWarehouseId;
-
-    // ========= 批次效期字段 =========
-
-    /**
-     * 批号
-     */
-    private String batchNo;
-    /**
-     * 生产日期
-     */
-    private LocalDateTime productionDate;
-    /**
-     * 过期日期
-     */
-    private LocalDateTime expirationDate;
 
     // ========= 汇总金额字段 =========
 

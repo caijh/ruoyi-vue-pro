@@ -23,16 +23,6 @@ public class WmsCheckOrderDetailSaveReqVO {
     @Schema(description = "库存编号", example = "1024")
     private Long inventoryId;
 
-    @Schema(description = "批号", example = "B202605110001")
-    @Size(max = 64, message = "批号长度不能超过 64 个字符")
-    private String batchNo;
-
-    @Schema(description = "生产日期")
-    private LocalDateTime productionDate;
-
-    @Schema(description = "过期日期")
-    private LocalDateTime expirationDate;
-
     @Schema(description = "入库时间")
     private LocalDateTime receiptTime;
 

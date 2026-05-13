@@ -67,20 +67,6 @@ public class WmsCheckOrderDetailDO extends BaseDO {
      */
     private Long inventoryId;
 
-    // ========= 批次效期字段 =========
-
-    /**
-     * 批号
-     */
-    private String batchNo;
-    /**
-     * 生产日期
-     */
-    private LocalDateTime productionDate;
-    /**
-     * 过期日期
-     */
-    private LocalDateTime expirationDate;
     /**
      * 入库时间
      */

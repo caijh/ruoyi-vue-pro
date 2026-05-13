@@ -175,9 +175,7 @@ public class WmsMovementOrderServiceImpl implements WmsMovementOrderService {
     }
 
     /**
-     * 移动移库单对应库存。
-     *
-     * 移库会生成两条库存变更：来源仓库扣减库存，目标仓库增加库存，批次字段随库存流水记录。
+     * 移动移库单对应库存
      *
      * @param order 移库单
      * @param details 移库单明细列表

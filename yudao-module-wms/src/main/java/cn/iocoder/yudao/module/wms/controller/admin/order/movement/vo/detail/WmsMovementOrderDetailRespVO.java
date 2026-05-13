@@ -49,15 +49,6 @@ public class WmsMovementOrderDetailRespVO {
     @Schema(description = "目标仓库名称", example = "上海仓")
     private String targetWarehouseName;
 
-    @Schema(description = "批号", example = "B202605110001")
-    private String batchNo;
-
-    @Schema(description = "生产日期")
-    private LocalDateTime productionDate;
-
-    @Schema(description = "过期日期")
-    private LocalDateTime expirationDate;
-
     @Schema(description = "移库数量", requiredMode = Schema.RequiredMode.REQUIRED, example = "100.00")
     private BigDecimal quantity;
 

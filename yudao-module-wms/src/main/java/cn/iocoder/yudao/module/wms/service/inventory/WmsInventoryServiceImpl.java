@@ -121,50 +121,50 @@ public class WmsInventoryServiceImpl implements WmsInventoryService {
     }
 
     private List<WmsInventoryDO> getOrCreateInventoryList(List<WmsInventoryChangeReqDTO.Item> items) {
-        // 先按库存维度在内存去重，避免同一批明细重复查询或重复补行。
-        List<WmsInventoryDO> inventoryKeyList = new ArrayList<>(items.size());
+        // 1.1 先按库存维度在内存去重，避免同一批明细重复查询或重复补行
+        List<WmsInventoryDO> inventoryDimensions = new ArrayList<>(items.size());
         for (WmsInventoryChangeReqDTO.Item item : items) {
-            if (findInventory(inventoryKeyList, item) == null) {
-                inventoryKeyList.add(new WmsInventoryDO().setSkuId(item.getSkuId())
+            if (findInventory(inventoryDimensions, item) == null) {
+                inventoryDimensions.add(new WmsInventoryDO().setSkuId(item.getSkuId())
                         .setWarehouseId(item.getWarehouseId()));
             }
         }
+        // 1.2 批量查询已存在的库存行（这里不加锁，后续统一按库存 ID 批量加锁）
+        List<WmsInventoryDO> inventories = inventoryMapper.selectListByKeys(inventoryDimensions);
 
-        // 批量查询已存在的库存行；这里不加锁，后续统一按库存 ID 批量加锁。
-        List<WmsInventoryDO> inventories = inventoryMapper.selectListByKeys(inventoryKeyList);
-
-        // 对比库存维度，找出数据库中还不存在的库存行，再按唯一索引兜底补齐。
-        List<WmsInventoryDO> missingInventoryList = new ArrayList<>(inventoryKeyList.size());
-        for (WmsInventoryDO inventoryKey : inventoryKeyList) {
-            if (findInventory(inventories, inventoryKey) == null) {
-                missingInventoryList.add(inventoryKey);
+        // 2.1 对比库存维度，找出数据库中还不存在的库存行
+        List<WmsInventoryDO> missingInventories = new ArrayList<>(inventoryDimensions.size());
+        for (WmsInventoryDO inventoryDimension : inventoryDimensions) {
+            if (findInventory(inventories, inventoryDimension) == null) {
+                missingInventories.add(inventoryDimension);
             }
         }
-        if (CollUtil.isEmpty(missingInventoryList)) {
+        // 2.2 如果库存行都已存在，直接返回待加锁库存列表
+        if (CollUtil.isEmpty(missingInventories)) {
             return inventories;
         }
-
-        inventories.addAll(createMissingInventoryList(missingInventoryList));
+        // 2.3 对缺失库存行执行创建；并发冲突时，内部会按唯一索引回查已创建的库存行
+        inventories.addAll(createMissingInventoryList(missingInventories));
         return inventories;
     }
 
-    private List<WmsInventoryDO> createMissingInventoryList(List<WmsInventoryDO> missingInventoryList) {
+    private List<WmsInventoryDO> createMissingInventoryList(List<WmsInventoryDO> missingInventories) {
         // 优先批量插入缺失库存行；并发唯一键冲突时，再逐个插入并回查冲突行。
-        List<WmsInventoryDO> newInventoryList = convertList(missingInventoryList, missingInventory ->
+        List<WmsInventoryDO> newInventories = convertList(missingInventories, missingInventory ->
                 new WmsInventoryDO().setSkuId(missingInventory.getSkuId()).setWarehouseId(missingInventory.getWarehouseId())
                         .setQuantity(BigDecimal.ZERO));
         try {
-            inventoryMapper.insertBatch(newInventoryList);
-            return newInventoryList;
+            inventoryMapper.insertBatch(newInventories);
+            return newInventories;
         } catch (DuplicateKeyException ex) {
             // 并发事务可能已经补齐部分库存行，降级为逐个插入并回查唯一键冲突的行。
-            log.warn("[createMissingInventoryList][missingInventoryList({}) 批量插入库存行冲突，降级为逐个插入]",
-                    missingInventoryList, ex);
+            log.warn("[createMissingInventoryList][missingInventories({}) 批量插入库存行冲突，降级为逐个插入]",
+                    missingInventories, ex);
         }
 
         // 批量插入失败后逐条补齐；单条唯一键冲突时，回查并使用并发事务创建的库存行。
-        List<WmsInventoryDO> resultList = new ArrayList<>(missingInventoryList.size());
-        for (WmsInventoryDO missingInventory : missingInventoryList) {
+        List<WmsInventoryDO> createdInventories = new ArrayList<>(missingInventories.size());
+        for (WmsInventoryDO missingInventory : missingInventories) {
             WmsInventoryDO inventory = new WmsInventoryDO().setSkuId(missingInventory.getSkuId())
                     .setWarehouseId(missingInventory.getWarehouseId())
                     .setQuantity(BigDecimal.ZERO);
@@ -178,9 +178,9 @@ public class WmsInventoryServiceImpl implements WmsInventoryService {
                     throw ex;
                 }
             }
-            resultList.add(inventory);
+            createdInventories.add(inventory);
         }
-        return resultList;
+        return createdInventories;
     }
 
     private WmsInventoryHistoryDO buildInventoryHistory(WmsInventoryChangeReqDTO reqDTO,
@@ -189,8 +189,6 @@ public class WmsInventoryServiceImpl implements WmsInventoryService {
         return new WmsInventoryHistoryDO()
                 .setWarehouseId(item.getWarehouseId()).setSkuId(item.getSkuId())
                 .setQuantity(item.getQuantity()).setBeforeQuantity(result.get(0)).setAfterQuantity(result.get(1))
-                .setBatchNo(item.getBatchNo()).setProductionDate(item.getProductionDate())
-                .setExpirationDate(item.getExpirationDate())
                 .setAmount(item.getAmount()).setRemark(item.getRemark())
                 .setOrderId(reqDTO.getOrderId()).setOrderNo(reqDTO.getOrderNo()).setOrderType(reqDTO.getOrderType());
     }

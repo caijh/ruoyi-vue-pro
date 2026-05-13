@@ -30,6 +30,7 @@ import static cn.iocoder.yudao.framework.test.core.util.AssertUtils.assertServic
 import static cn.iocoder.yudao.module.wms.enums.ErrorCodeConstants.INVENTORY_QUANTITY_NOT_ENOUGH;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.Mockito.when;
 
 @Import({WmsInventoryServiceImpl.class, WmsInventoryHistoryServiceImpl.class})
@@ -230,6 +231,10 @@ public class WmsInventoryServiceImplTest extends BaseDbUnitTest {
         // 调用，并断言
         assertServiceException(() -> inventoryService.changeInventory(reqDTO), INVENTORY_QUANTITY_NOT_ENOUGH,
                 item.getName(), sku.getName(), 100L, new BigDecimal("2.000000"), new BigDecimal("-3.00"));
+        WmsInventoryDO inventory = inventoryMapper.selectBySkuIdAndWarehouseId(sku.getId(), 100L);
+        assertNotNull(inventory);
+        assertEquals(0, new BigDecimal("2.00").compareTo(inventory.getQuantity()));
+        assertEquals(0L, inventoryHistoryMapper.selectCount());
     }
 
     @Test
@@ -243,7 +248,32 @@ public class WmsInventoryServiceImplTest extends BaseDbUnitTest {
         // 调用，并断言
         assertServiceException(() -> inventoryService.changeInventory(reqDTO), INVENTORY_QUANTITY_NOT_ENOUGH,
                 item.getName(), sku.getName(), 100L, BigDecimal.ZERO.setScale(6), new BigDecimal("-3.00"));
-        assertEquals(0, inventoryMapper.selectCount());
+        assertEquals(0L, inventoryMapper.selectCount());
+        assertEquals(0L, inventoryHistoryMapper.selectCount());
+    }
+
+    @Test
+    public void testChangeInventory_quantityNotEnoughRollbackCreatedInventories() {
+        // mock 数据
+        WmsItemDO item = createItem("ITEM-001", "红富士苹果");
+        WmsItemSkuDO sku = createSku(item.getId(), "SKU-001", "10kg 箱装");
+        WmsInventoryChangeReqDTO reqDTO = createChangeReq(sku.getId(), 100L, "5.00");
+        List<WmsInventoryChangeReqDTO.Item> items = new ArrayList<>(reqDTO.getItems());
+        items.add(new WmsInventoryChangeReqDTO.Item()
+                .setSkuId(sku.getId())
+                .setWarehouseId(200L)
+                .setQuantity(new BigDecimal("-1.00"))
+                .setAmount(new BigDecimal("20.00"))
+                .setRemark("测试出库"));
+        reqDTO.setItems(items);
+        mockItemSkuAndItem(item, sku);
+
+        // 调用，并断言：第二条明细库存不足，事务回滚前面补齐的库存行
+        assertServiceException(() -> inventoryService.changeInventory(reqDTO), INVENTORY_QUANTITY_NOT_ENOUGH,
+                item.getName(), sku.getName(), 200L, BigDecimal.ZERO.setScale(6), new BigDecimal("-1.00"));
+        assertNull(inventoryMapper.selectBySkuIdAndWarehouseId(sku.getId(), 100L));
+        assertNull(inventoryMapper.selectBySkuIdAndWarehouseId(sku.getId(), 200L));
+        assertEquals(0L, inventoryHistoryMapper.selectCount());
     }
 
     @Test

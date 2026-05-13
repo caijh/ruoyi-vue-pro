@@ -43,15 +43,6 @@ public class WmsReceiptOrderDetailRespVO {
     @Schema(description = "仓库名称", example = "北京仓")
     private String warehouseName;
 
-    @Schema(description = "批号", example = "B202605110001")
-    private String batchNo;
-
-    @Schema(description = "生产日期")
-    private LocalDateTime productionDate;
-
-    @Schema(description = "过期日期")
-    private LocalDateTime expirationDate;
-
     @Schema(description = "入库数量", requiredMode = Schema.RequiredMode.REQUIRED, example = "100.00")
     private BigDecimal quantity;
 

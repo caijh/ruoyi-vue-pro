@@ -1,5 +1,6 @@
 package cn.iocoder.yudao.module.wms.service.order.check;
 
+import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.ObjectUtil;
 import cn.iocoder.yudao.framework.common.pojo.PageResult;
 import cn.iocoder.yudao.framework.common.util.object.BeanUtils;
@@ -171,9 +172,7 @@ public class WmsCheckOrderServiceImpl implements WmsCheckOrderService {
     }
 
     /**
-     * 盘点盘库单对应库存。
-     *
-     * 盘库只对盈亏数量生成库存变更：实盘数量大于账面数量时增加库存，反之扣减库存，批次字段随库存流水记录。
+     * 盘点盘库单对应库存
      *
      * @param order 盘库单
      * @param details 盘库单明细列表
@@ -188,6 +187,9 @@ public class WmsCheckOrderServiceImpl implements WmsCheckOrderService {
             WmsInventoryChangeReqDTO.Item item = BeanUtils.toBean(detail, WmsInventoryChangeReqDTO.Item.class)
                     .setQuantity(differenceQuantity);
             items.add(item);
+        }
+        if (CollUtil.isEmpty(items)) {
+            return;
         }
         inventoryService.changeInventory(new WmsInventoryChangeReqDTO()
                 .setOrderId(order.getId()).setOrderNo(order.getNo())

@@ -184,7 +184,7 @@ public class WmsReceiptOrderServiceImpl implements WmsReceiptOrderService {
     /**
      * 增加入库单对应库存。
      *
-     * 入库在库存变更模型中使用正数数量，批次字段随库存流水记录。
+     * 入库在库存变更模型中使用正数数量。
      *
      * @param order 入库单
      * @param details 入库单明细列表

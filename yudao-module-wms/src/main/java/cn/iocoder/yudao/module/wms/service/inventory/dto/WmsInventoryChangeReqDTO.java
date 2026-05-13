@@ -4,7 +4,6 @@ import cn.iocoder.yudao.module.wms.enums.inventory.WmsInventoryOrderTypeEnum;
 import lombok.Data;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -53,21 +52,6 @@ public class WmsInventoryChangeReqDTO {
          * 变更数量
          */
         private BigDecimal quantity;
-
-        // ========= 批次效期相关字段 =========
-
-        /**
-         * 批号
-         */
-        private String batchNo;
-        /**
-         * 生产日期
-         */
-        private LocalDateTime productionDate;
-        /**
-         * 过期日期
-         */
-        private LocalDateTime expirationDate;
 
         // ========= 金额备注相关字段 =========
 

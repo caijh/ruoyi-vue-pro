@@ -46,15 +46,6 @@ public class WmsCheckOrderDetailRespVO {
     @Schema(description = "库存编号", example = "1024")
     private Long inventoryId;
 
-    @Schema(description = "批号", example = "B202605110001")
-    private String batchNo;
-
-    @Schema(description = "生产日期")
-    private LocalDateTime productionDate;
-
-    @Schema(description = "过期日期")
-    private LocalDateTime expirationDate;
-
     @Schema(description = "入库时间")
     private LocalDateTime receiptTime;
 

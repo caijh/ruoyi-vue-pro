@@ -10,7 +10,6 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.*;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 
 /**
  * WMS 库存流水 DO
@@ -59,21 +58,6 @@ public class WmsInventoryHistoryDO extends BaseDO {
      * 变化后库存数量
      */
     private BigDecimal afterQuantity;
-
-    // ========= 批次效期相关字段 =========
-
-    /**
-     * 批号
-     */
-    private String batchNo;
-    /**
-     * 生产日期
-     */
-    private LocalDateTime productionDate;
-    /**
-     * 过期日期
-     */
-    private LocalDateTime expirationDate;
 
     // ========= 金额备注相关字段 =========
 
