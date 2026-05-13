@@ -31,15 +31,9 @@ public class WmsMovementOrderSaveReqVO {
     @NotNull(message = "来源仓库不能为空")
     private Long sourceWarehouseId;
 
-    @Schema(description = "来源库区编号", example = "1024")
-    private Long sourceAreaId;
-
     @Schema(description = "目标仓库编号", requiredMode = Schema.RequiredMode.REQUIRED, example = "2048")
     @NotNull(message = "目标仓库不能为空")
     private Long targetWarehouseId;
-
-    @Schema(description = "目标库区编号", example = "2048")
-    private Long targetAreaId;
 
     @Schema(description = "移库数量", requiredMode = Schema.RequiredMode.REQUIRED, example = "100.00")
     @NotNull(message = "移库数量不能为空")

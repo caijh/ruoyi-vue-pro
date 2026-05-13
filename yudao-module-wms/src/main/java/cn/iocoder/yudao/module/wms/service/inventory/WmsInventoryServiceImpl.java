@@ -3,7 +3,6 @@ package cn.iocoder.yudao.module.wms.service.inventory;
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.lang.Tuple;
 import cn.hutool.core.util.ObjectUtil;
-import cn.hutool.core.util.StrUtil;
 import cn.iocoder.yudao.framework.common.exception.ServiceException;
 import cn.iocoder.yudao.framework.common.pojo.PageResult;
 import cn.iocoder.yudao.module.wms.controller.admin.inventory.vo.WmsInventoryPageReqVO;
@@ -56,9 +55,6 @@ public class WmsInventoryServiceImpl implements WmsInventoryService {
 
     @Override
     public PageResult<WmsInventoryDO> getInventoryPage(WmsInventoryPageReqVO pageReqVO) {
-        if (StrUtil.equals(WmsInventoryPageReqVO.TYPE_WAREHOUSE, pageReqVO.getType())) {
-            return inventoryMapper.selectPageGroupByWarehouse(pageReqVO);
-        }
         return inventoryMapper.selectPage(pageReqVO);
     }
 
@@ -106,7 +102,7 @@ public class WmsInventoryServiceImpl implements WmsInventoryService {
             WmsInventoryDO inventory = findInventory(inventories, item);
             if (inventory == null) {
                 throw new IllegalStateException("库存行不存在，skuId=" + item.getSkuId()
-                        + ", warehouseId=" + item.getWarehouseId() + ", areaId=" + item.getAreaId());
+                        + ", warehouseId=" + item.getWarehouseId());
             }
             BigDecimal beforeQuantity = inventory.getQuantity();
             BigDecimal afterQuantity = beforeQuantity.add(item.getQuantity());
@@ -130,7 +126,7 @@ public class WmsInventoryServiceImpl implements WmsInventoryService {
         for (WmsInventoryChangeReqDTO.Item item : items) {
             if (findInventory(inventoryKeyList, item) == null) {
                 inventoryKeyList.add(new WmsInventoryDO().setSkuId(item.getSkuId())
-                        .setWarehouseId(item.getWarehouseId()).setAreaId(item.getAreaId()));
+                        .setWarehouseId(item.getWarehouseId()));
             }
         }
 
@@ -156,7 +152,7 @@ public class WmsInventoryServiceImpl implements WmsInventoryService {
         // 优先批量插入缺失库存行；并发唯一键冲突时，再逐个插入并回查冲突行。
         List<WmsInventoryDO> newInventoryList = convertList(missingInventoryList, missingInventory ->
                 new WmsInventoryDO().setSkuId(missingInventory.getSkuId()).setWarehouseId(missingInventory.getWarehouseId())
-                        .setAreaId(missingInventory.getAreaId()).setQuantity(BigDecimal.ZERO));
+                        .setQuantity(BigDecimal.ZERO));
         try {
             inventoryMapper.insertBatch(newInventoryList);
             return newInventoryList;
@@ -170,13 +166,13 @@ public class WmsInventoryServiceImpl implements WmsInventoryService {
         List<WmsInventoryDO> resultList = new ArrayList<>(missingInventoryList.size());
         for (WmsInventoryDO missingInventory : missingInventoryList) {
             WmsInventoryDO inventory = new WmsInventoryDO().setSkuId(missingInventory.getSkuId())
-                    .setWarehouseId(missingInventory.getWarehouseId()).setAreaId(missingInventory.getAreaId())
+                    .setWarehouseId(missingInventory.getWarehouseId())
                     .setQuantity(BigDecimal.ZERO);
             try {
                 inventoryMapper.insert(inventory);
             } catch (DuplicateKeyException ex) {
-                inventory = inventoryMapper.selectBySkuIdAndWarehouseIdAndAreaId(
-                        missingInventory.getSkuId(), missingInventory.getWarehouseId(), missingInventory.getAreaId());
+                inventory = inventoryMapper.selectBySkuIdAndWarehouseId(
+                        missingInventory.getSkuId(), missingInventory.getWarehouseId());
                 log.warn("[createMissingInventoryList][missingInventory({}) 插入库存行冲突，回查已有库存行]", missingInventory, ex);
                 if (inventory == null) {
                     throw ex;
@@ -191,7 +187,7 @@ public class WmsInventoryServiceImpl implements WmsInventoryService {
                                                        WmsInventoryChangeReqDTO.Item item,
                                                        Tuple result) {
         return new WmsInventoryHistoryDO()
-                .setWarehouseId(item.getWarehouseId()).setAreaId(item.getAreaId()).setSkuId(item.getSkuId())
+                .setWarehouseId(item.getWarehouseId()).setSkuId(item.getSkuId())
                 .setQuantity(item.getQuantity()).setBeforeQuantity(result.get(0)).setAfterQuantity(result.get(1))
                 .setBatchNo(item.getBatchNo()).setProductionDate(item.getProductionDate())
                 .setExpirationDate(item.getExpirationDate())
@@ -209,14 +205,12 @@ public class WmsInventoryServiceImpl implements WmsInventoryService {
 
     private static boolean isSameInventory(WmsInventoryDO inventory, WmsInventoryChangeReqDTO.Item item) {
         return ObjectUtil.equal(inventory.getSkuId(), item.getSkuId())
-                && ObjectUtil.equal(inventory.getWarehouseId(), item.getWarehouseId())
-                && ObjectUtil.equal(inventory.getAreaId(), item.getAreaId());
+                && ObjectUtil.equal(inventory.getWarehouseId(), item.getWarehouseId());
     }
 
     private static boolean isSameInventory(WmsInventoryDO inventory, WmsInventoryDO key) {
         return ObjectUtil.equal(inventory.getSkuId(), key.getSkuId())
-                && ObjectUtil.equal(inventory.getWarehouseId(), key.getWarehouseId())
-                && ObjectUtil.equal(inventory.getAreaId(), key.getAreaId());
+                && ObjectUtil.equal(inventory.getWarehouseId(), key.getWarehouseId());
     }
 
     private ServiceException buildInventoryQuantityNotEnoughException(WmsInventoryChangeReqDTO.Item item,
@@ -224,7 +218,7 @@ public class WmsInventoryServiceImpl implements WmsInventoryService {
         WmsItemSkuDO skuDO = itemSkuService.validateItemSkuExists(item.getSkuId());
         WmsItemDO itemDO = itemService.validateItemExists(skuDO.getItemId());
         return exception(INVENTORY_QUANTITY_NOT_ENOUGH, itemDO.getName(), skuDO.getName(),
-                item.getWarehouseId(), item.getAreaId(), beforeQuantity, item.getQuantity());
+                item.getWarehouseId(), beforeQuantity, item.getQuantity());
     }
 
 }

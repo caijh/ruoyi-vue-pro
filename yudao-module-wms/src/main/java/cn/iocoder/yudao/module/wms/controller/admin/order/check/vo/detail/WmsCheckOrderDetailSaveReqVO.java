@@ -20,9 +20,6 @@ public class WmsCheckOrderDetailSaveReqVO {
     @NotNull(message = "SKU 不能为空")
     private Long skuId;
 
-    @Schema(description = "库区编号", example = "1024")
-    private Long areaId;
-
     @Schema(description = "库存编号", example = "1024")
     private Long inventoryId;
 

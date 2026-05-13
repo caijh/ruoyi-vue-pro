@@ -68,12 +68,4 @@ public interface WmsReceiptOrderDetailService {
      */
     long getReceiptOrderDetailCountBySkuId(Long skuId);
 
-    /**
-     * 获得指定库区的入库单明细数量
-     *
-     * @param areaId 库区编号
-     * @return 入库单明细数量
-     */
-    long getReceiptOrderDetailCountByAreaId(Long areaId);
-
 }

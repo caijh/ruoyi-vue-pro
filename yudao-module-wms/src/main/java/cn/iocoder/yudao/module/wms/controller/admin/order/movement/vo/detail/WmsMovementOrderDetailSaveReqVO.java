@@ -20,12 +20,6 @@ public class WmsMovementOrderDetailSaveReqVO {
     @NotNull(message = "SKU 不能为空")
     private Long skuId;
 
-    @Schema(description = "来源库区编号", example = "1024")
-    private Long sourceAreaId;
-
-    @Schema(description = "目标库区编号", example = "2048")
-    private Long targetAreaId;
-
     @Schema(description = "批号", example = "B202605110001")
     @Size(max = 64, message = "批号长度不能超过 64 个字符")
     private String batchNo;

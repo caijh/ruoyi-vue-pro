@@ -8,9 +8,7 @@ import cn.iocoder.yudao.framework.common.util.object.BeanUtils;
 import cn.iocoder.yudao.module.wms.controller.admin.md.warehouse.vo.WmsWarehousePageReqVO;
 import cn.iocoder.yudao.module.wms.controller.admin.md.warehouse.vo.WmsWarehouseSaveReqVO;
 import cn.iocoder.yudao.module.wms.dal.dataobject.md.warehouse.WmsWarehouseDO;
-import cn.iocoder.yudao.module.wms.dal.mysql.md.warehouse.WmsWarehouseAreaMapper;
 import cn.iocoder.yudao.module.wms.dal.mysql.md.warehouse.WmsWarehouseMapper;
-import cn.iocoder.yudao.module.wms.framework.config.WmsProperties;
 import cn.iocoder.yudao.module.wms.service.order.check.WmsCheckOrderService;
 import cn.iocoder.yudao.module.wms.service.order.movement.WmsMovementOrderService;
 import cn.iocoder.yudao.module.wms.service.order.receipt.WmsReceiptOrderService;
@@ -39,10 +37,6 @@ public class WmsWarehouseServiceImpl implements WmsWarehouseService {
 
     @Resource
     private WmsWarehouseMapper warehouseMapper;
-    @Resource
-    private WmsWarehouseAreaMapper warehouseAreaMapper;
-    @Resource
-    private WmsProperties wmsProperties;
     @Resource
     @Lazy // 延迟加载，避免循环依赖
     private WmsReceiptOrderService receiptOrderService;
@@ -113,10 +107,6 @@ public class WmsWarehouseServiceImpl implements WmsWarehouseService {
         validateWarehouseExists(id);
         // 校验未被单据使用
         validateWarehouseUnused(id);
-        // 库区模式下，存在库区时不允许删除仓库
-        if (wmsProperties.isAreaEnabled() && warehouseAreaMapper.selectCountByWarehouseId(id) > 0) {
-            throw exception(WAREHOUSE_HAS_AREA);
-        }
 
         // 删除
         warehouseMapper.deleteById(id);

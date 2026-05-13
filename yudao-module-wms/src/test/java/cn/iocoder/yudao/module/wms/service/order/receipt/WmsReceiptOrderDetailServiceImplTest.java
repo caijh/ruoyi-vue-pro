@@ -3,14 +3,10 @@ package cn.iocoder.yudao.module.wms.service.order.receipt;
 import cn.iocoder.yudao.framework.test.core.ut.BaseDbUnitTest;
 import cn.iocoder.yudao.module.wms.controller.admin.order.receipt.vo.detail.WmsReceiptOrderDetailSaveReqVO;
 import cn.iocoder.yudao.module.wms.controller.admin.order.receipt.vo.order.WmsReceiptOrderSaveReqVO;
-import cn.iocoder.yudao.module.wms.dal.dataobject.md.warehouse.WmsWarehouseAreaDO;
 import cn.iocoder.yudao.module.wms.dal.dataobject.order.receipt.WmsReceiptOrderDetailDO;
 import cn.iocoder.yudao.module.wms.dal.mysql.order.receipt.WmsReceiptOrderDetailMapper;
-import cn.iocoder.yudao.module.wms.framework.config.WmsProperties;
 import cn.iocoder.yudao.module.wms.service.md.item.WmsItemSkuService;
-import cn.iocoder.yudao.module.wms.service.md.warehouse.WmsWarehouseAreaService;
 import jakarta.annotation.Resource;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
@@ -24,10 +20,8 @@ import static cn.iocoder.yudao.module.wms.enums.ErrorCodeConstants.RECEIPT_ORDER
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
 
-@Import({WmsReceiptOrderDetailServiceImpl.class, WmsProperties.class})
+@Import(WmsReceiptOrderDetailServiceImpl.class)
 public class WmsReceiptOrderDetailServiceImplTest extends BaseDbUnitTest {
 
     @Resource
@@ -38,14 +32,6 @@ public class WmsReceiptOrderDetailServiceImplTest extends BaseDbUnitTest {
 
     @MockitoBean
     private WmsItemSkuService itemSkuService;
-    @MockitoBean
-    private WmsWarehouseAreaService warehouseAreaService;
-
-    @BeforeEach
-    public void setUp() {
-        when(warehouseAreaService.validateAndNormalizeWarehouseAreaId(any(), any()))
-                .thenReturn(WmsWarehouseAreaDO.ID_EMPTY);
-    }
 
     @Test
     public void testCreateReceiptOrderDetailList_success() {
@@ -129,7 +115,6 @@ public class WmsReceiptOrderDetailServiceImplTest extends BaseDbUnitTest {
     private static WmsReceiptOrderSaveReqVO createReceiptOrderReqVO(WmsReceiptOrderDetailSaveReqVO... details) {
         WmsReceiptOrderSaveReqVO reqVO = new WmsReceiptOrderSaveReqVO();
         reqVO.setWarehouseId(100L);
-        reqVO.setAreaId(0L);
         reqVO.setDetails(Arrays.asList(details));
         return reqVO;
     }
@@ -138,7 +123,6 @@ public class WmsReceiptOrderDetailServiceImplTest extends BaseDbUnitTest {
         WmsReceiptOrderDetailSaveReqVO reqVO = new WmsReceiptOrderDetailSaveReqVO();
         reqVO.setId(id);
         reqVO.setSkuId(skuId);
-        reqVO.setAreaId(0L);
         reqVO.setQuantity(new BigDecimal(quantity));
         reqVO.setAmount(new BigDecimal("100.00"));
         return reqVO;
@@ -149,7 +133,6 @@ public class WmsReceiptOrderDetailServiceImplTest extends BaseDbUnitTest {
                 .orderId(orderId)
                 .skuId(skuId)
                 .warehouseId(100L)
-                .areaId(0L)
                 .quantity(new BigDecimal(quantity))
                 .amount(new BigDecimal("100.00"))
                 .build();

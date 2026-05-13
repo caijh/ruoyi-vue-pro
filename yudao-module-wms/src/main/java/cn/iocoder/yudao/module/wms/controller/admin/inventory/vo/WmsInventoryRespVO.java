@@ -33,10 +33,6 @@ public class WmsInventoryRespVO {
     private Long warehouseId;
     @Schema(description = "仓库名称", example = "成品仓")
     private String warehouseName;
-    @Schema(description = "库区编号", requiredMode = Schema.RequiredMode.REQUIRED, example = "0")
-    private Long areaId;
-    @Schema(description = "库区名称", example = "A 区")
-    private String areaName;
 
     @Schema(description = "库存数量", requiredMode = Schema.RequiredMode.REQUIRED, example = "100.00")
     private BigDecimal quantity;

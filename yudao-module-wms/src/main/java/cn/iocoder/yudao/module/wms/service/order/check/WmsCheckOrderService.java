@@ -73,12 +73,4 @@ public interface WmsCheckOrderService {
      */
     long getCheckOrderCountByWarehouseId(Long warehouseId);
 
-    /**
-     * 获得指定库区的盘库单数量
-     *
-     * @param areaId 库区编号
-     * @return 盘库单数量
-     */
-    long getCheckOrderCountByAreaId(Long areaId);
-
 }

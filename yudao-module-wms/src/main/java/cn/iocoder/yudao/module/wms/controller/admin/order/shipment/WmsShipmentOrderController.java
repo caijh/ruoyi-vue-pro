@@ -18,15 +18,12 @@ import cn.iocoder.yudao.module.wms.controller.admin.order.shipment.vo.order.WmsS
 import cn.iocoder.yudao.module.wms.dal.dataobject.md.item.WmsItemDO;
 import cn.iocoder.yudao.module.wms.dal.dataobject.md.item.WmsItemSkuDO;
 import cn.iocoder.yudao.module.wms.dal.dataobject.md.merchant.WmsMerchantDO;
-import cn.iocoder.yudao.module.wms.dal.dataobject.md.warehouse.WmsWarehouseAreaDO;
 import cn.iocoder.yudao.module.wms.dal.dataobject.md.warehouse.WmsWarehouseDO;
 import cn.iocoder.yudao.module.wms.dal.dataobject.order.shipment.WmsShipmentOrderDO;
 import cn.iocoder.yudao.module.wms.dal.dataobject.order.shipment.WmsShipmentOrderDetailDO;
-import cn.iocoder.yudao.module.wms.framework.config.WmsProperties;
 import cn.iocoder.yudao.module.wms.service.md.item.WmsItemService;
 import cn.iocoder.yudao.module.wms.service.md.item.WmsItemSkuService;
 import cn.iocoder.yudao.module.wms.service.md.merchant.WmsMerchantService;
-import cn.iocoder.yudao.module.wms.service.md.warehouse.WmsWarehouseAreaService;
 import cn.iocoder.yudao.module.wms.service.md.warehouse.WmsWarehouseService;
 import cn.iocoder.yudao.module.wms.service.order.shipment.WmsShipmentOrderDetailService;
 import cn.iocoder.yudao.module.wms.service.order.shipment.WmsShipmentOrderService;
@@ -66,14 +63,9 @@ public class WmsShipmentOrderController {
     @Resource
     private WmsWarehouseService warehouseService;
     @Resource
-    private WmsWarehouseAreaService warehouseAreaService;
-    @Resource
     private WmsItemService itemService;
     @Resource
     private WmsItemSkuService itemSkuService;
-
-    @Resource
-    private WmsProperties wmsProperties;
 
     @Resource
     private AdminUserApi adminUserApi;
@@ -171,19 +163,15 @@ public class WmsShipmentOrderController {
         if (CollUtil.isEmpty(list)) {
             return Collections.emptyList();
         }
-        // 获取相关的商户、仓库、库区、用户等数据
+        // 获取相关的商户、仓库、用户等数据
         Map<Long, WmsMerchantDO> merchantMap = merchantService.getMerchantMap(convertSet(list, WmsShipmentOrderDO::getMerchantId));
         Map<Long, WmsWarehouseDO> warehouseMap = warehouseService.getWarehouseMap(convertSet(list, WmsShipmentOrderDO::getWarehouseId));
-        Map<Long, WmsWarehouseAreaDO> areaMap = wmsProperties.isAreaEnabled()
-                ? warehouseAreaService.getWarehouseAreaMap(convertSet(list, WmsShipmentOrderDO::getAreaId))
-                : Collections.emptyMap();
         Map<Long, AdminUserRespDTO> userMap = adminUserApi.getUserMap(convertSetByFlatMap(list,
                 order -> Stream.of(parseUserId(order.getCreator()), parseUserId(order.getUpdater()))));
         // 拼接数据
         return BeanUtils.toBean(list, WmsShipmentOrderRespVO.class, vo -> {
             MapUtils.findAndThen(merchantMap, vo.getMerchantId(), merchant -> vo.setMerchantName(merchant.getName()));
             MapUtils.findAndThen(warehouseMap, vo.getWarehouseId(), warehouse -> vo.setWarehouseName(warehouse.getName()));
-            MapUtils.findAndThen(areaMap, vo.getAreaId(), area -> vo.setAreaName(area.getName()));
             MapUtils.findAndThen(userMap, parseUserId(vo.getCreator()), user -> vo.setCreatorName(user.getNickname()));
             MapUtils.findAndThen(userMap, parseUserId(vo.getUpdater()), user -> vo.setUpdaterName(user.getNickname()));
         });
@@ -197,14 +185,11 @@ public class WmsShipmentOrderController {
         if (CollUtil.isEmpty(list)) {
             return Collections.emptyList();
         }
-        // 获取相关的商品、SKU、仓库、库区等数据
+        // 获取相关的商品、SKU、仓库等数据
         Map<Long, WmsItemSkuDO> skuMap = itemSkuService.getItemSkuMap(convertSet(list, WmsShipmentOrderDetailDO::getSkuId));
         Map<Long, WmsItemDO> itemMap = itemService.getItemMap(convertSet(skuMap.values(), WmsItemSkuDO::getItemId));
         Map<Long, WmsWarehouseDO> warehouseMap = warehouseService.getWarehouseMap(
                 convertSet(list, WmsShipmentOrderDetailDO::getWarehouseId));
-        Map<Long, WmsWarehouseAreaDO> areaMap = wmsProperties.isAreaEnabled()
-                ? warehouseAreaService.getWarehouseAreaMap(convertSet(list, WmsShipmentOrderDetailDO::getAreaId))
-                : Collections.emptyMap();
         // 拼接数据
         return BeanUtils.toBean(list, WmsShipmentOrderDetailRespVO.class, vo -> {
             MapUtils.findAndThen(skuMap, vo.getSkuId(), sku -> {
@@ -213,7 +198,6 @@ public class WmsShipmentOrderController {
                         .setItemName(item.getName()).setUnit(item.getUnit()));
             });
             MapUtils.findAndThen(warehouseMap, vo.getWarehouseId(), warehouse -> vo.setWarehouseName(warehouse.getName()));
-            MapUtils.findAndThen(areaMap, vo.getAreaId(), area -> vo.setAreaName(area.getName()));
         });
     }
 

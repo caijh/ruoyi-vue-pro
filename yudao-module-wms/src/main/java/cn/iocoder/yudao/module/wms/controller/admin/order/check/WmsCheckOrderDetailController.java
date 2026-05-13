@@ -7,13 +7,10 @@ import cn.iocoder.yudao.framework.common.util.object.BeanUtils;
 import cn.iocoder.yudao.module.wms.controller.admin.order.check.vo.detail.WmsCheckOrderDetailRespVO;
 import cn.iocoder.yudao.module.wms.dal.dataobject.md.item.WmsItemDO;
 import cn.iocoder.yudao.module.wms.dal.dataobject.md.item.WmsItemSkuDO;
-import cn.iocoder.yudao.module.wms.dal.dataobject.md.warehouse.WmsWarehouseAreaDO;
 import cn.iocoder.yudao.module.wms.dal.dataobject.md.warehouse.WmsWarehouseDO;
 import cn.iocoder.yudao.module.wms.dal.dataobject.order.check.WmsCheckOrderDetailDO;
-import cn.iocoder.yudao.module.wms.framework.config.WmsProperties;
 import cn.iocoder.yudao.module.wms.service.md.item.WmsItemService;
 import cn.iocoder.yudao.module.wms.service.md.item.WmsItemSkuService;
-import cn.iocoder.yudao.module.wms.service.md.warehouse.WmsWarehouseAreaService;
 import cn.iocoder.yudao.module.wms.service.md.warehouse.WmsWarehouseService;
 import cn.iocoder.yudao.module.wms.service.order.check.WmsCheckOrderDetailService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -49,11 +46,6 @@ public class WmsCheckOrderDetailController {
     private WmsItemSkuService itemSkuService;
     @Resource
     private WmsWarehouseService warehouseService;
-    @Resource
-    private WmsWarehouseAreaService warehouseAreaService;
-
-    @Resource
-    private WmsProperties wmsProperties;
 
     @GetMapping("/list-by-order-id")
     @Operation(summary = "获得盘库单明细列表")
@@ -76,9 +68,6 @@ public class WmsCheckOrderDetailController {
         Map<Long, WmsItemDO> itemMap = itemService.getItemMap(convertSet(skuMap.values(), WmsItemSkuDO::getItemId));
         Map<Long, WmsWarehouseDO> warehouseMap = warehouseService.getWarehouseMap(
                 convertSet(list, WmsCheckOrderDetailDO::getWarehouseId));
-        Map<Long, WmsWarehouseAreaDO> areaMap = wmsProperties.isAreaEnabled()
-                ? warehouseAreaService.getWarehouseAreaMap(convertSet(list, WmsCheckOrderDetailDO::getAreaId))
-                : Collections.emptyMap();
         // 拼接数据
         return BeanUtils.toBean(list, WmsCheckOrderDetailRespVO.class, vo -> {
             MapUtils.findAndThen(skuMap, vo.getSkuId(), sku -> {
@@ -87,7 +76,6 @@ public class WmsCheckOrderDetailController {
                         .setItemName(item.getName()).setUnit(item.getUnit()));
             });
             MapUtils.findAndThen(warehouseMap, vo.getWarehouseId(), warehouse -> vo.setWarehouseName(warehouse.getName()));
-            MapUtils.findAndThen(areaMap, vo.getAreaId(), area -> vo.setAreaName(area.getName()));
             if (vo.getQuantity() != null && vo.getCheckQuantity() != null) {
                 vo.setDifferenceQuantity(vo.getCheckQuantity().subtract(vo.getQuantity()));
             } else {

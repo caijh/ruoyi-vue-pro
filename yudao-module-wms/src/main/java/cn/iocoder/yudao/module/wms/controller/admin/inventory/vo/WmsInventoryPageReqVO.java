@@ -20,11 +20,6 @@ public class WmsInventoryPageReqVO extends PageParam {
     public static final String TYPE_WAREHOUSE = "warehouse";
 
     /**
-     * 按库区维度统计
-     */
-    public static final String TYPE_AREA = "area";
-
-    /**
      * 按商品维度统计
      */
     public static final String TYPE_ITEM = "item";
@@ -49,9 +44,6 @@ public class WmsInventoryPageReqVO extends PageParam {
 
     @Schema(description = "仓库编号", example = "2048")
     private Long warehouseId;
-
-    @Schema(description = "库区编号", example = "4096")
-    private Long areaId;
 
     @Schema(description = "最小库存数量", example = "0.01")
     private BigDecimal minQuantity;

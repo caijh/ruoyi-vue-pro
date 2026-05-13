@@ -68,12 +68,4 @@ public interface WmsCheckOrderDetailService {
      */
     long getCheckOrderDetailCountBySkuId(Long skuId);
 
-    /**
-     * 获得指定库区的盘库单明细数量
-     *
-     * @param areaId 库区编号
-     * @return 盘库单明细数量
-     */
-    long getCheckOrderDetailCountByAreaId(Long areaId);
-
 }

@@ -10,13 +10,10 @@ import cn.iocoder.yudao.module.wms.controller.admin.inventory.vo.WmsInventoryRes
 import cn.iocoder.yudao.module.wms.dal.dataobject.inventory.WmsInventoryDO;
 import cn.iocoder.yudao.module.wms.dal.dataobject.md.item.WmsItemDO;
 import cn.iocoder.yudao.module.wms.dal.dataobject.md.item.WmsItemSkuDO;
-import cn.iocoder.yudao.module.wms.dal.dataobject.md.warehouse.WmsWarehouseAreaDO;
 import cn.iocoder.yudao.module.wms.dal.dataobject.md.warehouse.WmsWarehouseDO;
-import cn.iocoder.yudao.module.wms.framework.config.WmsProperties;
 import cn.iocoder.yudao.module.wms.service.inventory.WmsInventoryService;
 import cn.iocoder.yudao.module.wms.service.md.item.WmsItemService;
 import cn.iocoder.yudao.module.wms.service.md.item.WmsItemSkuService;
-import cn.iocoder.yudao.module.wms.service.md.warehouse.WmsWarehouseAreaService;
 import cn.iocoder.yudao.module.wms.service.md.warehouse.WmsWarehouseService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -49,10 +46,6 @@ public class WmsInventoryController {
     private WmsItemSkuService itemSkuService;
     @Resource
     private WmsWarehouseService warehouseService;
-    @Resource
-    private WmsWarehouseAreaService warehouseAreaService;
-    @Resource
-    private WmsProperties wmsProperties;
 
     @GetMapping("/page")
     @Operation(summary = "获得库存统计分页")
@@ -72,9 +65,6 @@ public class WmsInventoryController {
         Map<Long, WmsItemDO> itemMap = itemService.getItemMap(convertSet(skuMap.values(), WmsItemSkuDO::getItemId));
         Map<Long, WmsWarehouseDO> warehouseMap = warehouseService.getWarehouseMap(
                 convertSet(list, WmsInventoryDO::getWarehouseId));
-        Map<Long, WmsWarehouseAreaDO> areaMap = wmsProperties.isAreaEnabled()
-                ? warehouseAreaService.getWarehouseAreaMap(convertSet(list, WmsInventoryDO::getAreaId))
-                : Collections.emptyMap();
         return BeanUtils.toBean(list, WmsInventoryRespVO.class, vo -> {
             MapUtils.findAndThen(skuMap, vo.getSkuId(), sku -> {
                 vo.setSkuCode(sku.getCode()).setSkuName(sku.getName()).setItemId(sku.getItemId());
@@ -82,7 +72,6 @@ public class WmsInventoryController {
                         .setItemName(item.getName()).setUnit(item.getUnit()));
             });
             MapUtils.findAndThen(warehouseMap, vo.getWarehouseId(), warehouse -> vo.setWarehouseName(warehouse.getName()));
-            MapUtils.findAndThen(areaMap, vo.getAreaId(), area -> vo.setAreaName(area.getName()));
         });
     }
 

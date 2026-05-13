@@ -35,33 +35,8 @@ public interface WmsInventoryMapper extends BaseMapperX<WmsInventoryDO> {
                 .likeIfPresent(WmsItemSkuDO::getCode, reqVO.getSkuCode())
                 .likeIfPresent(WmsItemSkuDO::getName, reqVO.getSkuName())
                 .eqIfPresent(WmsInventoryDO::getWarehouseId, reqVO.getWarehouseId())
-                .eqIfPresent(WmsInventoryDO::getAreaId, reqVO.getAreaId())
                 .geIfPresent(WmsInventoryDO::getQuantity, reqVO.getMinQuantity());
         appendDimensionOrder(query, reqVO.getType());
-        return selectJoinPage(reqVO, WmsInventoryDO.class, query);
-    }
-
-    default PageResult<WmsInventoryDO> selectPageGroupByWarehouse(WmsInventoryPageReqVO reqVO) {
-        MPJLambdaWrapperX<WmsInventoryDO> query = new MPJLambdaWrapperX<WmsInventoryDO>()
-                .selectMin(WmsInventoryDO::getId, WmsInventoryDO::getId)
-                .selectAs(WmsInventoryDO::getWarehouseId, WmsInventoryDO::getWarehouseId)
-                .selectAs("0", WmsInventoryDO::getAreaId)
-                .selectAs(WmsInventoryDO::getSkuId, WmsInventoryDO::getSkuId)
-                .selectSum(WmsInventoryDO::getQuantity, WmsInventoryDO::getQuantity)
-                .innerJoin(WmsItemSkuDO.class, WmsItemSkuDO::getId, WmsInventoryDO::getSkuId)
-                .innerJoin(WmsItemDO.class, WmsItemDO::getId, WmsItemSkuDO::getItemId)
-                .likeIfPresent(WmsItemDO::getCode, reqVO.getItemCode())
-                .likeIfPresent(WmsItemDO::getName, reqVO.getItemName())
-                .eqIfPresent(WmsInventoryDO::getSkuId, reqVO.getSkuId())
-                .likeIfPresent(WmsItemSkuDO::getCode, reqVO.getSkuCode())
-                .likeIfPresent(WmsItemSkuDO::getName, reqVO.getSkuName())
-                .eqIfPresent(WmsInventoryDO::getWarehouseId, reqVO.getWarehouseId());
-        query.groupBy(WmsInventoryDO::getWarehouseId, WmsInventoryDO::getSkuId);
-        if (reqVO.getMinQuantity() != null) {
-            query.having("SUM(t.quantity) >= {0}", reqVO.getMinQuantity());
-        }
-        query.orderByAsc(WmsInventoryDO::getWarehouseId)
-                .orderByAsc(WmsInventoryDO::getSkuId);
         return selectJoinPage(reqVO, WmsInventoryDO.class, query);
     }
 
@@ -69,16 +44,15 @@ public interface WmsInventoryMapper extends BaseMapperX<WmsInventoryDO> {
         return selectCount(WmsInventoryDO::getSkuId, skuId);
     }
 
-    default WmsInventoryDO selectBySkuIdAndWarehouseIdAndAreaId(Long skuId, Long warehouseId, Long areaId) {
+    default WmsInventoryDO selectBySkuIdAndWarehouseId(Long skuId, Long warehouseId) {
         return selectOne(WmsInventoryDO::getSkuId, skuId,
-                WmsInventoryDO::getWarehouseId, warehouseId,
-                WmsInventoryDO::getAreaId, areaId);
+                WmsInventoryDO::getWarehouseId, warehouseId);
     }
 
     /**
      * 根据多个唯一键，批量查询库存列表
      *
-     * @param keys 唯一键列表：由 SKU 编号 + 仓库编号 + 库区编号组成
+     * @param keys 唯一键列表：由 SKU 编号 + 仓库编号组成
      * @return 库存列表
      */
     default List<WmsInventoryDO> selectListByKeys(Collection<WmsInventoryDO> keys) {
@@ -93,8 +67,7 @@ public interface WmsInventoryMapper extends BaseMapperX<WmsInventoryDO> {
                             query.or();
                         }
                         query.eq(WmsInventoryDO::getSkuId, key.getSkuId())
-                                .eq(WmsInventoryDO::getWarehouseId, key.getWarehouseId())
-                                .eq(WmsInventoryDO::getAreaId, key.getAreaId());
+                                .eq(WmsInventoryDO::getWarehouseId, key.getWarehouseId());
                         first = false;
                     }
                 }));
@@ -122,15 +95,6 @@ public interface WmsInventoryMapper extends BaseMapperX<WmsInventoryDO> {
             query.orderByAsc(WmsItemSkuDO::getItemId)
                     .orderByAsc(WmsInventoryDO::getSkuId)
                     .orderByAsc(WmsInventoryDO::getWarehouseId)
-                    .orderByAsc(WmsInventoryDO::getAreaId)
-                    .orderByAsc(WmsInventoryDO::getId);
-            return;
-        }
-        if (StrUtil.equals(WmsInventoryPageReqVO.TYPE_AREA, type)) {
-            query.orderByAsc(WmsInventoryDO::getWarehouseId)
-                    .orderByAsc(WmsInventoryDO::getAreaId)
-                    .orderByAsc(WmsItemSkuDO::getItemId)
-                    .orderByAsc(WmsInventoryDO::getSkuId)
                     .orderByAsc(WmsInventoryDO::getId);
             return;
         }

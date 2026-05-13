@@ -28,7 +28,6 @@ public interface WmsInventoryHistoryMapper extends BaseMapperX<WmsInventoryHisto
                 .likeIfPresent(WmsItemSkuDO::getCode, reqVO.getSkuCode())
                 .likeIfPresent(WmsItemSkuDO::getName, reqVO.getSkuName())
                 .eqIfPresent(WmsInventoryHistoryDO::getWarehouseId, reqVO.getWarehouseId())
-                .eqIfPresent(WmsInventoryHistoryDO::getAreaId, reqVO.getAreaId())
                 .eqIfPresent(WmsInventoryHistoryDO::getOrderNo, reqVO.getOrderNo())
                 .eqIfPresent(WmsInventoryHistoryDO::getOrderType, reqVO.getOrderType())
                 .betweenIfPresent(WmsInventoryHistoryDO::getCreateTime, reqVO.getCreateTime())

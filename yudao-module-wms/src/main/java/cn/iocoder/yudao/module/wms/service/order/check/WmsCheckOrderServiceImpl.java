@@ -12,7 +12,6 @@ import cn.iocoder.yudao.module.wms.enums.inventory.WmsInventoryOrderTypeEnum;
 import cn.iocoder.yudao.module.wms.enums.order.WmsOrderStatusEnum;
 import cn.iocoder.yudao.module.wms.service.inventory.WmsInventoryService;
 import cn.iocoder.yudao.module.wms.service.inventory.dto.WmsInventoryChangeReqDTO;
-import cn.iocoder.yudao.module.wms.service.md.warehouse.WmsWarehouseAreaService;
 import cn.iocoder.yudao.module.wms.service.md.warehouse.WmsWarehouseService;
 import jakarta.annotation.Resource;
 import org.springframework.stereotype.Service;
@@ -41,8 +40,6 @@ public class WmsCheckOrderServiceImpl implements WmsCheckOrderService {
     private WmsCheckOrderDetailService checkOrderDetailService;
     @Resource
     private WmsWarehouseService warehouseService;
-    @Resource
-    private WmsWarehouseAreaService warehouseAreaService;
     @Resource
     private WmsInventoryService inventoryService;
 
@@ -134,18 +131,11 @@ public class WmsCheckOrderServiceImpl implements WmsCheckOrderService {
         return checkOrderMapper.selectCountByWarehouseId(warehouseId);
     }
 
-    @Override
-    public long getCheckOrderCountByAreaId(Long areaId) {
-        return checkOrderMapper.selectCountByAreaId(areaId);
-    }
-
     private void validateCheckOrderSaveData(WmsCheckOrderSaveReqVO reqVO) {
         // 校验盘库单号唯一
         validateCheckOrderNoUnique(reqVO.getId(), reqVO.getNo());
-        // 校验仓库、库区存在
+        // 校验仓库存在
         warehouseService.validateWarehouseExists(reqVO.getWarehouseId());
-        reqVO.setAreaId(warehouseAreaService.validateAndNormalizeWarehouseAreaId(reqVO.getAreaId(),
-                reqVO.getWarehouseId()));
     }
 
     private void validateCheckOrderNoUnique(Long id, String no) {

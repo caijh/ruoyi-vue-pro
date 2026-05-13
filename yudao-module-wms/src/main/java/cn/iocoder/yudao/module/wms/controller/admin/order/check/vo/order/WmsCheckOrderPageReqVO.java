@@ -30,9 +30,6 @@ public class WmsCheckOrderPageReqVO extends PageParam {
     @Schema(description = "仓库编号", example = "1024")
     private Long warehouseId;
 
-    @Schema(description = "库区编号", example = "1024")
-    private Long areaId;
-
     @Schema(description = "单据日期")
     @DateTimeFormat(pattern = FORMAT_YEAR_MONTH_DAY_HOUR_MINUTE_SECOND)
     private LocalDateTime[] orderDate;

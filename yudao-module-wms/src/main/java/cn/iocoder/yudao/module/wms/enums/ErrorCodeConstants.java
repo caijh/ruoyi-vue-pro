@@ -9,22 +9,11 @@ import cn.iocoder.yudao.framework.common.exception.ErrorCode;
  */
 public interface ErrorCodeConstants {
 
-    // ========== WMS 配置 1-060-000-000 ==========
-    ErrorCode WMS_AREA_DISABLED = new ErrorCode(1_060_000_000, "WMS 库区模式未开启");
-
     // ========== WMS 基础数据-仓库 1-060-100-000 ==========
     ErrorCode WAREHOUSE_NOT_EXISTS = new ErrorCode(1_060_100_000, "仓库不存在");
     ErrorCode WAREHOUSE_NAME_DUPLICATE = new ErrorCode(1_060_100_001, "仓库名称重复");
     ErrorCode WAREHOUSE_CODE_DUPLICATE = new ErrorCode(1_060_100_002, "仓库编号重复");
-    ErrorCode WAREHOUSE_HAS_AREA = new ErrorCode(1_060_100_003, "删除失败！请先删除该仓库下的库区！");
     ErrorCode WAREHOUSE_HAS_ORDER = new ErrorCode(1_060_100_004, "删除失败！仓库已被{}使用！");
-
-    // ========== WMS 基础数据-库区 1-060-101-000 ==========
-    ErrorCode WAREHOUSE_AREA_NOT_EXISTS = new ErrorCode(1_060_101_000, "库区不存在");
-    ErrorCode WAREHOUSE_AREA_NAME_DUPLICATE = new ErrorCode(1_060_101_001, "库区名称重复");
-    ErrorCode WAREHOUSE_AREA_CODE_DUPLICATE = new ErrorCode(1_060_101_002, "库区编号重复");
-    ErrorCode WAREHOUSE_AREA_NOT_MATCH_WAREHOUSE = new ErrorCode(1_060_101_003, "库区不属于仓库");
-    ErrorCode WAREHOUSE_AREA_HAS_ORDER = new ErrorCode(1_060_101_004, "删除失败！库区已被{}使用！");
 
     // ========== WMS 基础数据-商品分类 1-060-102-000 ==========
     ErrorCode ITEM_CATEGORY_NOT_EXISTS = new ErrorCode(1_060_102_000, "商品分类不存在");
@@ -59,7 +48,6 @@ public interface ErrorCodeConstants {
     ErrorCode RECEIPT_ORDER_NO_DUPLICATE = new ErrorCode(1_060_200_001, "入库单号重复");
     ErrorCode RECEIPT_ORDER_STATUS_NOT_PREPARE = new ErrorCode(1_060_200_002, "入库单状态不是草稿，不能操作");
     ErrorCode RECEIPT_ORDER_DETAIL_REQUIRED = new ErrorCode(1_060_200_003, "入库单至少包含一条明细");
-    ErrorCode RECEIPT_ORDER_AREA_REQUIRED = new ErrorCode(1_060_200_004, "库区模式下，入库单库区不能为空");
     ErrorCode RECEIPT_ORDER_STATUS_NOT_DELETABLE = new ErrorCode(1_060_200_005, "入库单状态不是草稿或已作废，不能删除");
     ErrorCode RECEIPT_ORDER_DETAIL_NOT_EXISTS = new ErrorCode(1_060_200_007, "入库单明细不存在");
 
@@ -68,7 +56,6 @@ public interface ErrorCodeConstants {
     ErrorCode SHIPMENT_ORDER_NO_DUPLICATE = new ErrorCode(1_060_201_001, "出库单号重复");
     ErrorCode SHIPMENT_ORDER_STATUS_NOT_PREPARE = new ErrorCode(1_060_201_002, "出库单状态不是草稿，不能操作");
     ErrorCode SHIPMENT_ORDER_DETAIL_REQUIRED = new ErrorCode(1_060_201_003, "出库单至少包含一条明细");
-    ErrorCode SHIPMENT_ORDER_AREA_REQUIRED = new ErrorCode(1_060_201_004, "库区模式下，出库单库区不能为空");
     ErrorCode SHIPMENT_ORDER_STATUS_NOT_DELETABLE = new ErrorCode(1_060_201_005, "出库单状态不是草稿或已作废，不能删除");
     ErrorCode SHIPMENT_ORDER_DETAIL_NOT_EXISTS = new ErrorCode(1_060_201_007, "出库单明细不存在");
 
@@ -77,22 +64,20 @@ public interface ErrorCodeConstants {
     ErrorCode MOVEMENT_ORDER_NO_DUPLICATE = new ErrorCode(1_060_202_001, "移库单号重复");
     ErrorCode MOVEMENT_ORDER_STATUS_NOT_PREPARE = new ErrorCode(1_060_202_002, "移库单状态不是草稿，不能操作");
     ErrorCode MOVEMENT_ORDER_DETAIL_REQUIRED = new ErrorCode(1_060_202_003, "移库单至少包含一条明细");
-    ErrorCode MOVEMENT_ORDER_AREA_REQUIRED = new ErrorCode(1_060_202_004, "库区模式下，移库单库区不能为空");
     ErrorCode MOVEMENT_ORDER_STATUS_NOT_DELETABLE = new ErrorCode(1_060_202_005, "移库单状态不是草稿或已作废，不能删除");
     ErrorCode MOVEMENT_ORDER_DETAIL_NOT_EXISTS = new ErrorCode(1_060_202_006, "移库单明细不存在");
-    ErrorCode MOVEMENT_ORDER_WAREHOUSE_AREA_SAME = new ErrorCode(1_060_202_007, "来源仓库库区和目标仓库库区不能相同");
+    ErrorCode MOVEMENT_ORDER_WAREHOUSE_SAME = new ErrorCode(1_060_202_007, "来源仓库和目标仓库不能相同");
 
     // ========== WMS 盘库单 1-060-203-000 ==========
     ErrorCode CHECK_ORDER_NOT_EXISTS = new ErrorCode(1_060_203_000, "盘库单不存在");
     ErrorCode CHECK_ORDER_NO_DUPLICATE = new ErrorCode(1_060_203_001, "盘库单号重复");
     ErrorCode CHECK_ORDER_STATUS_NOT_PREPARE = new ErrorCode(1_060_203_002, "盘库单状态不是草稿，不能操作");
     ErrorCode CHECK_ORDER_DETAIL_REQUIRED = new ErrorCode(1_060_203_003, "盘库单至少包含一条明细");
-    ErrorCode CHECK_ORDER_AREA_REQUIRED = new ErrorCode(1_060_203_004, "库区模式下，盘库单库区不能为空");
     ErrorCode CHECK_ORDER_STATUS_NOT_DELETABLE = new ErrorCode(1_060_203_005, "盘库单状态不是草稿或已作废，不能删除");
     ErrorCode CHECK_ORDER_DETAIL_NOT_EXISTS = new ErrorCode(1_060_203_006, "盘库单明细不存在");
 
     // ========== WMS 库存 1-060-300-000 ==========
     ErrorCode INVENTORY_QUANTITY_NOT_ENOUGH = new ErrorCode(1_060_300_000,
-            "库存不足，商品：{}，商品规格：{}，仓库：{}，库区：{}，当前库存：{}，变更数量：{}");
+            "库存不足，商品：{}，商品规格：{}，仓库：{}，当前库存：{}，变更数量：{}");
 
 }

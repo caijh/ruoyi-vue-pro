@@ -47,8 +47,4 @@ public interface WmsReceiptOrderMapper extends BaseMapperX<WmsReceiptOrderDO> {
         return selectCount(WmsReceiptOrderDO::getWarehouseId, warehouseId);
     }
 
-    default Long selectCountByAreaId(Long areaId) {
-        return selectCount(WmsReceiptOrderDO::getAreaId, areaId);
-    }
-
 }

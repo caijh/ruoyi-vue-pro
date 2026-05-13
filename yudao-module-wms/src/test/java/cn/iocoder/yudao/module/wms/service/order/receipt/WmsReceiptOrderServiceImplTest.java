@@ -8,12 +8,10 @@ import cn.iocoder.yudao.module.wms.dal.mysql.order.receipt.WmsReceiptOrderMapper
 import cn.iocoder.yudao.module.wms.enums.inventory.WmsInventoryOrderTypeEnum;
 import cn.iocoder.yudao.module.wms.enums.order.WmsOrderStatusEnum;
 import cn.iocoder.yudao.module.wms.enums.order.WmsReceiptOrderTypeEnum;
-import cn.iocoder.yudao.module.wms.framework.config.WmsProperties;
 import cn.iocoder.yudao.module.wms.service.inventory.WmsInventoryService;
 import cn.iocoder.yudao.module.wms.service.inventory.dto.WmsInventoryChangeReqDTO;
 import cn.iocoder.yudao.module.wms.service.md.item.WmsItemSkuService;
 import cn.iocoder.yudao.module.wms.service.md.merchant.WmsMerchantService;
-import cn.iocoder.yudao.module.wms.service.md.warehouse.WmsWarehouseAreaService;
 import cn.iocoder.yudao.module.wms.service.md.warehouse.WmsWarehouseService;
 import jakarta.annotation.Resource;
 import org.junit.jupiter.api.Test;
@@ -24,7 +22,6 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import java.math.BigDecimal;
 
 import static cn.iocoder.yudao.framework.test.core.util.AssertUtils.assertServiceException;
-import static cn.iocoder.yudao.module.wms.enums.ErrorCodeConstants.RECEIPT_ORDER_AREA_REQUIRED;
 import static cn.iocoder.yudao.module.wms.enums.ErrorCodeConstants.RECEIPT_ORDER_DETAIL_REQUIRED;
 import static cn.iocoder.yudao.module.wms.enums.ErrorCodeConstants.RECEIPT_ORDER_STATUS_NOT_DELETABLE;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -34,7 +31,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 
-@Import({WmsReceiptOrderServiceImpl.class, WmsReceiptOrderDetailServiceImpl.class, WmsProperties.class})
+@Import({WmsReceiptOrderServiceImpl.class, WmsReceiptOrderDetailServiceImpl.class})
 public class WmsReceiptOrderServiceImplTest extends BaseDbUnitTest {
 
     @Resource
@@ -47,8 +44,6 @@ public class WmsReceiptOrderServiceImplTest extends BaseDbUnitTest {
 
     @MockitoBean
     private WmsWarehouseService warehouseService;
-    @MockitoBean
-    private WmsWarehouseAreaService warehouseAreaService;
     @MockitoBean
     private WmsMerchantService merchantService;
     @MockitoBean
@@ -63,7 +58,7 @@ public class WmsReceiptOrderServiceImplTest extends BaseDbUnitTest {
         Long skuId = 200L;
         WmsReceiptOrderDO order = createReceiptOrder(warehouseId);
         receiptOrderMapper.insert(order);
-        receiptOrderDetailMapper.insert(createReceiptOrderDetail(order.getId(), skuId, warehouseId, 300L));
+        receiptOrderDetailMapper.insert(createReceiptOrderDetail(order.getId(), skuId, warehouseId));
 
         // 调用
         receiptOrderService.completeReceiptOrder(order.getId());
@@ -98,19 +93,6 @@ public class WmsReceiptOrderServiceImplTest extends BaseDbUnitTest {
     }
 
     @Test
-    public void testCompleteReceiptOrder_areaRequired() {
-        // mock 数据
-        WmsReceiptOrderDO order = createReceiptOrder(100L);
-        receiptOrderMapper.insert(order);
-        receiptOrderDetailMapper.insert(createReceiptOrderDetail(order.getId(), 200L, 100L, 0L));
-
-        // 调用，并断言
-        assertServiceException(() -> receiptOrderService.completeReceiptOrder(order.getId()),
-                RECEIPT_ORDER_AREA_REQUIRED);
-        verify(inventoryService, never()).changeInventory(any());
-    }
-
-    @Test
     public void testCancelReceiptOrder_success() {
         // mock 数据
         WmsReceiptOrderDO order = createReceiptOrder(100L);
@@ -131,7 +113,7 @@ public class WmsReceiptOrderServiceImplTest extends BaseDbUnitTest {
         // mock 数据
         WmsReceiptOrderDO order = createReceiptOrder(100L).setStatus(WmsOrderStatusEnum.CANCELED.getStatus());
         receiptOrderMapper.insert(order);
-        receiptOrderDetailMapper.insert(createReceiptOrderDetail(order.getId(), 200L, 100L, 300L));
+        receiptOrderDetailMapper.insert(createReceiptOrderDetail(order.getId(), 200L, 100L));
 
         // 调用
         receiptOrderService.deleteReceiptOrder(order.getId());
@@ -158,18 +140,15 @@ public class WmsReceiptOrderServiceImplTest extends BaseDbUnitTest {
                 .setType(WmsReceiptOrderTypeEnum.PURCHASE.getType())
                 .setStatus(WmsOrderStatusEnum.PREPARE.getStatus())
                 .setWarehouseId(warehouseId)
-                .setAreaId(0L)
                 .setTotalQuantity(new BigDecimal("2.00"))
                 .setTotalAmount(new BigDecimal("20.00"));
     }
 
-    private static WmsReceiptOrderDetailDO createReceiptOrderDetail(Long orderId, Long skuId, Long warehouseId,
-                                                                    Long areaId) {
+    private static WmsReceiptOrderDetailDO createReceiptOrderDetail(Long orderId, Long skuId, Long warehouseId) {
         return WmsReceiptOrderDetailDO.builder()
                 .orderId(orderId)
                 .skuId(skuId)
                 .warehouseId(warehouseId)
-                .areaId(areaId)
                 .quantity(new BigDecimal("2.00"))
                 .amount(new BigDecimal("20.00"))
                 .build();

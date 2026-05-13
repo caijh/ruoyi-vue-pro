@@ -138,11 +138,6 @@ public class WmsReceiptOrderServiceImpl implements WmsReceiptOrderService {
         return receiptOrderMapper.selectCountByWarehouseId(warehouseId);
     }
 
-    @Override
-    public long getReceiptOrderCountByAreaId(Long areaId) {
-        return receiptOrderMapper.selectCountByAreaId(areaId);
-    }
-
     private void validateReceiptOrderSaveData(WmsReceiptOrderSaveReqVO reqVO) {
         // 校验入库单号唯一
         validateReceiptOrderNoUnique(reqVO.getId(), reqVO.getNo());

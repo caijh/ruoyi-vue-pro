@@ -56,12 +56,6 @@ public class WmsReceiptOrderRespVO {
     @ExcelProperty("仓库")
     private String warehouseName;
 
-    @Schema(description = "库区编号", example = "1024")
-    private Long areaId;
-
-    @Schema(description = "库区名称", example = "北京库区01")
-    private String areaName;
-
     @Schema(description = "入库数量", requiredMode = Schema.RequiredMode.REQUIRED, example = "100.00")
     @ExcelProperty("入库数量")
     private BigDecimal totalQuantity;

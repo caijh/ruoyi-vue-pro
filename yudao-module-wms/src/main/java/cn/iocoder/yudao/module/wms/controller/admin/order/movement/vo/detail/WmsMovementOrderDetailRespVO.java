@@ -43,23 +43,11 @@ public class WmsMovementOrderDetailRespVO {
     @Schema(description = "来源仓库名称", example = "北京仓")
     private String sourceWarehouseName;
 
-    @Schema(description = "来源库区编号", example = "1024")
-    private Long sourceAreaId;
-
-    @Schema(description = "来源库区名称", example = "北京库区01")
-    private String sourceAreaName;
-
     @Schema(description = "目标仓库编号", requiredMode = Schema.RequiredMode.REQUIRED, example = "2048")
     private Long targetWarehouseId;
 
     @Schema(description = "目标仓库名称", example = "上海仓")
     private String targetWarehouseName;
-
-    @Schema(description = "目标库区编号", example = "2048")
-    private Long targetAreaId;
-
-    @Schema(description = "目标库区名称", example = "上海库区01")
-    private String targetAreaName;
 
     @Schema(description = "批号", example = "B202605110001")
     private String batchNo;

@@ -12,7 +12,6 @@ import cn.iocoder.yudao.module.wms.enums.inventory.WmsInventoryOrderTypeEnum;
 import cn.iocoder.yudao.module.wms.enums.order.WmsOrderStatusEnum;
 import cn.iocoder.yudao.module.wms.service.inventory.WmsInventoryService;
 import cn.iocoder.yudao.module.wms.service.inventory.dto.WmsInventoryChangeReqDTO;
-import cn.iocoder.yudao.module.wms.service.md.warehouse.WmsWarehouseAreaService;
 import cn.iocoder.yudao.module.wms.service.md.warehouse.WmsWarehouseService;
 import jakarta.annotation.Resource;
 import org.springframework.stereotype.Service;
@@ -40,8 +39,6 @@ public class WmsMovementOrderServiceImpl implements WmsMovementOrderService {
     private WmsMovementOrderDetailService movementOrderDetailService;
     @Resource
     private WmsWarehouseService warehouseService;
-    @Resource
-    private WmsWarehouseAreaService warehouseAreaService;
     @Resource
     private WmsInventoryService inventoryService;
 
@@ -133,25 +130,15 @@ public class WmsMovementOrderServiceImpl implements WmsMovementOrderService {
         return movementOrderMapper.selectCountByWarehouseId(warehouseId);
     }
 
-    @Override
-    public long getMovementOrderCountByAreaId(Long areaId) {
-        return movementOrderMapper.selectCountByAreaId(areaId);
-    }
-
     private void validateMovementOrderSaveData(WmsMovementOrderSaveReqVO reqVO) {
         // 校验移库单号唯一
         validateMovementOrderNoUnique(reqVO.getId(), reqVO.getNo());
-        // 校验仓库、库区存在
+        // 校验仓库存在
         warehouseService.validateWarehouseExists(reqVO.getSourceWarehouseId());
         warehouseService.validateWarehouseExists(reqVO.getTargetWarehouseId());
-        reqVO.setSourceAreaId(warehouseAreaService.validateAndNormalizeWarehouseAreaId(reqVO.getSourceAreaId(),
-                reqVO.getSourceWarehouseId()));
-        reqVO.setTargetAreaId(warehouseAreaService.validateAndNormalizeWarehouseAreaId(reqVO.getTargetAreaId(),
-                reqVO.getTargetWarehouseId()));
         // 校验来源和目标不能相同
-        if (ObjectUtil.equal(reqVO.getSourceWarehouseId(), reqVO.getTargetWarehouseId())
-                && ObjectUtil.equal(reqVO.getSourceAreaId(), reqVO.getTargetAreaId())) {
-            throw exception(MOVEMENT_ORDER_WAREHOUSE_AREA_SAME);
+        if (ObjectUtil.equal(reqVO.getSourceWarehouseId(), reqVO.getTargetWarehouseId())) {
+            throw exception(MOVEMENT_ORDER_WAREHOUSE_SAME);
         }
     }
 
@@ -199,11 +186,9 @@ public class WmsMovementOrderServiceImpl implements WmsMovementOrderService {
         List<WmsInventoryChangeReqDTO.Item> items = new ArrayList<>(details.size() * 2);
         for (WmsMovementOrderDetailDO detail : details) {
             items.add(BeanUtils.toBean(detail, WmsInventoryChangeReqDTO.Item.class)
-                    .setWarehouseId(detail.getSourceWarehouseId()).setAreaId(detail.getSourceAreaId())
-                    .setQuantity(detail.getQuantity().negate()));
+                    .setWarehouseId(detail.getSourceWarehouseId()).setQuantity(detail.getQuantity().negate()));
             items.add(BeanUtils.toBean(detail, WmsInventoryChangeReqDTO.Item.class)
-                    .setWarehouseId(detail.getTargetWarehouseId()).setAreaId(detail.getTargetAreaId())
-                    .setQuantity(detail.getQuantity()));
+                    .setWarehouseId(detail.getTargetWarehouseId()).setQuantity(detail.getQuantity()));
         }
         inventoryService.changeInventory(new WmsInventoryChangeReqDTO()
                 .setOrderId(order.getId()).setOrderNo(order.getNo())

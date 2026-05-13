@@ -1,7 +1,6 @@
 package cn.iocoder.yudao.module.wms.dal.dataobject.order.check;
 
 import cn.iocoder.yudao.framework.mybatis.core.dataobject.BaseDO;
-import cn.iocoder.yudao.module.wms.dal.dataobject.md.warehouse.WmsWarehouseAreaDO;
 import cn.iocoder.yudao.module.wms.dal.dataobject.md.warehouse.WmsWarehouseDO;
 import cn.iocoder.yudao.module.wms.enums.DictTypeConstants;
 import com.baomidou.mybatisplus.annotation.KeySequence;
@@ -46,7 +45,7 @@ public class WmsCheckOrderDO extends BaseDO {
      */
     private String remark;
 
-    // ========= 仓库库区字段 =========
+    // ========= 仓库字段 =========
 
     /**
      * 仓库编号
@@ -54,12 +53,6 @@ public class WmsCheckOrderDO extends BaseDO {
      * 关联 {@link WmsWarehouseDO#getId()}
      */
     private Long warehouseId;
-    /**
-     * 库区编号
-     *
-     * 关联 {@link WmsWarehouseAreaDO#getId()}
-     */
-    private Long areaId;
 
     // ========= 汇总金额字段 =========
 

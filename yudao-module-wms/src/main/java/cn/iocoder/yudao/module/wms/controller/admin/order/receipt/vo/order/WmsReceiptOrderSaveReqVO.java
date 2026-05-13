@@ -45,9 +45,6 @@ public class WmsReceiptOrderSaveReqVO {
     @NotNull(message = "仓库不能为空")
     private Long warehouseId;
 
-    @Schema(description = "库区编号", example = "1024")
-    private Long areaId;
-
     @Schema(description = "入库数量", requiredMode = Schema.RequiredMode.REQUIRED, example = "100.00")
     @NotNull(message = "入库数量不能为空")
     private BigDecimal totalQuantity;

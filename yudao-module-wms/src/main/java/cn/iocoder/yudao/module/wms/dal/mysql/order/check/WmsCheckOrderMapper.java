@@ -20,7 +20,6 @@ public interface WmsCheckOrderMapper extends BaseMapperX<WmsCheckOrderDO> {
                 .likeIfPresent(WmsCheckOrderDO::getNo, reqVO.getNo())
                 .eqIfPresent(WmsCheckOrderDO::getStatus, reqVO.getStatus())
                 .eqIfPresent(WmsCheckOrderDO::getWarehouseId, reqVO.getWarehouseId())
-                .eqIfPresent(WmsCheckOrderDO::getAreaId, reqVO.getAreaId())
                 .betweenIfPresent(WmsCheckOrderDO::getCreateTime, reqVO.getOrderDate())
                 .geIfPresent(WmsCheckOrderDO::getTotalQuantity, reqVO.getTotalQuantityMin())
                 .leIfPresent(WmsCheckOrderDO::getTotalQuantity, reqVO.getTotalQuantityMax())
@@ -39,10 +38,6 @@ public interface WmsCheckOrderMapper extends BaseMapperX<WmsCheckOrderDO> {
 
     default Long selectCountByWarehouseId(Long warehouseId) {
         return selectCount(WmsCheckOrderDO::getWarehouseId, warehouseId);
-    }
-
-    default Long selectCountByAreaId(Long areaId) {
-        return selectCount(WmsCheckOrderDO::getAreaId, areaId);
     }
 
 }

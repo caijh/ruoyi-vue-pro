@@ -3,14 +3,10 @@ package cn.iocoder.yudao.module.wms.service.order.movement;
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.collection.ListUtil;
 import cn.iocoder.yudao.framework.common.util.object.BeanUtils;
-import cn.iocoder.yudao.framework.common.util.object.ObjectUtils;
 import cn.iocoder.yudao.module.wms.controller.admin.order.movement.vo.order.WmsMovementOrderSaveReqVO;
-import cn.iocoder.yudao.module.wms.dal.dataobject.md.warehouse.WmsWarehouseAreaDO;
 import cn.iocoder.yudao.module.wms.dal.dataobject.order.movement.WmsMovementOrderDetailDO;
 import cn.iocoder.yudao.module.wms.dal.mysql.order.movement.WmsMovementOrderDetailMapper;
-import cn.iocoder.yudao.module.wms.framework.config.WmsProperties;
 import cn.iocoder.yudao.module.wms.service.md.item.WmsItemSkuService;
-import cn.iocoder.yudao.module.wms.service.md.warehouse.WmsWarehouseAreaService;
 import jakarta.annotation.Resource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -37,10 +33,6 @@ public class WmsMovementOrderDetailServiceImpl implements WmsMovementOrderDetail
     private WmsMovementOrderDetailMapper movementOrderDetailMapper;
     @Resource
     private WmsItemSkuService itemSkuService;
-    @Resource
-    private WmsWarehouseAreaService warehouseAreaService;
-    @Resource
-    private WmsProperties wmsProperties;
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -104,22 +96,12 @@ public class WmsMovementOrderDetailServiceImpl implements WmsMovementOrderDetail
         if (CollUtil.isEmpty(details)) {
             throw exception(MOVEMENT_ORDER_DETAIL_REQUIRED);
         }
-        if (wmsProperties.isAreaEnabled() && details.stream().anyMatch(detail ->
-                ObjectUtils.equalsAny(detail.getSourceAreaId(), null, WmsWarehouseAreaDO.ID_EMPTY)
-                        || ObjectUtils.equalsAny(detail.getTargetAreaId(), null, WmsWarehouseAreaDO.ID_EMPTY))) {
-            throw exception(MOVEMENT_ORDER_AREA_REQUIRED);
-        }
         return details;
     }
 
     @Override
     public long getMovementOrderDetailCountBySkuId(Long skuId) {
         return movementOrderDetailMapper.selectCountBySkuId(skuId);
-    }
-
-    @Override
-    public long getMovementOrderDetailCountByAreaId(Long areaId) {
-        return movementOrderDetailMapper.selectCountByAreaId(areaId);
     }
 
     private List<WmsMovementOrderDetailDO> buildMovementOrderDetailList(WmsMovementOrderSaveReqVO reqVO) {
@@ -129,17 +111,10 @@ public class WmsMovementOrderDetailServiceImpl implements WmsMovementOrderDetail
         return convertList(reqVO.getDetails(), detail -> {
             // 校验 SKU 存在
             itemSkuService.validateItemSkuExists(detail.getSkuId());
-            // 校验来源、目标库区存在，并且属于对应仓库
-            Long sourceAreaId = warehouseAreaService.validateAndNormalizeWarehouseAreaId(
-                    detail.getSourceAreaId() == null ? reqVO.getSourceAreaId() : detail.getSourceAreaId(),
-                    reqVO.getSourceWarehouseId());
-            Long targetAreaId = warehouseAreaService.validateAndNormalizeWarehouseAreaId(
-                    detail.getTargetAreaId() == null ? reqVO.getTargetAreaId() : detail.getTargetAreaId(),
-                    reqVO.getTargetWarehouseId());
             // 构建对象
             return BeanUtils.toBean(detail, WmsMovementOrderDetailDO.class)
-                    .setSourceWarehouseId(reqVO.getSourceWarehouseId()).setSourceAreaId(sourceAreaId)
-                    .setTargetWarehouseId(reqVO.getTargetWarehouseId()).setTargetAreaId(targetAreaId);
+                    .setSourceWarehouseId(reqVO.getSourceWarehouseId())
+                    .setTargetWarehouseId(reqVO.getTargetWarehouseId());
         });
     }
 

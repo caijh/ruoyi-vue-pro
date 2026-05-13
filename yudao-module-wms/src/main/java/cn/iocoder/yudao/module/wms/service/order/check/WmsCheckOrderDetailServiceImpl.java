@@ -3,14 +3,10 @@ package cn.iocoder.yudao.module.wms.service.order.check;
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.collection.ListUtil;
 import cn.iocoder.yudao.framework.common.util.object.BeanUtils;
-import cn.iocoder.yudao.framework.common.util.object.ObjectUtils;
 import cn.iocoder.yudao.module.wms.controller.admin.order.check.vo.order.WmsCheckOrderSaveReqVO;
-import cn.iocoder.yudao.module.wms.dal.dataobject.md.warehouse.WmsWarehouseAreaDO;
 import cn.iocoder.yudao.module.wms.dal.dataobject.order.check.WmsCheckOrderDetailDO;
 import cn.iocoder.yudao.module.wms.dal.mysql.order.check.WmsCheckOrderDetailMapper;
-import cn.iocoder.yudao.module.wms.framework.config.WmsProperties;
 import cn.iocoder.yudao.module.wms.service.md.item.WmsItemSkuService;
-import cn.iocoder.yudao.module.wms.service.md.warehouse.WmsWarehouseAreaService;
 import jakarta.annotation.Resource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -37,10 +33,6 @@ public class WmsCheckOrderDetailServiceImpl implements WmsCheckOrderDetailServic
     private WmsCheckOrderDetailMapper checkOrderDetailMapper;
     @Resource
     private WmsItemSkuService itemSkuService;
-    @Resource
-    private WmsWarehouseAreaService warehouseAreaService;
-    @Resource
-    private WmsProperties wmsProperties;
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -104,21 +96,12 @@ public class WmsCheckOrderDetailServiceImpl implements WmsCheckOrderDetailServic
         if (CollUtil.isEmpty(details)) {
             throw exception(CHECK_ORDER_DETAIL_REQUIRED);
         }
-        if (wmsProperties.isAreaEnabled() && details.stream()
-                .anyMatch(detail -> ObjectUtils.equalsAny(detail.getAreaId(), null, WmsWarehouseAreaDO.ID_EMPTY))) {
-            throw exception(CHECK_ORDER_AREA_REQUIRED);
-        }
         return details;
     }
 
     @Override
     public long getCheckOrderDetailCountBySkuId(Long skuId) {
         return checkOrderDetailMapper.selectCountBySkuId(skuId);
-    }
-
-    @Override
-    public long getCheckOrderDetailCountByAreaId(Long areaId) {
-        return checkOrderDetailMapper.selectCountByAreaId(areaId);
     }
 
     private List<WmsCheckOrderDetailDO> buildCheckOrderDetailList(WmsCheckOrderSaveReqVO reqVO) {
@@ -128,12 +111,8 @@ public class WmsCheckOrderDetailServiceImpl implements WmsCheckOrderDetailServic
         return convertList(reqVO.getDetails(), detail -> {
             // 校验 SKU 存在
             itemSkuService.validateItemSkuExists(detail.getSkuId());
-            // 校验库区存在，并且属于当前仓库
-            Long areaId = warehouseAreaService.validateAndNormalizeWarehouseAreaId(
-                    detail.getAreaId() == null ? reqVO.getAreaId() : detail.getAreaId(), reqVO.getWarehouseId());
             // 构建对象
-            return BeanUtils.toBean(detail, WmsCheckOrderDetailDO.class)
-                    .setWarehouseId(reqVO.getWarehouseId()).setAreaId(areaId);
+            return BeanUtils.toBean(detail, WmsCheckOrderDetailDO.class).setWarehouseId(reqVO.getWarehouseId());
         });
     }
 

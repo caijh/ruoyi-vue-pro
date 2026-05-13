@@ -31,9 +31,6 @@ public class WmsCheckOrderSaveReqVO {
     @NotNull(message = "仓库不能为空")
     private Long warehouseId;
 
-    @Schema(description = "库区编号", example = "1024")
-    private Long areaId;
-
     @Schema(description = "盈亏数量", requiredMode = Schema.RequiredMode.REQUIRED, example = "100.00")
     @NotNull(message = "盈亏数量不能为空")
     private BigDecimal totalQuantity;

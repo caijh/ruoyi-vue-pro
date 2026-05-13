@@ -68,12 +68,4 @@ public interface WmsShipmentOrderDetailService {
      */
     long getShipmentOrderDetailCountBySkuId(Long skuId);
 
-    /**
-     * 获得指定库区的出库单明细数量
-     *
-     * @param areaId 库区编号
-     * @return 出库单明细数量
-     */
-    long getShipmentOrderDetailCountByAreaId(Long areaId);
-
 }

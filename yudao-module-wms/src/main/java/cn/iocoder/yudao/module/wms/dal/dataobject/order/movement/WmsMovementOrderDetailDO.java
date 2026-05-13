@@ -2,7 +2,6 @@ package cn.iocoder.yudao.module.wms.dal.dataobject.order.movement;
 
 import cn.iocoder.yudao.framework.mybatis.core.dataobject.BaseDO;
 import cn.iocoder.yudao.module.wms.dal.dataobject.md.item.WmsItemSkuDO;
-import cn.iocoder.yudao.module.wms.dal.dataobject.md.warehouse.WmsWarehouseAreaDO;
 import cn.iocoder.yudao.module.wms.dal.dataobject.md.warehouse.WmsWarehouseDO;
 import com.baomidou.mybatisplus.annotation.KeySequence;
 import com.baomidou.mybatisplus.annotation.TableId;
@@ -52,7 +51,7 @@ public class WmsMovementOrderDetailDO extends BaseDO {
      */
     private Long skuId;
 
-    // ========= 来源仓库库区字段 =========
+    // ========= 来源仓库字段 =========
 
     /**
      * 来源仓库编号
@@ -60,14 +59,8 @@ public class WmsMovementOrderDetailDO extends BaseDO {
      * 关联 {@link WmsWarehouseDO#getId()}
      */
     private Long sourceWarehouseId;
-    /**
-     * 来源库区编号
-     *
-     * 关联 {@link WmsWarehouseAreaDO#getId()}
-     */
-    private Long sourceAreaId;
 
-    // ========= 目标仓库库区字段 =========
+    // ========= 目标仓库字段 =========
 
     /**
      * 目标仓库编号
@@ -75,12 +68,6 @@ public class WmsMovementOrderDetailDO extends BaseDO {
      * 关联 {@link WmsWarehouseDO#getId()}
      */
     private Long targetWarehouseId;
-    /**
-     * 目标库区编号
-     *
-     * 关联 {@link WmsWarehouseAreaDO#getId()}
-     */
-    private Long targetAreaId;
 
     // ========= 批次效期字段 =========
 
