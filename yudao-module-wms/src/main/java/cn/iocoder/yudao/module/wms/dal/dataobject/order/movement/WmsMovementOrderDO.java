@@ -9,6 +9,7 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.*;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 
 /**
  * WMS 移库单 DO
@@ -34,6 +35,10 @@ public class WmsMovementOrderDO extends BaseDO {
      * 移库单号
      */
     private String no;
+    /**
+     * 单据日期
+     */
+    private LocalDateTime orderTime;
     /**
      * 移库状态
      *

@@ -3,7 +3,6 @@ package cn.iocoder.yudao.module.wms.controller.admin.order.check.vo.detail;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
 import lombok.Data;
 
 import java.math.BigDecimal;
@@ -39,9 +38,5 @@ public class WmsCheckOrderDetailSaveReqVO {
     @Schema(description = "金额", example = "1000.00")
     @DecimalMin(value = "0", message = "金额不能小于 0")
     private BigDecimal amount;
-
-    @Schema(description = "备注", example = "备注")
-    @Size(max = 255, message = "备注长度不能超过 255 个字符")
-    private String remark;
 
 }

@@ -30,6 +30,10 @@ public class WmsShipmentOrderRespVO {
     @DictFormat(DictTypeConstants.SHIPMENT_ORDER_TYPE)
     private Integer type;
 
+    @Schema(description = "单据日期", requiredMode = Schema.RequiredMode.REQUIRED)
+    @ExcelProperty("单据日期")
+    private LocalDateTime orderTime;
+
     @Schema(description = "出库状态", requiredMode = Schema.RequiredMode.REQUIRED, example = "0")
     @ExcelProperty(value = "出库状态", converter = DictConvert.class)
     @DictFormat(DictTypeConstants.ORDER_STATUS)

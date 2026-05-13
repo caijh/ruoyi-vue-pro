@@ -12,6 +12,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 
@@ -115,6 +116,7 @@ public class WmsShipmentOrderDetailServiceImplTest extends BaseDbUnitTest {
 
     private static WmsShipmentOrderSaveReqVO createShipmentOrderReqVO(WmsShipmentOrderDetailSaveReqVO... details) {
         WmsShipmentOrderSaveReqVO reqVO = new WmsShipmentOrderSaveReqVO();
+        reqVO.setOrderTime(LocalDateTime.of(2026, 5, 12, 0, 0));
         reqVO.setWarehouseId(100L);
         reqVO.setDetails(Arrays.asList(details));
         return reqVO;

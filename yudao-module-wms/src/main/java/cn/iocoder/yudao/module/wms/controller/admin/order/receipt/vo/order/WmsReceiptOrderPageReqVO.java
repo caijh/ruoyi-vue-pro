@@ -36,7 +36,7 @@ public class WmsReceiptOrderPageReqVO extends PageParam {
 
     @Schema(description = "单据日期")
     @DateTimeFormat(pattern = FORMAT_YEAR_MONTH_DAY_HOUR_MINUTE_SECOND)
-    private LocalDateTime[] orderDate;
+    private LocalDateTime[] orderTime;
 
     @Schema(description = "最小数量", example = "1.00")
     private BigDecimal totalQuantityMin;

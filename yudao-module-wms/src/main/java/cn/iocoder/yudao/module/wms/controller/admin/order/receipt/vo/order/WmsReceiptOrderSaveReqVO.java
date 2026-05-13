@@ -11,6 +11,7 @@ import jakarta.validation.constraints.Size;
 import lombok.Data;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Schema(description = "管理后台 - WMS 入库单保存 Request VO")
@@ -29,6 +30,10 @@ public class WmsReceiptOrderSaveReqVO {
     @NotNull(message = "入库类型不能为空")
     @InEnum(WmsReceiptOrderTypeEnum.class)
     private Integer type;
+
+    @Schema(description = "单据日期", requiredMode = Schema.RequiredMode.REQUIRED)
+    @NotNull(message = "单据日期不能为空")
+    private LocalDateTime orderTime;
 
     @Schema(description = "业务单号", example = "PO202605110001")
     @Size(max = 64, message = "业务单号长度不能超过 64 个字符")
@@ -49,7 +54,8 @@ public class WmsReceiptOrderSaveReqVO {
     @NotNull(message = "入库数量不能为空")
     private BigDecimal totalQuantity;
 
-    @Schema(description = "总金额", example = "1000.00")
+    @Schema(description = "总金额", requiredMode = Schema.RequiredMode.REQUIRED, example = "1000.00")
+    @NotNull(message = "总金额不能为空")
     private BigDecimal totalAmount;
 
     @Schema(description = "入库明细")

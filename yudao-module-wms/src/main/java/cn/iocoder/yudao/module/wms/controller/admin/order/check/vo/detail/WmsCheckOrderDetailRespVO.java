@@ -61,9 +61,6 @@ public class WmsCheckOrderDetailRespVO {
     @Schema(description = "金额", example = "1000.00")
     private BigDecimal amount;
 
-    @Schema(description = "备注", example = "备注")
-    private String remark;
-
     @Schema(description = "创建时间", requiredMode = Schema.RequiredMode.REQUIRED)
     private LocalDateTime createTime;
 

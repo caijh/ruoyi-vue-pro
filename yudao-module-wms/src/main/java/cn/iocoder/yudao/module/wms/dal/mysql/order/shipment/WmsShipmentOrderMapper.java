@@ -21,7 +21,7 @@ public interface WmsShipmentOrderMapper extends BaseMapperX<WmsShipmentOrderDO> 
                 .eqIfPresent(WmsShipmentOrderDO::getStatus, reqVO.getStatus())
                 .eqIfPresent(WmsShipmentOrderDO::getWarehouseId, reqVO.getWarehouseId())
                 .eqIfPresent(WmsShipmentOrderDO::getMerchantId, reqVO.getMerchantId())
-                .betweenIfPresent(WmsShipmentOrderDO::getCreateTime, reqVO.getOrderDate())
+                .betweenIfPresent(WmsShipmentOrderDO::getOrderTime, reqVO.getOrderTime())
                 .geIfPresent(WmsShipmentOrderDO::getTotalQuantity, reqVO.getTotalQuantityMin())
                 .leIfPresent(WmsShipmentOrderDO::getTotalQuantity, reqVO.getTotalQuantityMax())
                 .geIfPresent(WmsShipmentOrderDO::getTotalAmount, reqVO.getTotalAmountMin())

@@ -21,7 +21,7 @@ public interface WmsReceiptOrderMapper extends BaseMapperX<WmsReceiptOrderDO> {
                 .eqIfPresent(WmsReceiptOrderDO::getStatus, reqVO.getStatus())
                 .eqIfPresent(WmsReceiptOrderDO::getWarehouseId, reqVO.getWarehouseId())
                 .eqIfPresent(WmsReceiptOrderDO::getMerchantId, reqVO.getMerchantId())
-                .betweenIfPresent(WmsReceiptOrderDO::getCreateTime, reqVO.getOrderDate())
+                .betweenIfPresent(WmsReceiptOrderDO::getOrderTime, reqVO.getOrderTime())
                 .geIfPresent(WmsReceiptOrderDO::getTotalQuantity, reqVO.getTotalQuantityMin())
                 .leIfPresent(WmsReceiptOrderDO::getTotalQuantity, reqVO.getTotalQuantityMax())
                 .geIfPresent(WmsReceiptOrderDO::getTotalAmount, reqVO.getTotalAmountMin())

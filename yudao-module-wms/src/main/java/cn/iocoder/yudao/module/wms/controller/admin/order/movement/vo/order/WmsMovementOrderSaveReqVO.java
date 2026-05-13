@@ -9,6 +9,7 @@ import jakarta.validation.constraints.Size;
 import lombok.Data;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Schema(description = "管理后台 - WMS 移库单保存 Request VO")
@@ -22,6 +23,10 @@ public class WmsMovementOrderSaveReqVO {
     @NotBlank(message = "移库单号不能为空")
     @Size(max = 64, message = "移库单号长度不能超过 64 个字符")
     private String no;
+
+    @Schema(description = "单据日期", requiredMode = Schema.RequiredMode.REQUIRED)
+    @NotNull(message = "单据日期不能为空")
+    private LocalDateTime orderTime;
 
     @Schema(description = "备注", example = "备注")
     @Size(max = 255, message = "备注长度不能超过 255 个字符")
@@ -39,7 +44,8 @@ public class WmsMovementOrderSaveReqVO {
     @NotNull(message = "移库数量不能为空")
     private BigDecimal totalQuantity;
 
-    @Schema(description = "总金额", example = "1000.00")
+    @Schema(description = "总金额", requiredMode = Schema.RequiredMode.REQUIRED, example = "1000.00")
+    @NotNull(message = "总金额不能为空")
     private BigDecimal totalAmount;
 
     @Schema(description = "移库明细")

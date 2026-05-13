@@ -11,6 +11,7 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.*;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 
 /**
  * WMS 出库单 DO
@@ -43,6 +44,10 @@ public class WmsShipmentOrderDO extends BaseDO {
      * 字典 {@link DictTypeConstants#SHIPMENT_ORDER_TYPE}
      */
     private Integer type;
+    /**
+     * 单据日期
+     */
+    private LocalDateTime orderTime;
     /**
      * 出库状态
      *

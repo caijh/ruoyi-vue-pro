@@ -20,7 +20,7 @@ public interface WmsCheckOrderMapper extends BaseMapperX<WmsCheckOrderDO> {
                 .likeIfPresent(WmsCheckOrderDO::getNo, reqVO.getNo())
                 .eqIfPresent(WmsCheckOrderDO::getStatus, reqVO.getStatus())
                 .eqIfPresent(WmsCheckOrderDO::getWarehouseId, reqVO.getWarehouseId())
-                .betweenIfPresent(WmsCheckOrderDO::getCreateTime, reqVO.getOrderDate())
+                .betweenIfPresent(WmsCheckOrderDO::getOrderTime, reqVO.getOrderTime())
                 .geIfPresent(WmsCheckOrderDO::getTotalQuantity, reqVO.getTotalQuantityMin())
                 .leIfPresent(WmsCheckOrderDO::getTotalQuantity, reqVO.getTotalQuantityMax())
                 .geIfPresent(WmsCheckOrderDO::getTotalAmount, reqVO.getTotalAmountMin())

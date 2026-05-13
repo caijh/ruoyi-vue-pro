@@ -20,6 +20,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 
 import static cn.iocoder.yudao.framework.test.core.util.AssertUtils.assertServiceException;
 import static cn.iocoder.yudao.module.wms.enums.ErrorCodeConstants.SHIPMENT_ORDER_DETAIL_REQUIRED;
@@ -138,6 +139,7 @@ public class WmsShipmentOrderServiceImplTest extends BaseDbUnitTest {
         return new WmsShipmentOrderDO()
                 .setNo("CK202605120001")
                 .setType(WmsShipmentOrderTypeEnum.SALE.getType())
+                .setOrderTime(LocalDateTime.of(2026, 5, 12, 0, 0))
                 .setStatus(WmsOrderStatusEnum.PREPARE.getStatus())
                 .setWarehouseId(warehouseId)
                 .setTotalQuantity(new BigDecimal("2.00"))

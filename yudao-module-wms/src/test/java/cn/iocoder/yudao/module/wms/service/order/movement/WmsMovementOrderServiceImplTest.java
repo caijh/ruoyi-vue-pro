@@ -19,6 +19,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 
 import static cn.iocoder.yudao.framework.test.core.util.AssertUtils.assertServiceException;
 import static cn.iocoder.yudao.module.wms.enums.ErrorCodeConstants.MOVEMENT_ORDER_DETAIL_REQUIRED;
@@ -150,6 +151,7 @@ public class WmsMovementOrderServiceImplTest extends BaseDbUnitTest {
     private static WmsMovementOrderDO createMovementOrder(Long sourceWarehouseId, Long targetWarehouseId) {
         return new WmsMovementOrderDO()
                 .setNo("YK202605120001")
+                .setOrderTime(LocalDateTime.of(2026, 5, 12, 0, 0))
                 .setStatus(WmsOrderStatusEnum.PREPARE.getStatus())
                 .setSourceWarehouseId(sourceWarehouseId)
                 .setTargetWarehouseId(targetWarehouseId)
@@ -172,6 +174,7 @@ public class WmsMovementOrderServiceImplTest extends BaseDbUnitTest {
     private static WmsMovementOrderSaveReqVO createMovementOrderReqVO(Long sourceWarehouseId, Long targetWarehouseId) {
         WmsMovementOrderSaveReqVO reqVO = new WmsMovementOrderSaveReqVO();
         reqVO.setNo("YK202605120001");
+        reqVO.setOrderTime(LocalDateTime.of(2026, 5, 12, 0, 0));
         reqVO.setSourceWarehouseId(sourceWarehouseId);
         reqVO.setTargetWarehouseId(targetWarehouseId);
         reqVO.setTotalQuantity(new BigDecimal("2.00"));
