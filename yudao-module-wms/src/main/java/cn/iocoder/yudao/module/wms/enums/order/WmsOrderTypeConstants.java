@@ -19,4 +19,10 @@ public final class WmsOrderTypeConstants {
     public static final int RECEIPT_RETURN = 102; // 退货入库：WmsReceiptOrderDO
     public static final int RECEIPT_GIVE_BACK = 103; // 归还入库：WmsReceiptOrderDO
 
+    // ========== 出库单类型 [200, 300) ==========
+
+    public static final int SHIPMENT_RETURN = 200; // 退货出库：WmsShipmentOrderDO
+    public static final int SHIPMENT_SALE = 201; // 销售出库：WmsShipmentOrderDO
+    public static final int SHIPMENT_PRODUCTION = 202; // 生产出库：WmsShipmentOrderDO
+
 }

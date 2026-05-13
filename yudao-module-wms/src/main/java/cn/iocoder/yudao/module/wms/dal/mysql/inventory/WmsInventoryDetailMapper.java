@@ -8,8 +8,10 @@ import cn.iocoder.yudao.module.wms.controller.admin.inventory.vo.detail.WmsInven
 import cn.iocoder.yudao.module.wms.dal.dataobject.inventory.WmsInventoryDetailDO;
 import cn.iocoder.yudao.module.wms.dal.dataobject.md.item.WmsItemDO;
 import cn.iocoder.yudao.module.wms.dal.dataobject.md.item.WmsItemSkuDO;
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import org.apache.ibatis.annotations.Mapper;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -35,6 +37,7 @@ public interface WmsInventoryDetailMapper extends BaseMapperX<WmsInventoryDetail
                 .eqIfPresent(WmsInventoryDetailDO::getWarehouseId, reqVO.getWarehouseId())
                 .eqIfPresent(WmsInventoryDetailDO::getAreaId, reqVO.getAreaId())
                 .likeIfPresent(WmsInventoryDetailDO::getBatchNo, reqVO.getBatchNo())
+                .geIfPresent(WmsInventoryDetailDO::getRemainQuantity, reqVO.getMinRemainQuantity())
                 .betweenIfPresent(WmsInventoryDetailDO::getCreateTime, reqVO.getCreateTime());
         appendDaysToExpiresQuery(query, reqVO.getDaysToExpires());
         appendDimensionOrder(query, reqVO.getType());

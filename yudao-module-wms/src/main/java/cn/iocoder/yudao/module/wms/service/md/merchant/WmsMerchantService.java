@@ -55,7 +55,17 @@ public interface WmsMerchantService {
      * @param id 编号
      * @return 往来企业
      */
+    @SuppressWarnings("UnusedReturnValue")
     WmsMerchantDO validateSupplierMerchantExists(Long id);
+
+    /**
+     * 校验客户存在
+     *
+     * @param id 编号
+     * @return 往来企业
+     */
+    @SuppressWarnings("UnusedReturnValue")
+    WmsMerchantDO validateCustomerMerchantExists(Long id);
 
     /**
      * 获得往来企业

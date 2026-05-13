@@ -7,6 +7,7 @@ import lombok.EqualsAndHashCode;
 import lombok.ToString;
 import org.springframework.format.annotation.DateTimeFormat;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 import static cn.iocoder.yudao.framework.common.util.date.DateUtils.FORMAT_YEAR_MONTH_DAY_HOUR_MINUTE_SECOND;
@@ -52,6 +53,9 @@ public class WmsInventoryDetailPageReqVO extends PageParam {
 
     @Schema(description = "批号", example = "BATCH001")
     private String batchNo;
+
+    @Schema(description = "最小剩余库存数量", example = "0.01")
+    private BigDecimal minRemainQuantity;
 
     @Schema(description = "距离过期天数", example = "30")
     private Integer daysToExpires;

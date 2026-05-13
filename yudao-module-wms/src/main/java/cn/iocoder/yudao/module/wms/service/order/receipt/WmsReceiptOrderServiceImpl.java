@@ -171,6 +171,14 @@ public class WmsReceiptOrderServiceImpl implements WmsReceiptOrderService {
         return order;
     }
 
+    /**
+     * 增加入库单对应库存。
+     *
+     * 入库在库存变更模型中使用正数数量；批次模式下，会根据入库明细生成新的库存明细。
+     *
+     * @param order 入库单
+     * @param details 入库单明细列表
+     */
     private void createInventory(WmsReceiptOrderDO order, List<WmsReceiptOrderDetailDO> details) {
         List<WmsInventoryChangeReqDTO.Item> items = convertList(details,
                 detail -> BeanUtils.toBean(detail, WmsInventoryChangeReqDTO.Item.class));

@@ -48,6 +48,7 @@ public interface ErrorCodeConstants {
     // ========== WMS 基础数据-往来企业 1-060-105-000 ==========
     ErrorCode MERCHANT_NOT_EXISTS = new ErrorCode(1_060_105_000, "往来企业不存在");
     ErrorCode MERCHANT_NOT_SUPPLIER = new ErrorCode(1_060_105_001, "往来企业必须是供应商或客户/供应商类型");
+    ErrorCode MERCHANT_NOT_CUSTOMER = new ErrorCode(1_060_105_002, "往来企业必须是客户或客户/供应商类型");
 
     // ========== WMS 入库单 1-060-200-000 ==========
     ErrorCode RECEIPT_ORDER_NOT_EXISTS = new ErrorCode(1_060_200_000, "入库单不存在");
@@ -57,5 +58,19 @@ public interface ErrorCodeConstants {
     ErrorCode RECEIPT_ORDER_AREA_REQUIRED = new ErrorCode(1_060_200_004, "库区模式下，入库单库区不能为空");
     ErrorCode RECEIPT_ORDER_STATUS_NOT_DELETABLE = new ErrorCode(1_060_200_005, "入库单状态不是草稿或已作废，不能删除");
     ErrorCode RECEIPT_ORDER_DETAIL_NOT_EXISTS = new ErrorCode(1_060_200_007, "入库单明细不存在");
+
+    // ========== WMS 出库单 1-060-201-000 ==========
+    ErrorCode SHIPMENT_ORDER_NOT_EXISTS = new ErrorCode(1_060_201_000, "出库单不存在");
+    ErrorCode SHIPMENT_ORDER_NO_DUPLICATE = new ErrorCode(1_060_201_001, "出库单号重复");
+    ErrorCode SHIPMENT_ORDER_STATUS_NOT_PREPARE = new ErrorCode(1_060_201_002, "出库单状态不是草稿，不能操作");
+    ErrorCode SHIPMENT_ORDER_DETAIL_REQUIRED = new ErrorCode(1_060_201_003, "出库单至少包含一条明细");
+    ErrorCode SHIPMENT_ORDER_AREA_REQUIRED = new ErrorCode(1_060_201_004, "库区模式下，出库单库区不能为空");
+    ErrorCode SHIPMENT_ORDER_STATUS_NOT_DELETABLE = new ErrorCode(1_060_201_005, "出库单状态不是草稿或已作废，不能删除");
+    ErrorCode SHIPMENT_ORDER_DETAIL_NOT_EXISTS = new ErrorCode(1_060_201_007, "出库单明细不存在");
+
+    // ========== WMS 库存 1-060-300-000 ==========
+    ErrorCode INVENTORY_QUANTITY_NOT_ENOUGH = new ErrorCode(1_060_300_000, "库存不足，当前库存：{}，变更数量：{}");
+    ErrorCode INVENTORY_DETAIL_NOT_EXISTS = new ErrorCode(1_060_300_001, "库存明细不存在");
+    ErrorCode INVENTORY_DETAIL_REMAIN_QUANTITY_NOT_ENOUGH = new ErrorCode(1_060_300_002, "库存明细剩余数量不足，当前剩余：{}，出库数量：{}");
 
 }

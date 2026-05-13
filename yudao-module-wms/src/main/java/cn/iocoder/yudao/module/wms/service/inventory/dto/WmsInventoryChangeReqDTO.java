@@ -54,6 +54,10 @@ public class WmsInventoryChangeReqDTO {
          */
         private Long areaId;
         /**
+         * 库存明细编号
+         */
+        private Long inventoryDetailId;
+        /**
          * 变更数量
          */
         private BigDecimal quantity;

@@ -79,6 +79,16 @@ public class WmsMerchantServiceImpl implements WmsMerchantService {
     }
 
     @Override
+    public WmsMerchantDO validateCustomerMerchantExists(Long id) {
+        WmsMerchantDO merchant = validateMerchantExists(id);
+        if (ObjectUtil.notEqual(merchant.getType(), WmsMerchantTypeEnum.CUSTOMER.getType())
+                && ObjectUtil.notEqual(merchant.getType(), WmsMerchantTypeEnum.CUSTOMER_SUPPLIER.getType())) {
+            throw exception(MERCHANT_NOT_CUSTOMER);
+        }
+        return merchant;
+    }
+
+    @Override
     public WmsMerchantDO getMerchant(Long id) {
         return merchantMapper.selectById(id);
     }
