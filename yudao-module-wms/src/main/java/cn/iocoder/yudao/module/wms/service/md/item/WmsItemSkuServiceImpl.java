@@ -65,7 +65,9 @@ public class WmsItemSkuServiceImpl implements WmsItemSkuService {
         // 第二步，批量添加、修改、删除
         if (CollUtil.isNotEmpty(diffList.get(2))) {
             List<Long> deleteSkuIds = convertList(diffList.get(2), WmsItemSkuDO::getId);
+            // 校验 SKU 是否被使用
             validateItemSkuUnused(diffList.get(2));
+            // 删除 SKU
             itemSkuMapper.deleteByIds(deleteSkuIds);
         }
         if (CollUtil.isNotEmpty(diffList.get(0))) {
@@ -86,8 +88,10 @@ public class WmsItemSkuServiceImpl implements WmsItemSkuService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void deleteItemSkuListByItemId(Long itemId) {
+        // 校验 SKU 是否被使用
         List<WmsItemSkuDO> skus = itemSkuMapper.selectListByItemId(itemId);
         validateItemSkuUnused(skus);
+        // 删除 SKU
         itemSkuMapper.deleteByItemId(itemId);
     }
 
