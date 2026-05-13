@@ -2,7 +2,6 @@ package cn.iocoder.yudao.module.wms.dal.dataobject.order.check;
 
 import cn.iocoder.yudao.framework.mybatis.core.dataobject.BaseDO;
 import cn.iocoder.yudao.module.wms.dal.dataobject.inventory.WmsInventoryDO;
-import cn.iocoder.yudao.module.wms.dal.dataobject.inventory.WmsInventoryDetailDO;
 import cn.iocoder.yudao.module.wms.dal.dataobject.md.item.WmsItemSkuDO;
 import cn.iocoder.yudao.module.wms.dal.dataobject.md.warehouse.WmsWarehouseAreaDO;
 import cn.iocoder.yudao.module.wms.dal.dataobject.md.warehouse.WmsWarehouseDO;
@@ -74,12 +73,6 @@ public class WmsCheckOrderDetailDO extends BaseDO {
      * 关联 {@link WmsInventoryDO#getId()}
      */
     private Long inventoryId;
-    /**
-     * 库存明细编号
-     *
-     * 关联 {@link WmsInventoryDetailDO#getId()}
-     */
-    private Long inventoryDetailId;
 
     // ========= 批次效期字段 =========
 

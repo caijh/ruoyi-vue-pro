@@ -61,11 +61,9 @@ public class WmsShipmentOrderServiceImplTest extends BaseDbUnitTest {
         // mock 数据
         Long warehouseId = 100L;
         Long skuId = 200L;
-        Long inventoryDetailId = 300L;
         WmsShipmentOrderDO order = createShipmentOrder(warehouseId);
         shipmentOrderMapper.insert(order);
-        shipmentOrderDetailMapper.insert(createShipmentOrderDetail(order.getId(), skuId, warehouseId, 400L,
-                inventoryDetailId));
+        shipmentOrderDetailMapper.insert(createShipmentOrderDetail(order.getId(), skuId, warehouseId, 400L));
 
         // 调用
         shipmentOrderService.completeShipmentOrder(order.getId());
@@ -84,7 +82,6 @@ public class WmsShipmentOrderServiceImplTest extends BaseDbUnitTest {
         assertEquals(1, inventoryReqDTO.getItems().size());
         assertEquals(skuId, inventoryReqDTO.getItems().get(0).getSkuId());
         assertEquals(warehouseId, inventoryReqDTO.getItems().get(0).getWarehouseId());
-        assertEquals(inventoryDetailId, inventoryReqDTO.getItems().get(0).getInventoryDetailId());
         assertEquals(0, new BigDecimal("-2.00").compareTo(inventoryReqDTO.getItems().get(0).getQuantity()));
     }
 
@@ -105,7 +102,7 @@ public class WmsShipmentOrderServiceImplTest extends BaseDbUnitTest {
         // mock 数据
         WmsShipmentOrderDO order = createShipmentOrder(100L);
         shipmentOrderMapper.insert(order);
-        shipmentOrderDetailMapper.insert(createShipmentOrderDetail(order.getId(), 200L, 100L, 0L, null));
+        shipmentOrderDetailMapper.insert(createShipmentOrderDetail(order.getId(), 200L, 100L, 0L));
 
         // 调用，并断言
         assertServiceException(() -> shipmentOrderService.completeShipmentOrder(order.getId()),
@@ -134,7 +131,7 @@ public class WmsShipmentOrderServiceImplTest extends BaseDbUnitTest {
         // mock 数据
         WmsShipmentOrderDO order = createShipmentOrder(100L).setStatus(WmsOrderStatusEnum.CANCELED.getStatus());
         shipmentOrderMapper.insert(order);
-        shipmentOrderDetailMapper.insert(createShipmentOrderDetail(order.getId(), 200L, 100L, 300L, null));
+        shipmentOrderDetailMapper.insert(createShipmentOrderDetail(order.getId(), 200L, 100L, 300L));
 
         // 调用
         shipmentOrderService.deleteShipmentOrder(order.getId());
@@ -167,13 +164,12 @@ public class WmsShipmentOrderServiceImplTest extends BaseDbUnitTest {
     }
 
     private static WmsShipmentOrderDetailDO createShipmentOrderDetail(Long orderId, Long skuId, Long warehouseId,
-                                                                     Long areaId, Long inventoryDetailId) {
+                                                                     Long areaId) {
         return WmsShipmentOrderDetailDO.builder()
                 .orderId(orderId)
                 .skuId(skuId)
                 .warehouseId(warehouseId)
                 .areaId(areaId)
-                .inventoryDetailId(inventoryDetailId)
                 .quantity(new BigDecimal("2.00"))
                 .amount(new BigDecimal("20.00"))
                 .build();

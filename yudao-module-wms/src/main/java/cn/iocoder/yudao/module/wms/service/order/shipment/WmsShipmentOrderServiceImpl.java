@@ -190,7 +190,7 @@ public class WmsShipmentOrderServiceImpl implements WmsShipmentOrderService {
     /**
      * 扣减出库单对应库存。
      *
-     * 出库在库存变更模型中使用负数数量；批次模式下，明细里的 inventoryDetailId 会用于扣减对应库存明细的剩余数量。
+     * 出库在库存变更模型中使用负数数量，批次字段随库存流水记录。
      *
      * @param order 出库单
      * @param details 出库单明细列表

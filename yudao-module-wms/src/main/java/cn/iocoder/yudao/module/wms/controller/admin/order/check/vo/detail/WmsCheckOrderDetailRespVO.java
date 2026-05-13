@@ -52,9 +52,6 @@ public class WmsCheckOrderDetailRespVO {
     @Schema(description = "库存编号", example = "1024")
     private Long inventoryId;
 
-    @Schema(description = "库存明细编号", example = "1024")
-    private Long inventoryDetailId;
-
     @Schema(description = "批号", example = "B202605110001")
     private String batchNo;
 

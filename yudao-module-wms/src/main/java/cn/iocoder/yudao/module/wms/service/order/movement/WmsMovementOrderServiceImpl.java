@@ -190,8 +190,7 @@ public class WmsMovementOrderServiceImpl implements WmsMovementOrderService {
     /**
      * 移动移库单对应库存。
      *
-     * 移库会生成两条库存变更：来源仓库扣减库存，目标仓库增加库存；批次模式下，来源库存明细用
-     * inventoryDetailId 扣减剩余数量，目标仓库生成新的库存明细。
+     * 移库会生成两条库存变更：来源仓库扣减库存，目标仓库增加库存，批次字段随库存流水记录。
      *
      * @param order 移库单
      * @param details 移库单明细列表
@@ -204,7 +203,7 @@ public class WmsMovementOrderServiceImpl implements WmsMovementOrderService {
                     .setQuantity(detail.getQuantity().negate()));
             items.add(BeanUtils.toBean(detail, WmsInventoryChangeReqDTO.Item.class)
                     .setWarehouseId(detail.getTargetWarehouseId()).setAreaId(detail.getTargetAreaId())
-                    .setInventoryDetailId(null).setQuantity(detail.getQuantity()));
+                    .setQuantity(detail.getQuantity()));
         }
         inventoryService.changeInventory(new WmsInventoryChangeReqDTO()
                 .setOrderId(order.getId()).setOrderNo(order.getNo())

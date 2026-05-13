@@ -49,9 +49,6 @@ public class WmsShipmentOrderDetailRespVO {
     @Schema(description = "库区名称", example = "北京库区01")
     private String areaName;
 
-    @Schema(description = "库存明细编号", example = "1024")
-    private Long inventoryDetailId;
-
     @Schema(description = "批号", example = "B202605110001")
     private String batchNo;
 

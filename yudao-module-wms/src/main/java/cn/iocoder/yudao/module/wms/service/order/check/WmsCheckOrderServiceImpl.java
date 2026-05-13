@@ -183,8 +183,7 @@ public class WmsCheckOrderServiceImpl implements WmsCheckOrderService {
     /**
      * 盘点盘库单对应库存。
      *
-     * 盘库只对盈亏数量生成库存变更：实盘数量大于账面数量时增加库存，反之扣减库存；批次模式下，扣减库存会使用
-     * inventoryDetailId 扣减对应库存明细的剩余数量。
+     * 盘库只对盈亏数量生成库存变更：实盘数量大于账面数量时增加库存，反之扣减库存，批次字段随库存流水记录。
      *
      * @param order 盘库单
      * @param details 盘库单明细列表
@@ -198,9 +197,6 @@ public class WmsCheckOrderServiceImpl implements WmsCheckOrderService {
             }
             WmsInventoryChangeReqDTO.Item item = BeanUtils.toBean(detail, WmsInventoryChangeReqDTO.Item.class)
                     .setQuantity(differenceQuantity);
-            if (differenceQuantity.compareTo(BigDecimal.ZERO) > 0) {
-                item.setInventoryDetailId(null);
-            }
             items.add(item);
         }
         inventoryService.changeInventory(new WmsInventoryChangeReqDTO()

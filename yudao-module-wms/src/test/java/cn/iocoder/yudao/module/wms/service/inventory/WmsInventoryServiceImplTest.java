@@ -3,18 +3,15 @@ package cn.iocoder.yudao.module.wms.service.inventory;
 import cn.iocoder.yudao.framework.common.pojo.PageResult;
 import cn.iocoder.yudao.framework.test.core.ut.BaseDbUnitTest;
 import cn.iocoder.yudao.module.wms.controller.admin.inventory.vo.WmsInventoryPageReqVO;
-import cn.iocoder.yudao.module.wms.dal.dataobject.inventory.WmsInventoryDetailDO;
 import cn.iocoder.yudao.module.wms.dal.dataobject.inventory.WmsInventoryHistoryDO;
 import cn.iocoder.yudao.module.wms.dal.dataobject.inventory.WmsInventoryDO;
 import cn.iocoder.yudao.module.wms.dal.dataobject.md.item.WmsItemDO;
-import cn.iocoder.yudao.module.wms.dal.mysql.inventory.WmsInventoryDetailMapper;
 import cn.iocoder.yudao.module.wms.dal.dataobject.md.item.WmsItemSkuDO;
 import cn.iocoder.yudao.module.wms.dal.mysql.inventory.WmsInventoryHistoryMapper;
 import cn.iocoder.yudao.module.wms.dal.mysql.inventory.WmsInventoryMapper;
 import cn.iocoder.yudao.module.wms.dal.mysql.md.item.WmsItemMapper;
 import cn.iocoder.yudao.module.wms.dal.mysql.md.item.WmsItemSkuMapper;
 import cn.iocoder.yudao.module.wms.enums.inventory.WmsInventoryOrderTypeEnum;
-import cn.iocoder.yudao.module.wms.framework.config.WmsProperties;
 import cn.iocoder.yudao.module.wms.service.inventory.dto.WmsInventoryChangeReqDTO;
 import cn.iocoder.yudao.module.wms.service.md.item.WmsItemService;
 import cn.iocoder.yudao.module.wms.service.md.item.WmsItemSkuService;
@@ -30,14 +27,12 @@ import java.util.Comparator;
 import java.util.List;
 
 import static cn.iocoder.yudao.framework.test.core.util.AssertUtils.assertServiceException;
-import static cn.iocoder.yudao.module.wms.enums.ErrorCodeConstants.INVENTORY_DETAIL_REMAIN_QUANTITY_NOT_ENOUGH;
 import static cn.iocoder.yudao.module.wms.enums.ErrorCodeConstants.INVENTORY_QUANTITY_NOT_ENOUGH;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.when;
 
-@Import({WmsInventoryServiceImpl.class, WmsInventoryDetailServiceImpl.class, WmsInventoryHistoryServiceImpl.class,
-        WmsProperties.class})
+@Import({WmsInventoryServiceImpl.class, WmsInventoryHistoryServiceImpl.class})
 public class WmsInventoryServiceImplTest extends BaseDbUnitTest {
 
     @Resource
@@ -46,15 +41,11 @@ public class WmsInventoryServiceImplTest extends BaseDbUnitTest {
     @Resource
     private WmsInventoryMapper inventoryMapper;
     @Resource
-    private WmsInventoryDetailMapper inventoryDetailMapper;
-    @Resource
     private WmsInventoryHistoryMapper inventoryHistoryMapper;
     @Resource
     private WmsItemMapper itemMapper;
     @Resource
     private WmsItemSkuMapper skuMapper;
-    @Resource
-    private WmsProperties wmsProperties;
 
     @MockitoBean
     private WmsItemSkuService itemSkuService;
@@ -64,7 +55,6 @@ public class WmsInventoryServiceImplTest extends BaseDbUnitTest {
     @Test
     public void testChangeInventory_createInventory() {
         // mock 数据
-        wmsProperties.setBatchEnable(false);
         WmsItemDO item = createItem("ITEM-001", "红富士苹果");
         WmsItemSkuDO sku = createSku(item.getId(), "SKU-001", "10kg 箱装");
         WmsInventoryChangeReqDTO reqDTO = createChangeReq(sku.getId(), 100L, 1001L, "5.00");
@@ -93,7 +83,6 @@ public class WmsInventoryServiceImplTest extends BaseDbUnitTest {
     @Test
     public void testChangeInventory_updateInventory() {
         // mock 数据
-        wmsProperties.setBatchEnable(false);
         WmsItemDO item = createItem("ITEM-001", "红富士苹果");
         WmsItemSkuDO sku = createSku(item.getId(), "SKU-001", "10kg 箱装");
         inventoryMapper.insert(createInventory(sku.getId(), 100L, 1001L, "2.00"));
@@ -118,7 +107,6 @@ public class WmsInventoryServiceImplTest extends BaseDbUnitTest {
     @Test
     public void testChangeInventory_sameInventoryKeyKeepItemGranularity() {
         // mock 数据
-        wmsProperties.setBatchEnable(false);
         WmsItemDO item = createItem("ITEM-001", "红富士苹果");
         WmsItemSkuDO sku = createSku(item.getId(), "SKU-001", "10kg 箱装");
         WmsInventoryChangeReqDTO reqDTO = createChangeReq(sku.getId(), 100L, 1001L, "5.00");
@@ -154,7 +142,6 @@ public class WmsInventoryServiceImplTest extends BaseDbUnitTest {
     @Test
     public void testChangeInventory_sameExistingInventoryKeyKeepItemGranularity() {
         // mock 数据
-        wmsProperties.setBatchEnable(false);
         WmsItemDO item = createItem("ITEM-001", "红富士苹果");
         WmsItemSkuDO sku = createSku(item.getId(), "SKU-001", "10kg 箱装");
         inventoryMapper.insert(createInventory(sku.getId(), 100L, 1001L, "2.00"));
@@ -191,7 +178,6 @@ public class WmsInventoryServiceImplTest extends BaseDbUnitTest {
     @Test
     public void testChangeInventory_multipleInventoryKeysKeepItemGranularity() {
         // mock 数据
-        wmsProperties.setBatchEnable(false);
         WmsItemDO item = createItem("ITEM-001", "红富士苹果");
         WmsItemSkuDO sku = createSku(item.getId(), "SKU-001", "10kg 箱装");
         WmsInventoryChangeReqDTO reqDTO = createChangeReq(sku.getId(), 100L, 1001L, "5.00");
@@ -240,7 +226,6 @@ public class WmsInventoryServiceImplTest extends BaseDbUnitTest {
     @Test
     public void testChangeInventory_quantityNotEnough() {
         // mock 数据
-        wmsProperties.setBatchEnable(false);
         WmsItemDO item = createItem("ITEM-001", "红富士苹果");
         WmsItemSkuDO sku = createSku(item.getId(), "SKU-001", "10kg 箱装");
         inventoryMapper.insert(createInventory(sku.getId(), 100L, 1001L, "2.00"));
@@ -255,7 +240,6 @@ public class WmsInventoryServiceImplTest extends BaseDbUnitTest {
     @Test
     public void testChangeInventory_quantityNotEnoughWithoutInventory() {
         // mock 数据
-        wmsProperties.setBatchEnable(false);
         WmsItemDO item = createItem("ITEM-001", "红富士苹果");
         WmsItemSkuDO sku = createSku(item.getId(), "SKU-001", "10kg 箱装");
         WmsInventoryChangeReqDTO reqDTO = createChangeReq(sku.getId(), 100L, 1001L, "-3.00");
@@ -265,58 +249,6 @@ public class WmsInventoryServiceImplTest extends BaseDbUnitTest {
         assertServiceException(() -> inventoryService.changeInventory(reqDTO), INVENTORY_QUANTITY_NOT_ENOUGH,
                 item.getName(), sku.getName(), 100L, 1001L, BigDecimal.ZERO.setScale(6), new BigDecimal("-3.00"));
         assertEquals(0, inventoryMapper.selectCount());
-    }
-
-    @Test
-    public void testChangeInventory_decreaseInventoryDetail() {
-        // mock 数据
-        wmsProperties.setBatchEnable(true);
-        WmsItemDO item = createItem("ITEM-001", "红富士苹果");
-        WmsItemSkuDO sku = createSku(item.getId(), "SKU-001", "10kg 箱装");
-        inventoryMapper.insert(createInventory(sku.getId(), 100L, 1001L, "10.00"));
-        WmsInventoryDetailDO detail = createInventoryDetail(sku.getId(), 100L, 1001L, "5.00");
-        inventoryDetailMapper.insert(detail);
-        WmsInventoryChangeReqDTO reqDTO = createChangeReq(sku.getId(), 100L, 1001L, "-3.00");
-        reqDTO.getItems().get(0).setInventoryDetailId(detail.getId());
-
-        // 调用
-        inventoryService.changeInventory(reqDTO);
-
-        // 断言：库存余额
-        WmsInventoryDO inventory = inventoryMapper.selectBySkuIdAndWarehouseIdAndAreaId(sku.getId(), 100L, 1001L);
-        assertEquals(0, new BigDecimal("7.00").compareTo(inventory.getQuantity()));
-        // 断言：库存明细
-        WmsInventoryDetailDO dbDetail = inventoryDetailMapper.selectById(detail.getId());
-        assertEquals(0, new BigDecimal("2.00").compareTo(dbDetail.getRemainQuantity()));
-        // 断言：库存流水
-        List<WmsInventoryHistoryDO> histories = inventoryHistoryMapper.selectList();
-        assertEquals(1, histories.size());
-        assertEquals(0, new BigDecimal("-3.00").compareTo(histories.get(0).getQuantity()));
-    }
-
-    @Test
-    public void testChangeInventory_decreaseInventoryDetailRemainQuantityNotEnough() {
-        // mock 数据
-        wmsProperties.setBatchEnable(true);
-        WmsItemDO item = createItem("ITEM-001", "红富士苹果");
-        WmsItemSkuDO sku = createSku(item.getId(), "SKU-001", "10kg 箱装");
-        inventoryMapper.insert(createInventory(sku.getId(), 100L, 1001L, "10.00"));
-        WmsInventoryDetailDO detail = createInventoryDetail(sku.getId(), 100L, 1001L, "5.00");
-        inventoryDetailMapper.insert(detail);
-        WmsInventoryChangeReqDTO reqDTO = createChangeReq(sku.getId(), 100L, 1001L, "-3.00");
-        reqDTO.getItems().get(0).setInventoryDetailId(detail.getId());
-        List<WmsInventoryChangeReqDTO.Item> items = new ArrayList<>(reqDTO.getItems());
-        items.add(new WmsInventoryChangeReqDTO.Item()
-                .setSkuId(sku.getId())
-                .setWarehouseId(100L)
-                .setAreaId(1001L)
-                .setInventoryDetailId(detail.getId())
-                .setQuantity(new BigDecimal("-3.00")));
-        reqDTO.setItems(items);
-
-        // 调用，并断言：相同库存明细会合并后校验
-        assertServiceException(() -> inventoryService.changeInventory(reqDTO),
-                INVENTORY_DETAIL_REMAIN_QUANTITY_NOT_ENOUGH, new BigDecimal("5.000000"), new BigDecimal("6.00"));
     }
 
     @Test
@@ -416,17 +348,6 @@ public class WmsInventoryServiceImplTest extends BaseDbUnitTest {
                 .warehouseId(warehouseId)
                 .areaId(areaId)
                 .quantity(new BigDecimal(quantity))
-                .build();
-    }
-
-    private static WmsInventoryDetailDO createInventoryDetail(Long skuId, Long warehouseId, Long areaId,
-                                                             String remainQuantity) {
-        return WmsInventoryDetailDO.builder()
-                .skuId(skuId)
-                .warehouseId(warehouseId)
-                .areaId(areaId)
-                .quantity(new BigDecimal(remainQuantity))
-                .remainQuantity(new BigDecimal(remainQuantity))
                 .build();
     }
 

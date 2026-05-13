@@ -94,7 +94,5 @@ public interface ErrorCodeConstants {
     // ========== WMS 库存 1-060-300-000 ==========
     ErrorCode INVENTORY_QUANTITY_NOT_ENOUGH = new ErrorCode(1_060_300_000,
             "库存不足，商品：{}，商品规格：{}，仓库：{}，库区：{}，当前库存：{}，变更数量：{}");
-    ErrorCode INVENTORY_DETAIL_NOT_EXISTS = new ErrorCode(1_060_300_001, "库存明细不存在");
-    ErrorCode INVENTORY_DETAIL_REMAIN_QUANTITY_NOT_ENOUGH = new ErrorCode(1_060_300_002, "库存明细剩余数量不足，当前剩余：{}，出库数量：{}");
 
 }

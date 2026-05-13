@@ -7,13 +7,11 @@ import cn.hutool.core.util.StrUtil;
 import cn.iocoder.yudao.framework.common.exception.ServiceException;
 import cn.iocoder.yudao.framework.common.pojo.PageResult;
 import cn.iocoder.yudao.module.wms.controller.admin.inventory.vo.WmsInventoryPageReqVO;
-import cn.iocoder.yudao.module.wms.dal.dataobject.inventory.WmsInventoryDetailDO;
 import cn.iocoder.yudao.module.wms.dal.dataobject.inventory.WmsInventoryDO;
 import cn.iocoder.yudao.module.wms.dal.dataobject.inventory.WmsInventoryHistoryDO;
 import cn.iocoder.yudao.module.wms.dal.dataobject.md.item.WmsItemDO;
 import cn.iocoder.yudao.module.wms.dal.dataobject.md.item.WmsItemSkuDO;
 import cn.iocoder.yudao.module.wms.dal.mysql.inventory.WmsInventoryMapper;
-import cn.iocoder.yudao.module.wms.framework.config.WmsProperties;
 import cn.iocoder.yudao.module.wms.service.inventory.dto.WmsInventoryChangeReqDTO;
 import cn.iocoder.yudao.module.wms.service.md.item.WmsItemService;
 import cn.iocoder.yudao.module.wms.service.md.item.WmsItemSkuService;
@@ -26,7 +24,6 @@ import org.springframework.validation.annotation.Validated;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
@@ -50,17 +47,12 @@ public class WmsInventoryServiceImpl implements WmsInventoryService {
     private WmsInventoryMapper inventoryMapper;
 
     @Resource
-    private WmsInventoryDetailService inventoryDetailService;
-    @Resource
     private WmsInventoryHistoryService inventoryHistoryService;
 
     @Resource
     private WmsItemSkuService itemSkuService;
     @Resource
     private WmsItemService itemService;
-
-    @Resource
-    private WmsProperties wmsProperties;
 
     @Override
     public PageResult<WmsInventoryDO> getInventoryPage(WmsInventoryPageReqVO pageReqVO) {
@@ -85,29 +77,11 @@ public class WmsInventoryServiceImpl implements WmsInventoryService {
         // 1. 补齐并锁定本次涉及的库存余额行，再计算库存变更
         Map<WmsInventoryChangeReqDTO.Item, Tuple> resultMap = changeInventoryList(reqDTO.getItems());
 
-        // 2.1 构建库存流水与批次库存明细
-        boolean batchEnabled = wmsProperties.isBatchEnabled();
+        // 2. 批量写入库存流水
         List<WmsInventoryHistoryDO> histories = new ArrayList<>(reqDTO.getItems().size());
-        List<WmsInventoryDetailDO> increaseDetails = batchEnabled ? new ArrayList<>(reqDTO.getItems().size()) : Collections.emptyList();
-        List<WmsInventoryChangeReqDTO.Item> decreaseItems = batchEnabled ? new ArrayList<>(reqDTO.getItems().size()) : Collections.emptyList();
         for (WmsInventoryChangeReqDTO.Item item : reqDTO.getItems()) {
             histories.add(buildInventoryHistory(reqDTO, item, resultMap.get(item)));
-            if (!batchEnabled) {
-                continue;
-            }
-            if (item.getQuantity().compareTo(BigDecimal.ZERO) > 0) {
-                increaseDetails.add(buildInventoryDetail(reqDTO, item));
-            } else {
-                decreaseItems.add(item);
-            }
         }
-
-        // 2.2.1 扣减已有批次库存明细，再写入新增批次库存明细
-        if (batchEnabled) {
-            inventoryDetailService.decreaseInventoryDetailList(decreaseItems);
-            inventoryDetailService.createInventoryDetailList(increaseDetails);
-        }
-        // 2.2.2 批量写入库存流水
         inventoryHistoryService.createInventoryHistoryList(histories);
     }
 
@@ -219,17 +193,6 @@ public class WmsInventoryServiceImpl implements WmsInventoryService {
         return new WmsInventoryHistoryDO()
                 .setWarehouseId(item.getWarehouseId()).setAreaId(item.getAreaId()).setSkuId(item.getSkuId())
                 .setQuantity(item.getQuantity()).setBeforeQuantity(result.get(0)).setAfterQuantity(result.get(1))
-                .setBatchNo(item.getBatchNo()).setProductionDate(item.getProductionDate())
-                .setExpirationDate(item.getExpirationDate())
-                .setAmount(item.getAmount()).setRemark(item.getRemark())
-                .setOrderId(reqDTO.getOrderId()).setOrderNo(reqDTO.getOrderNo()).setOrderType(reqDTO.getOrderType());
-    }
-
-    private WmsInventoryDetailDO buildInventoryDetail(WmsInventoryChangeReqDTO reqDTO,
-                                                     WmsInventoryChangeReqDTO.Item item) {
-        return new WmsInventoryDetailDO()
-                .setSkuId(item.getSkuId()).setWarehouseId(item.getWarehouseId()).setAreaId(item.getAreaId())
-                .setQuantity(item.getQuantity()).setRemainQuantity(item.getQuantity())
                 .setBatchNo(item.getBatchNo()).setProductionDate(item.getProductionDate())
                 .setExpirationDate(item.getExpirationDate())
                 .setAmount(item.getAmount()).setRemark(item.getRemark())

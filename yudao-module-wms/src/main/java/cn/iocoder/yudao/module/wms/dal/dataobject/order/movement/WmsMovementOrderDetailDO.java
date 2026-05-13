@@ -1,7 +1,6 @@
 package cn.iocoder.yudao.module.wms.dal.dataobject.order.movement;
 
 import cn.iocoder.yudao.framework.mybatis.core.dataobject.BaseDO;
-import cn.iocoder.yudao.module.wms.dal.dataobject.inventory.WmsInventoryDetailDO;
 import cn.iocoder.yudao.module.wms.dal.dataobject.md.item.WmsItemSkuDO;
 import cn.iocoder.yudao.module.wms.dal.dataobject.md.warehouse.WmsWarehouseAreaDO;
 import cn.iocoder.yudao.module.wms.dal.dataobject.md.warehouse.WmsWarehouseDO;
@@ -67,12 +66,6 @@ public class WmsMovementOrderDetailDO extends BaseDO {
      * 关联 {@link WmsWarehouseAreaDO#getId()}
      */
     private Long sourceAreaId;
-    /**
-     * 库存明细编号
-     *
-     * 关联 {@link WmsInventoryDetailDO#getId()}
-     */
-    private Long inventoryDetailId;
 
     // ========= 目标仓库库区字段 =========
 
