@@ -16,12 +16,17 @@ import cn.iocoder.yudao.module.wms.dal.mysql.md.item.WmsItemSkuMapper;
 import cn.iocoder.yudao.module.wms.enums.inventory.WmsInventoryOrderTypeEnum;
 import cn.iocoder.yudao.module.wms.framework.config.WmsProperties;
 import cn.iocoder.yudao.module.wms.service.inventory.dto.WmsInventoryChangeReqDTO;
+import cn.iocoder.yudao.module.wms.service.md.item.WmsItemService;
+import cn.iocoder.yudao.module.wms.service.md.item.WmsItemSkuService;
 import jakarta.annotation.Resource;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.annotation.Import;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import static cn.iocoder.yudao.framework.test.core.util.AssertUtils.assertServiceException;
@@ -29,6 +34,7 @@ import static cn.iocoder.yudao.module.wms.enums.ErrorCodeConstants.INVENTORY_DET
 import static cn.iocoder.yudao.module.wms.enums.ErrorCodeConstants.INVENTORY_QUANTITY_NOT_ENOUGH;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.mockito.Mockito.when;
 
 @Import({WmsInventoryServiceImpl.class, WmsInventoryDetailServiceImpl.class, WmsInventoryHistoryServiceImpl.class,
         WmsProperties.class})
@@ -49,6 +55,11 @@ public class WmsInventoryServiceImplTest extends BaseDbUnitTest {
     private WmsItemSkuMapper skuMapper;
     @Resource
     private WmsProperties wmsProperties;
+
+    @MockitoBean
+    private WmsItemSkuService itemSkuService;
+    @MockitoBean
+    private WmsItemService itemService;
 
     @Test
     public void testChangeInventory_createInventory() {
@@ -105,6 +116,128 @@ public class WmsInventoryServiceImplTest extends BaseDbUnitTest {
     }
 
     @Test
+    public void testChangeInventory_sameInventoryKeyKeepItemGranularity() {
+        // mock 数据
+        wmsProperties.setBatchEnable(false);
+        WmsItemDO item = createItem("ITEM-001", "红富士苹果");
+        WmsItemSkuDO sku = createSku(item.getId(), "SKU-001", "10kg 箱装");
+        WmsInventoryChangeReqDTO reqDTO = createChangeReq(sku.getId(), 100L, 1001L, "5.00");
+        List<WmsInventoryChangeReqDTO.Item> items = new ArrayList<>(reqDTO.getItems());
+        items.add(new WmsInventoryChangeReqDTO.Item()
+                .setSkuId(sku.getId())
+                .setWarehouseId(100L)
+                .setAreaId(1001L)
+                .setQuantity(new BigDecimal("7.00"))
+                .setAmount(new BigDecimal("140.00"))
+                .setRemark("测试入库 2"));
+        reqDTO.setItems(items);
+
+        // 调用
+        inventoryService.changeInventory(reqDTO);
+
+        // 断言：库存余额只保留一条，数量逐条累加
+        WmsInventoryDO inventory = inventoryMapper.selectBySkuIdAndWarehouseIdAndAreaId(sku.getId(), 100L, 1001L);
+        assertNotNull(inventory);
+        assertEquals(0, new BigDecimal("12.00").compareTo(inventory.getQuantity()));
+        // 断言：库存流水保持用户明细颗粒度
+        List<WmsInventoryHistoryDO> histories = inventoryHistoryMapper.selectList();
+        histories.sort(Comparator.comparing(WmsInventoryHistoryDO::getId));
+        assertEquals(2, histories.size());
+        assertEquals(0, BigDecimal.ZERO.compareTo(histories.get(0).getBeforeQuantity()));
+        assertEquals(0, new BigDecimal("5.00").compareTo(histories.get(0).getAfterQuantity()));
+        assertEquals(0, new BigDecimal("5.00").compareTo(histories.get(0).getQuantity()));
+        assertEquals(0, new BigDecimal("5.00").compareTo(histories.get(1).getBeforeQuantity()));
+        assertEquals(0, new BigDecimal("12.00").compareTo(histories.get(1).getAfterQuantity()));
+        assertEquals(0, new BigDecimal("7.00").compareTo(histories.get(1).getQuantity()));
+    }
+
+    @Test
+    public void testChangeInventory_sameExistingInventoryKeyKeepItemGranularity() {
+        // mock 数据
+        wmsProperties.setBatchEnable(false);
+        WmsItemDO item = createItem("ITEM-001", "红富士苹果");
+        WmsItemSkuDO sku = createSku(item.getId(), "SKU-001", "10kg 箱装");
+        inventoryMapper.insert(createInventory(sku.getId(), 100L, 1001L, "2.00"));
+        WmsInventoryChangeReqDTO reqDTO = createChangeReq(sku.getId(), 100L, 1001L, "3.00");
+        List<WmsInventoryChangeReqDTO.Item> items = new ArrayList<>(reqDTO.getItems());
+        items.add(new WmsInventoryChangeReqDTO.Item()
+                .setSkuId(sku.getId())
+                .setWarehouseId(100L)
+                .setAreaId(1001L)
+                .setQuantity(new BigDecimal("4.00"))
+                .setAmount(new BigDecimal("80.00"))
+                .setRemark("测试入库 2"));
+        reqDTO.setItems(items);
+
+        // 调用
+        inventoryService.changeInventory(reqDTO);
+
+        // 断言：库存余额只保留一条，数量逐条累加
+        WmsInventoryDO inventory = inventoryMapper.selectBySkuIdAndWarehouseIdAndAreaId(sku.getId(), 100L, 1001L);
+        assertNotNull(inventory);
+        assertEquals(0, new BigDecimal("9.00").compareTo(inventory.getQuantity()));
+        // 断言：库存流水保持用户明细颗粒度
+        List<WmsInventoryHistoryDO> histories = inventoryHistoryMapper.selectList();
+        histories.sort(Comparator.comparing(WmsInventoryHistoryDO::getId));
+        assertEquals(2, histories.size());
+        assertEquals(0, new BigDecimal("2.00").compareTo(histories.get(0).getBeforeQuantity()));
+        assertEquals(0, new BigDecimal("5.00").compareTo(histories.get(0).getAfterQuantity()));
+        assertEquals(0, new BigDecimal("3.00").compareTo(histories.get(0).getQuantity()));
+        assertEquals(0, new BigDecimal("5.00").compareTo(histories.get(1).getBeforeQuantity()));
+        assertEquals(0, new BigDecimal("9.00").compareTo(histories.get(1).getAfterQuantity()));
+        assertEquals(0, new BigDecimal("4.00").compareTo(histories.get(1).getQuantity()));
+    }
+
+    @Test
+    public void testChangeInventory_multipleInventoryKeysKeepItemGranularity() {
+        // mock 数据
+        wmsProperties.setBatchEnable(false);
+        WmsItemDO item = createItem("ITEM-001", "红富士苹果");
+        WmsItemSkuDO sku = createSku(item.getId(), "SKU-001", "10kg 箱装");
+        WmsInventoryChangeReqDTO reqDTO = createChangeReq(sku.getId(), 100L, 1001L, "5.00");
+        List<WmsInventoryChangeReqDTO.Item> items = new ArrayList<>(reqDTO.getItems());
+        items.add(new WmsInventoryChangeReqDTO.Item()
+                .setSkuId(sku.getId())
+                .setWarehouseId(200L)
+                .setAreaId(2001L)
+                .setQuantity(new BigDecimal("3.00"))
+                .setAmount(new BigDecimal("60.00"))
+                .setRemark("测试入库 2"));
+        items.add(new WmsInventoryChangeReqDTO.Item()
+                .setSkuId(sku.getId())
+                .setWarehouseId(100L)
+                .setAreaId(1001L)
+                .setQuantity(new BigDecimal("-2.00"))
+                .setAmount(new BigDecimal("40.00"))
+                .setRemark("测试出库"));
+        reqDTO.setItems(items);
+
+        // 调用
+        inventoryService.changeInventory(reqDTO);
+
+        // 断言：不同库存余额分别更新
+        WmsInventoryDO inventory1 = inventoryMapper.selectBySkuIdAndWarehouseIdAndAreaId(sku.getId(), 100L, 1001L);
+        assertNotNull(inventory1);
+        assertEquals(0, new BigDecimal("3.00").compareTo(inventory1.getQuantity()));
+        WmsInventoryDO inventory2 = inventoryMapper.selectBySkuIdAndWarehouseIdAndAreaId(sku.getId(), 200L, 2001L);
+        assertNotNull(inventory2);
+        assertEquals(0, new BigDecimal("3.00").compareTo(inventory2.getQuantity()));
+        // 断言：批量加锁后仍按明细颗粒度记录 before/after
+        List<WmsInventoryHistoryDO> histories = inventoryHistoryMapper.selectList();
+        histories.sort(Comparator.comparing(WmsInventoryHistoryDO::getId));
+        assertEquals(3, histories.size());
+        assertEquals(100L, histories.get(0).getWarehouseId());
+        assertEquals(0, BigDecimal.ZERO.compareTo(histories.get(0).getBeforeQuantity()));
+        assertEquals(0, new BigDecimal("5.00").compareTo(histories.get(0).getAfterQuantity()));
+        assertEquals(200L, histories.get(1).getWarehouseId());
+        assertEquals(0, BigDecimal.ZERO.compareTo(histories.get(1).getBeforeQuantity()));
+        assertEquals(0, new BigDecimal("3.00").compareTo(histories.get(1).getAfterQuantity()));
+        assertEquals(100L, histories.get(2).getWarehouseId());
+        assertEquals(0, new BigDecimal("5.00").compareTo(histories.get(2).getBeforeQuantity()));
+        assertEquals(0, new BigDecimal("3.00").compareTo(histories.get(2).getAfterQuantity()));
+    }
+
+    @Test
     public void testChangeInventory_quantityNotEnough() {
         // mock 数据
         wmsProperties.setBatchEnable(false);
@@ -112,10 +245,26 @@ public class WmsInventoryServiceImplTest extends BaseDbUnitTest {
         WmsItemSkuDO sku = createSku(item.getId(), "SKU-001", "10kg 箱装");
         inventoryMapper.insert(createInventory(sku.getId(), 100L, 1001L, "2.00"));
         WmsInventoryChangeReqDTO reqDTO = createChangeReq(sku.getId(), 100L, 1001L, "-3.00");
+        mockItemSkuAndItem(item, sku);
 
         // 调用，并断言
         assertServiceException(() -> inventoryService.changeInventory(reqDTO), INVENTORY_QUANTITY_NOT_ENOUGH,
-                new BigDecimal("2.000000"), new BigDecimal("-3.00"));
+                item.getName(), sku.getName(), 100L, 1001L, new BigDecimal("2.000000"), new BigDecimal("-3.00"));
+    }
+
+    @Test
+    public void testChangeInventory_quantityNotEnoughWithoutInventory() {
+        // mock 数据
+        wmsProperties.setBatchEnable(false);
+        WmsItemDO item = createItem("ITEM-001", "红富士苹果");
+        WmsItemSkuDO sku = createSku(item.getId(), "SKU-001", "10kg 箱装");
+        WmsInventoryChangeReqDTO reqDTO = createChangeReq(sku.getId(), 100L, 1001L, "-3.00");
+        mockItemSkuAndItem(item, sku);
+
+        // 调用，并断言
+        assertServiceException(() -> inventoryService.changeInventory(reqDTO), INVENTORY_QUANTITY_NOT_ENOUGH,
+                item.getName(), sku.getName(), 100L, 1001L, BigDecimal.ZERO.setScale(6), new BigDecimal("-3.00"));
+        assertEquals(0, inventoryMapper.selectCount());
     }
 
     @Test
@@ -256,6 +405,11 @@ public class WmsInventoryServiceImplTest extends BaseDbUnitTest {
         return sku;
     }
 
+    private void mockItemSkuAndItem(WmsItemDO item, WmsItemSkuDO sku) {
+        when(itemSkuService.validateItemSkuExists(sku.getId())).thenReturn(sku);
+        when(itemService.validateItemExists(item.getId())).thenReturn(item);
+    }
+
     private static WmsInventoryDO createInventory(Long skuId, Long warehouseId, Long areaId, String quantity) {
         return WmsInventoryDO.builder()
                 .skuId(skuId)
@@ -281,7 +435,7 @@ public class WmsInventoryServiceImplTest extends BaseDbUnitTest {
                 .setOrderId(1L)
                 .setOrderNo("RK202605120001")
                 .setOrderType(WmsInventoryOrderTypeEnum.RECEIPT.getType())
-                .setItems(List.of(new WmsInventoryChangeReqDTO.Item()
+                .setItems(Collections.singletonList(new WmsInventoryChangeReqDTO.Item()
                         .setSkuId(skuId)
                         .setWarehouseId(warehouseId)
                         .setAreaId(areaId)

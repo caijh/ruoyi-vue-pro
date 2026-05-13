@@ -163,7 +163,7 @@ public class WmsShipmentOrderController {
         if (order == null) {
             return null;
         }
-        List<WmsShipmentOrderRespVO> list = buildShipmentOrderRespVOList(List.of(order));
+        List<WmsShipmentOrderRespVO> list = buildShipmentOrderRespVOList(Collections.singletonList(order));
         return CollUtil.getFirst(list);
     }
 

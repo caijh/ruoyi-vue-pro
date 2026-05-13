@@ -160,7 +160,7 @@ public class WmsMovementOrderController {
         if (order == null) {
             return null;
         }
-        List<WmsMovementOrderRespVO> list = buildMovementOrderRespVOList(List.of(order));
+        List<WmsMovementOrderRespVO> list = buildMovementOrderRespVOList(Collections.singletonList(order));
         return CollUtil.getFirst(list);
     }
 

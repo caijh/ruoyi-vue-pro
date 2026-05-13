@@ -160,7 +160,7 @@ public class WmsCheckOrderController {
         if (order == null) {
             return null;
         }
-        List<WmsCheckOrderRespVO> list = buildCheckOrderRespVOList(List.of(order));
+        List<WmsCheckOrderRespVO> list = buildCheckOrderRespVOList(Collections.singletonList(order));
         return CollUtil.getFirst(list);
     }
 

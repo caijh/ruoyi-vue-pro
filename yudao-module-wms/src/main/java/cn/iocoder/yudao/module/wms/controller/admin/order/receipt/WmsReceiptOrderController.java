@@ -163,7 +163,7 @@ public class WmsReceiptOrderController {
         if (order == null) {
             return null;
         }
-        List<WmsReceiptOrderRespVO> list = buildReceiptOrderRespVOList(List.of(order));
+        List<WmsReceiptOrderRespVO> list = buildReceiptOrderRespVOList(Collections.singletonList(order));
         return CollUtil.getFirst(list);
     }
 

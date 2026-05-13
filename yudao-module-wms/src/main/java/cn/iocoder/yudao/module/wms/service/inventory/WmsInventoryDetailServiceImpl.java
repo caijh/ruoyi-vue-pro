@@ -17,6 +17,7 @@ import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import static cn.iocoder.yudao.framework.common.exception.util.ServiceExceptionUtil.exception;
 import static cn.iocoder.yudao.framework.common.util.collection.CollectionUtils.convertMap;
@@ -50,6 +51,8 @@ public class WmsInventoryDetailServiceImpl implements WmsInventoryDetailService 
         inventoryDetailMapper.insertBatch(list);
     }
 
+    // DONE @AI：加锁，也按照 inventory 做法；一批直接加锁；避免按照顺序，多个明细交叉拿锁，导致死锁
+    // 批量扣减库存明细：先一次性锁定相关明细，再在内存合并扣减数量后统一校验与更新。
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void decreaseInventoryDetailList(List<WmsInventoryChangeReqDTO.Item> items) {
@@ -61,9 +64,9 @@ public class WmsInventoryDetailServiceImpl implements WmsInventoryDetailService 
         }
         List<WmsInventoryChangeReqDTO.Item> sortedItems = items.stream()
                 .sorted(Comparator.comparing(WmsInventoryChangeReqDTO.Item::getInventoryDetailId))
-                .toList();
+                .collect(Collectors.toList());
 
-        // 1. 按库存明细编号固定顺序加锁，避免多明细并发扣减时交叉拿锁
+        // 1. 批量锁定本次涉及的库存明细行，避免逐条加锁时不同事务交叉等待
         Map<Long, WmsInventoryDetailDO> detailMap = convertMap(inventoryDetailMapper.selectListByIdsForUpdate(
                 convertSet(sortedItems, WmsInventoryChangeReqDTO.Item::getInventoryDetailId)),
                 WmsInventoryDetailDO::getId);

@@ -1,17 +1,20 @@
 package cn.iocoder.yudao.module.wms.dal.mysql.inventory;
 
+import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.iocoder.yudao.framework.common.pojo.PageResult;
 import cn.iocoder.yudao.framework.mybatis.core.mapper.BaseMapperX;
+import cn.iocoder.yudao.framework.mybatis.core.query.LambdaQueryWrapperX;
 import cn.iocoder.yudao.framework.mybatis.core.query.MPJLambdaWrapperX;
 import cn.iocoder.yudao.module.wms.controller.admin.inventory.vo.WmsInventoryPageReqVO;
 import cn.iocoder.yudao.module.wms.dal.dataobject.inventory.WmsInventoryDO;
 import cn.iocoder.yudao.module.wms.dal.dataobject.md.item.WmsItemDO;
 import cn.iocoder.yudao.module.wms.dal.dataobject.md.item.WmsItemSkuDO;
-import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import org.apache.ibatis.annotations.Mapper;
 
-import java.math.BigDecimal;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * WMS 库存 Mapper
@@ -72,27 +75,42 @@ public interface WmsInventoryMapper extends BaseMapperX<WmsInventoryDO> {
                 WmsInventoryDO::getAreaId, areaId);
     }
 
-    default WmsInventoryDO selectBySkuIdAndWarehouseIdAndAreaIdForUpdate(Long skuId, Long warehouseId, Long areaId) {
-        return selectOneForUpdate(WmsInventoryDO::getSkuId, skuId,
-                WmsInventoryDO::getWarehouseId, warehouseId,
-                WmsInventoryDO::getAreaId, areaId);
-    }
-
     /**
-     * 增量更新库存数量
+     * 根据多个唯一键，批量查询库存列表
      *
-     * @param id       库存编号
-     * @param quantity 变更数量
-     * @return 更新行数
+     * @param keys 唯一键列表：由 SKU 编号 + 仓库编号 + 库区编号组成
+     * @return 库存列表
      */
-    @SuppressWarnings("UnusedReturnValue")
-    default int updateQuantity(Long id, BigDecimal quantity) {
-        return update(null, new LambdaUpdateWrapper<WmsInventoryDO>()
-                .eq(WmsInventoryDO::getId, id)
-                .setSql("quantity = quantity + (" + quantity + ")"));
+    default List<WmsInventoryDO> selectListByKeys(Collection<WmsInventoryDO> keys) {
+        if (CollUtil.isEmpty(keys)) {
+            return Collections.emptyList();
+        }
+        return selectList(new LambdaQueryWrapperX<WmsInventoryDO>()
+                .and(query -> {
+                    boolean first = true;
+                    for (WmsInventoryDO key : keys) {
+                        if (!first) {
+                            query.or();
+                        }
+                        query.eq(WmsInventoryDO::getSkuId, key.getSkuId())
+                                .eq(WmsInventoryDO::getWarehouseId, key.getWarehouseId())
+                                .eq(WmsInventoryDO::getAreaId, key.getAreaId());
+                        first = false;
+                    }
+                }));
     }
 
-    private static void appendDimensionOrder(MPJLambdaWrapperX<WmsInventoryDO> query, String type) {
+    default List<WmsInventoryDO> selectListByIdsForUpdate(Collection<Long> ids) {
+        if (CollUtil.isEmpty(ids)) {
+            return Collections.emptyList();
+        }
+        return selectList(new LambdaQueryWrapperX<WmsInventoryDO>()
+                .in(WmsInventoryDO::getId, ids)
+                .orderByAsc(WmsInventoryDO::getId)
+                .last("FOR UPDATE"));
+    }
+
+    static void appendDimensionOrder(MPJLambdaWrapperX<WmsInventoryDO> query, String type) {
         if (StrUtil.equals(WmsInventoryPageReqVO.TYPE_WAREHOUSE, type)) {
             query.orderByAsc(WmsInventoryDO::getWarehouseId)
                     .orderByAsc(WmsItemSkuDO::getItemId)

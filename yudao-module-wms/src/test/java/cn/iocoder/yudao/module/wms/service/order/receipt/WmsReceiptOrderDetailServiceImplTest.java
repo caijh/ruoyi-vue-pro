@@ -16,6 +16,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 import java.math.BigDecimal;
+import java.util.Arrays;
 import java.util.List;
 
 import static cn.iocoder.yudao.framework.test.core.util.AssertUtils.assertServiceException;
@@ -129,7 +130,7 @@ public class WmsReceiptOrderDetailServiceImplTest extends BaseDbUnitTest {
         WmsReceiptOrderSaveReqVO reqVO = new WmsReceiptOrderSaveReqVO();
         reqVO.setWarehouseId(100L);
         reqVO.setAreaId(0L);
-        reqVO.setDetails(List.of(details));
+        reqVO.setDetails(Arrays.asList(details));
         return reqVO;
     }
 

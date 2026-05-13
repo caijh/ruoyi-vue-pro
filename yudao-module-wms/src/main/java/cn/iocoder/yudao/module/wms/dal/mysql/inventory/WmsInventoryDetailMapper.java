@@ -47,7 +47,7 @@ public interface WmsInventoryDetailMapper extends BaseMapperX<WmsInventoryDetail
         return selectJoinPage(reqVO, WmsInventoryDetailDO.class, query);
     }
 
-    private static void appendDaysToExpiresQuery(MPJLambdaWrapperX<WmsInventoryDetailDO> query, Integer daysToExpires) {
+    static void appendDaysToExpiresQuery(MPJLambdaWrapperX<WmsInventoryDetailDO> query, Integer daysToExpires) {
         if (daysToExpires == null) {
             return;
         }
@@ -56,7 +56,7 @@ public interface WmsInventoryDetailMapper extends BaseMapperX<WmsInventoryDetail
                 .leIfPresent(WmsInventoryDetailDO::getExpirationDate, startTime.plusDays(daysToExpires));
     }
 
-    private static void appendDimensionOrder(MPJLambdaWrapperX<WmsInventoryDetailDO> query, String type) {
+    static void appendDimensionOrder(MPJLambdaWrapperX<WmsInventoryDetailDO> query, String type) {
         if (StrUtil.equals(WmsInventoryDetailPageReqVO.TYPE_WAREHOUSE, type)) {
             query.orderByAsc(WmsInventoryDetailDO::getWarehouseId)
                     .orderByAsc(WmsInventoryDetailDO::getAreaId)
