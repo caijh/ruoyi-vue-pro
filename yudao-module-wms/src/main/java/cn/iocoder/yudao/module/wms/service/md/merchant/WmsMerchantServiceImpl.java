@@ -10,7 +10,10 @@ import cn.iocoder.yudao.module.wms.controller.admin.md.merchant.vo.WmsMerchantSa
 import cn.iocoder.yudao.module.wms.dal.dataobject.md.merchant.WmsMerchantDO;
 import cn.iocoder.yudao.module.wms.dal.mysql.md.merchant.WmsMerchantMapper;
 import cn.iocoder.yudao.module.wms.enums.md.WmsMerchantTypeEnum;
+import cn.iocoder.yudao.module.wms.service.order.receipt.WmsReceiptOrderService;
+import cn.iocoder.yudao.module.wms.service.order.shipment.WmsShipmentOrderService;
 import jakarta.annotation.Resource;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
@@ -19,6 +22,7 @@ import java.util.List;
 
 import static cn.iocoder.yudao.framework.common.exception.util.ServiceExceptionUtil.exception;
 import static cn.iocoder.yudao.module.wms.enums.ErrorCodeConstants.*;
+import static cn.iocoder.yudao.module.wms.enums.order.WmsOrderTypeConstants.*;
 
 /**
  * WMS 往来企业 Service 实现类
@@ -31,6 +35,12 @@ public class WmsMerchantServiceImpl implements WmsMerchantService {
 
     @Resource
     private WmsMerchantMapper merchantMapper;
+    @Resource
+    @Lazy // 延迟加载，避免循环依赖
+    private WmsReceiptOrderService receiptOrderService;
+    @Resource
+    @Lazy // 延迟加载，避免循环依赖
+    private WmsShipmentOrderService shipmentOrderService;
 
     @Override
     public Long createMerchant(WmsMerchantSaveReqVO createReqVO) {
@@ -53,10 +63,20 @@ public class WmsMerchantServiceImpl implements WmsMerchantService {
     public void deleteMerchant(Long id) {
         // 校验存在
         validateMerchantExists(id);
-        // TODO 入库/出库单实现后，校验往来企业不存在业务关联后再删除
+        // 校验未被单据使用
+        validateMerchantUnused(id);
 
         // 删除
         merchantMapper.deleteById(id);
+    }
+
+    private void validateMerchantUnused(Long id) {
+        if (receiptOrderService.getReceiptOrderCountByMerchantId(id) > 0) {
+            throw exception(MERCHANT_HAS_ORDER, ORDER_NAME_RECEIPT);
+        }
+        if (shipmentOrderService.getShipmentOrderCountByMerchantId(id) > 0) {
+            throw exception(MERCHANT_HAS_ORDER, ORDER_NAME_SHIPMENT);
+        }
     }
 
     @Override

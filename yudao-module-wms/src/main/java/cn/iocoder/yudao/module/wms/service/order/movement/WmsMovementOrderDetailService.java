@@ -60,4 +60,20 @@ public interface WmsMovementOrderDetailService {
      */
     List<WmsMovementOrderDetailDO> validateMovementOrderDetailListExists(Long orderId);
 
+    /**
+     * 获得指定 SKU 的移库单明细数量
+     *
+     * @param skuId SKU 编号
+     * @return 移库单明细数量
+     */
+    long getMovementOrderDetailCountBySkuId(Long skuId);
+
+    /**
+     * 获得指定库区的移库单明细数量
+     *
+     * @param areaId 库区编号
+     * @return 移库单明细数量
+     */
+    long getMovementOrderDetailCountByAreaId(Long areaId);
+
 }

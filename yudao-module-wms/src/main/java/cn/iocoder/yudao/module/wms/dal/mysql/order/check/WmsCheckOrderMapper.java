@@ -37,4 +37,12 @@ public interface WmsCheckOrderMapper extends BaseMapperX<WmsCheckOrderDO> {
         return selectOne(WmsCheckOrderDO::getNo, no);
     }
 
+    default Long selectCountByWarehouseId(Long warehouseId) {
+        return selectCount(WmsCheckOrderDO::getWarehouseId, warehouseId);
+    }
+
+    default Long selectCountByAreaId(Long areaId) {
+        return selectCount(WmsCheckOrderDO::getAreaId, areaId);
+    }
+
 }

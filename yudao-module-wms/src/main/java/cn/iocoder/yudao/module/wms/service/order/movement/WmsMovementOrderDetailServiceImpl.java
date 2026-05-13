@@ -112,6 +112,16 @@ public class WmsMovementOrderDetailServiceImpl implements WmsMovementOrderDetail
         return details;
     }
 
+    @Override
+    public long getMovementOrderDetailCountBySkuId(Long skuId) {
+        return movementOrderDetailMapper.selectCountBySkuId(skuId);
+    }
+
+    @Override
+    public long getMovementOrderDetailCountByAreaId(Long areaId) {
+        return movementOrderDetailMapper.selectCountByAreaId(areaId);
+    }
+
     private List<WmsMovementOrderDetailDO> buildMovementOrderDetailList(WmsMovementOrderSaveReqVO reqVO) {
         if (CollUtil.isEmpty(reqVO.getDetails())) {
             return ListUtil.of();

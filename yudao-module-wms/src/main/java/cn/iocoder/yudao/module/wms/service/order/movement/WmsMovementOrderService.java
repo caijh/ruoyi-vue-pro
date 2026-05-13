@@ -65,4 +65,20 @@ public interface WmsMovementOrderService {
      */
     PageResult<WmsMovementOrderDO> getMovementOrderPage(WmsMovementOrderPageReqVO pageReqVO);
 
+    /**
+     * 获得指定仓库的移库单数量
+     *
+     * @param warehouseId 仓库编号
+     * @return 移库单数量
+     */
+    long getMovementOrderCountByWarehouseId(Long warehouseId);
+
+    /**
+     * 获得指定库区的移库单数量
+     *
+     * @param areaId 库区编号
+     * @return 移库单数量
+     */
+    long getMovementOrderCountByAreaId(Long areaId);
+
 }

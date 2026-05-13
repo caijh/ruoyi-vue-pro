@@ -129,6 +129,16 @@ public class WmsCheckOrderServiceImpl implements WmsCheckOrderService {
         return checkOrderMapper.selectPage(pageReqVO);
     }
 
+    @Override
+    public long getCheckOrderCountByWarehouseId(Long warehouseId) {
+        return checkOrderMapper.selectCountByWarehouseId(warehouseId);
+    }
+
+    @Override
+    public long getCheckOrderCountByAreaId(Long areaId) {
+        return checkOrderMapper.selectCountByAreaId(areaId);
+    }
+
     private void validateCheckOrderSaveData(WmsCheckOrderSaveReqVO reqVO) {
         // 校验盘库单号唯一
         validateCheckOrderNoUnique(reqVO.getId(), reqVO.getNo());

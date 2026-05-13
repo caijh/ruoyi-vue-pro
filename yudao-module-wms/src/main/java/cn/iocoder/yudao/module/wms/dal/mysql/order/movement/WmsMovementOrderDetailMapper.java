@@ -31,4 +31,14 @@ public interface WmsMovementOrderDetailMapper extends BaseMapperX<WmsMovementOrd
         delete(WmsMovementOrderDetailDO::getOrderId, orderId);
     }
 
+    default Long selectCountBySkuId(Long skuId) {
+        return selectCount(WmsMovementOrderDetailDO::getSkuId, skuId);
+    }
+
+    default Long selectCountByAreaId(Long areaId) {
+        return selectCount(new LambdaQueryWrapperX<WmsMovementOrderDetailDO>()
+                .and(query -> query.eq(WmsMovementOrderDetailDO::getSourceAreaId, areaId)
+                        .or().eq(WmsMovementOrderDetailDO::getTargetAreaId, areaId)));
+    }
+
 }

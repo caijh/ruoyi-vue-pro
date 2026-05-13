@@ -111,6 +111,16 @@ public class WmsReceiptOrderDetailServiceImpl implements WmsReceiptOrderDetailSe
         return details;
     }
 
+    @Override
+    public long getReceiptOrderDetailCountBySkuId(Long skuId) {
+        return receiptOrderDetailMapper.selectCountBySkuId(skuId);
+    }
+
+    @Override
+    public long getReceiptOrderDetailCountByAreaId(Long areaId) {
+        return receiptOrderDetailMapper.selectCountByAreaId(areaId);
+    }
+
     private List<WmsReceiptOrderDetailDO> buildReceiptOrderDetailList(WmsReceiptOrderSaveReqVO reqVO) {
         if (CollUtil.isEmpty(reqVO.getDetails())) {
             return ListUtil.of();

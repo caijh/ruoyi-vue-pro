@@ -3,6 +3,7 @@ package cn.iocoder.yudao.module.wms.dal.mysql.inventory;
 import cn.hutool.core.util.StrUtil;
 import cn.iocoder.yudao.framework.common.pojo.PageResult;
 import cn.iocoder.yudao.framework.mybatis.core.mapper.BaseMapperX;
+import cn.iocoder.yudao.framework.mybatis.core.query.LambdaQueryWrapperX;
 import cn.iocoder.yudao.framework.mybatis.core.query.MPJLambdaWrapperX;
 import cn.iocoder.yudao.module.wms.controller.admin.inventory.vo.detail.WmsInventoryDetailPageReqVO;
 import cn.iocoder.yudao.module.wms.dal.dataobject.inventory.WmsInventoryDetailDO;
@@ -15,6 +16,8 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.Collection;
+import java.util.List;
 
 /**
  * WMS 库存明细 Mapper
@@ -71,6 +74,31 @@ public interface WmsInventoryDetailMapper extends BaseMapperX<WmsInventoryDetail
             return;
         }
         throw new IllegalArgumentException("未知库存明细统计维度：" + type);
+    }
+
+    default WmsInventoryDetailDO selectByIdForUpdate(Long id) {
+        return selectOneForUpdate(WmsInventoryDetailDO::getId, id);
+    }
+
+    default List<WmsInventoryDetailDO> selectListByIdsForUpdate(Collection<Long> ids) {
+        return selectList(new LambdaQueryWrapperX<WmsInventoryDetailDO>()
+                .in(WmsInventoryDetailDO::getId, ids)
+                .orderByAsc(WmsInventoryDetailDO::getId)
+                .last("FOR UPDATE"));
+    }
+
+    /**
+     * 增量更新库存明细剩余数量
+     *
+     * @param id       库存明细编号
+     * @param quantity 变更数量
+     * @return 更新行数
+     */
+    @SuppressWarnings("UnusedReturnValue")
+    default int updateRemainQuantityIncr(Long id, BigDecimal quantity) {
+        return update(null, new LambdaUpdateWrapper<WmsInventoryDetailDO>()
+                .eq(WmsInventoryDetailDO::getId, id)
+                .setSql("remain_quantity = remain_quantity + (" + quantity + ")"));
     }
 
 }

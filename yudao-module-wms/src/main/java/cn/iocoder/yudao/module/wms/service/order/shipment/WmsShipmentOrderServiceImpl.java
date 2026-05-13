@@ -129,6 +129,21 @@ public class WmsShipmentOrderServiceImpl implements WmsShipmentOrderService {
         return shipmentOrderMapper.selectPage(pageReqVO);
     }
 
+    @Override
+    public long getShipmentOrderCountByMerchantId(Long merchantId) {
+        return shipmentOrderMapper.selectCountByMerchantId(merchantId);
+    }
+
+    @Override
+    public long getShipmentOrderCountByWarehouseId(Long warehouseId) {
+        return shipmentOrderMapper.selectCountByWarehouseId(warehouseId);
+    }
+
+    @Override
+    public long getShipmentOrderCountByAreaId(Long areaId) {
+        return shipmentOrderMapper.selectCountByAreaId(areaId);
+    }
+
     private void validateShipmentOrderSaveData(WmsShipmentOrderSaveReqVO reqVO) {
         // 校验出库单号唯一
         validateShipmentOrderNoUnique(reqVO.getId(), reqVO.getNo());

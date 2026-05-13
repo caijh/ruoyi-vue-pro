@@ -31,4 +31,12 @@ public interface WmsCheckOrderDetailMapper extends BaseMapperX<WmsCheckOrderDeta
         delete(WmsCheckOrderDetailDO::getOrderId, orderId);
     }
 
+    default Long selectCountBySkuId(Long skuId) {
+        return selectCount(WmsCheckOrderDetailDO::getSkuId, skuId);
+    }
+
+    default Long selectCountByAreaId(Long areaId) {
+        return selectCount(WmsCheckOrderDetailDO::getAreaId, areaId);
+    }
+
 }

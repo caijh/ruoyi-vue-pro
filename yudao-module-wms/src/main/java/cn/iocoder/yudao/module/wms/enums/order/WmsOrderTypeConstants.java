@@ -12,6 +12,13 @@ public final class WmsOrderTypeConstants {
 
     private WmsOrderTypeConstants() {}
 
+    // ========== 单据名称 ==========
+
+    public static final String ORDER_NAME_RECEIPT = "入库单";
+    public static final String ORDER_NAME_SHIPMENT = "出库单";
+    public static final String ORDER_NAME_MOVEMENT = "移库单";
+    public static final String ORDER_NAME_CHECK = "盘库单";
+
     // ========== 入库单类型 [100, 200) ==========
 
     public static final int RECEIPT_PRODUCTION = 100; // 生产入库：WmsReceiptOrderDO

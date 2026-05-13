@@ -39,4 +39,16 @@ public interface WmsShipmentOrderMapper extends BaseMapperX<WmsShipmentOrderDO> 
         return selectOne(WmsShipmentOrderDO::getNo, no);
     }
 
+    default Long selectCountByMerchantId(Long merchantId) {
+        return selectCount(WmsShipmentOrderDO::getMerchantId, merchantId);
+    }
+
+    default Long selectCountByWarehouseId(Long warehouseId) {
+        return selectCount(WmsShipmentOrderDO::getWarehouseId, warehouseId);
+    }
+
+    default Long selectCountByAreaId(Long areaId) {
+        return selectCount(WmsShipmentOrderDO::getAreaId, areaId);
+    }
+
 }

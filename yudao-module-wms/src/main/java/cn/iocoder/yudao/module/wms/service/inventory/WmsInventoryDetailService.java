@@ -3,6 +3,7 @@ package cn.iocoder.yudao.module.wms.service.inventory;
 import cn.iocoder.yudao.framework.common.pojo.PageResult;
 import cn.iocoder.yudao.module.wms.controller.admin.inventory.vo.detail.WmsInventoryDetailPageReqVO;
 import cn.iocoder.yudao.module.wms.dal.dataobject.inventory.WmsInventoryDetailDO;
+import cn.iocoder.yudao.module.wms.service.inventory.dto.WmsInventoryChangeReqDTO;
 
 import java.util.List;
 
@@ -27,5 +28,12 @@ public interface WmsInventoryDetailService {
      * @param list 库存明细列表
      */
     void createInventoryDetailList(List<WmsInventoryDetailDO> list);
+
+    /**
+     * 扣减库存明细剩余数量
+     *
+     * @param items 库存变更明细列表
+     */
+    void decreaseInventoryDetailList(List<WmsInventoryChangeReqDTO.Item> items);
 
 }

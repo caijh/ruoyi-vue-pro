@@ -65,4 +65,20 @@ public interface WmsCheckOrderService {
      */
     PageResult<WmsCheckOrderDO> getCheckOrderPage(WmsCheckOrderPageReqVO pageReqVO);
 
+    /**
+     * 获得指定仓库的盘库单数量
+     *
+     * @param warehouseId 仓库编号
+     * @return 盘库单数量
+     */
+    long getCheckOrderCountByWarehouseId(Long warehouseId);
+
+    /**
+     * 获得指定库区的盘库单数量
+     *
+     * @param areaId 库区编号
+     * @return 盘库单数量
+     */
+    long getCheckOrderCountByAreaId(Long areaId);
+
 }

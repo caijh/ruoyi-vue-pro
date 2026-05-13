@@ -60,4 +60,20 @@ public interface WmsReceiptOrderDetailService {
      */
     List<WmsReceiptOrderDetailDO> validateReceiptOrderDetailListExists(Long orderId);
 
+    /**
+     * 获得指定 SKU 的入库单明细数量
+     *
+     * @param skuId SKU 编号
+     * @return 入库单明细数量
+     */
+    long getReceiptOrderDetailCountBySkuId(Long skuId);
+
+    /**
+     * 获得指定库区的入库单明细数量
+     *
+     * @param areaId 库区编号
+     * @return 入库单明细数量
+     */
+    long getReceiptOrderDetailCountByAreaId(Long areaId);
+
 }

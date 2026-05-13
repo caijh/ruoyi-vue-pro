@@ -111,6 +111,16 @@ public class WmsShipmentOrderDetailServiceImpl implements WmsShipmentOrderDetail
         return details;
     }
 
+    @Override
+    public long getShipmentOrderDetailCountBySkuId(Long skuId) {
+        return shipmentOrderDetailMapper.selectCountBySkuId(skuId);
+    }
+
+    @Override
+    public long getShipmentOrderDetailCountByAreaId(Long areaId) {
+        return shipmentOrderDetailMapper.selectCountByAreaId(areaId);
+    }
+
     private List<WmsShipmentOrderDetailDO> buildShipmentOrderDetailList(WmsShipmentOrderSaveReqVO reqVO) {
         if (CollUtil.isEmpty(reqVO.getDetails())) {
             return ListUtil.of();

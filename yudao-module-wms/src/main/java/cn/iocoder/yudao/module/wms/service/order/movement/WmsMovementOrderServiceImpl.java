@@ -128,6 +128,16 @@ public class WmsMovementOrderServiceImpl implements WmsMovementOrderService {
         return movementOrderMapper.selectPage(pageReqVO);
     }
 
+    @Override
+    public long getMovementOrderCountByWarehouseId(Long warehouseId) {
+        return movementOrderMapper.selectCountByWarehouseId(warehouseId);
+    }
+
+    @Override
+    public long getMovementOrderCountByAreaId(Long areaId) {
+        return movementOrderMapper.selectCountByAreaId(areaId);
+    }
+
     private void validateMovementOrderSaveData(WmsMovementOrderSaveReqVO reqVO) {
         // 校验移库单号唯一
         validateMovementOrderNoUnique(reqVO.getId(), reqVO.getNo());

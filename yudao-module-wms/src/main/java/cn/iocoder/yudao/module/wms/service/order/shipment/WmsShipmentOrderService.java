@@ -65,4 +65,28 @@ public interface WmsShipmentOrderService {
      */
     PageResult<WmsShipmentOrderDO> getShipmentOrderPage(WmsShipmentOrderPageReqVO pageReqVO);
 
+    /**
+     * 获得指定往来企业的出库单数量
+     *
+     * @param merchantId 往来企业编号
+     * @return 出库单数量
+     */
+    long getShipmentOrderCountByMerchantId(Long merchantId);
+
+    /**
+     * 获得指定仓库的出库单数量
+     *
+     * @param warehouseId 仓库编号
+     * @return 出库单数量
+     */
+    long getShipmentOrderCountByWarehouseId(Long warehouseId);
+
+    /**
+     * 获得指定库区的出库单数量
+     *
+     * @param areaId 库区编号
+     * @return 出库单数量
+     */
+    long getShipmentOrderCountByAreaId(Long areaId);
+
 }

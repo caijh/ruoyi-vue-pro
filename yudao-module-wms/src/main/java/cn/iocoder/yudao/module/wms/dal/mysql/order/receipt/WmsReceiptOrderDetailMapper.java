@@ -31,4 +31,12 @@ public interface WmsReceiptOrderDetailMapper extends BaseMapperX<WmsReceiptOrder
         delete(WmsReceiptOrderDetailDO::getOrderId, orderId);
     }
 
+    default Long selectCountBySkuId(Long skuId) {
+        return selectCount(WmsReceiptOrderDetailDO::getSkuId, skuId);
+    }
+
+    default Long selectCountByAreaId(Long areaId) {
+        return selectCount(WmsReceiptOrderDetailDO::getAreaId, areaId);
+    }
+
 }

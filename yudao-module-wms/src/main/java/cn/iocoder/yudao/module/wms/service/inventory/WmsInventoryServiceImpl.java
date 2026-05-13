@@ -19,7 +19,13 @@ import org.springframework.validation.annotation.Validated;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.IdentityHashMap;
 import java.util.List;
+import java.util.Map;
+
+import static cn.iocoder.yudao.framework.common.exception.util.ServiceExceptionUtil.exception;
+import static cn.iocoder.yudao.module.wms.enums.ErrorCodeConstants.*;
 
 /**
  * WMS 库存 Service 实现类
@@ -61,44 +67,72 @@ public class WmsInventoryServiceImpl implements WmsInventoryService {
             return;
         }
 
-        // 1. 变更库存余额，并构建库存流水与批次库存明细
+        // 1. 按固定顺序变更库存余额，避免多 SKU/仓库并发操作时交叉拿锁
+        Map<WmsInventoryChangeReqDTO.Item, Tuple> resultMap = changeInventoryList(reqDTO.getItems());
+
+        // 2. 构建库存流水与批次库存明细
         boolean batchEnabled = wmsProperties.isBatchEnabled();
         List<WmsInventoryHistoryDO> histories = new ArrayList<>(reqDTO.getItems().size());
         List<WmsInventoryDetailDO> details = batchEnabled ? new ArrayList<>(reqDTO.getItems().size()) : List.of();
+        List<WmsInventoryChangeReqDTO.Item> decreaseItems = batchEnabled ? new ArrayList<>(reqDTO.getItems().size()) : List.of();
         for (WmsInventoryChangeReqDTO.Item item : reqDTO.getItems()) {
-            // 1.1 变更库存余额
-            Tuple result = changeInventory0(item);
-            // 1.2 构建库存流水与批次库存明细
-            histories.add(buildInventoryHistory(reqDTO, item, result));
+            histories.add(buildInventoryHistory(reqDTO, item, resultMap.get(item)));
             if (batchEnabled) {
-                details.add(buildInventoryDetail(reqDTO, item));
+                if (isIncrease(item)) {
+                    details.add(buildInventoryDetail(reqDTO, item));
+                } else {
+                    decreaseItems.add(item);
+                }
             }
         }
 
-        // 2.1 批量写入库存流水
-        inventoryHistoryService.createInventoryHistoryList(histories);
+        // 3. 按固定顺序变更批次库存明细
         if (batchEnabled) {
-            // 2.2 批量写入批次库存明细
+            inventoryDetailService.decreaseInventoryDetailList(decreaseItems);
             inventoryDetailService.createInventoryDetailList(details);
         }
+
+        // 4. 批量写入库存流水
+        inventoryHistoryService.createInventoryHistoryList(histories);
     }
 
     /**
-     * 变更库存余额
+     * 批量变更库存余额
      *
-     * @param item 库存变更明细
-     * @return 变更前数量、变更后数量
+     * 按 SKU、仓库、库区固定顺序拿锁；相同库存余额只更新一次，避免同一批操作内反复更新。
+     *
+     * @param items 库存变更明细列表
+     * @return 每条变更明细对应的变更前数量、变更后数量
      */
-    private Tuple changeInventory0(WmsInventoryChangeReqDTO.Item item) {
-        // 1. 获取或创建库存余额，使用 FOR UPDATE 锁定行
-        WmsInventoryDO inventory = getOrCreateInventory(item);
-        // 2. 变更库存余额
-        BigDecimal beforeQuantity = inventory.getQuantity();
-        BigDecimal afterQuantity = beforeQuantity.add(item.getQuantity());
-        inventoryMapper.updateQuantity(inventory.getId(), item.getQuantity());
-        return new Tuple(beforeQuantity, afterQuantity);
-    }
+    private Map<WmsInventoryChangeReqDTO.Item, Tuple> changeInventoryList(List<WmsInventoryChangeReqDTO.Item> items) {
+        List<WmsInventoryChangeReqDTO.Item> sortedItems = sortByInventoryKey(items);
+        Map<WmsInventoryChangeReqDTO.Item, Tuple> resultMap = new IdentityHashMap<>(items.size());
+        for (int i = 0; i < sortedItems.size(); ) {
+            WmsInventoryChangeReqDTO.Item firstItem = sortedItems.get(i);
+            WmsInventoryDO inventory = getOrCreateInventory(firstItem);
+            BigDecimal currentQuantity = inventory.getQuantity();
+            BigDecimal totalChangeQuantity = BigDecimal.ZERO;
 
+            int j = i;
+            while (j < sortedItems.size() && isSameInventoryKey(firstItem, sortedItems.get(j))) {
+                WmsInventoryChangeReqDTO.Item item = sortedItems.get(j);
+                BigDecimal beforeQuantity = currentQuantity;
+                currentQuantity = currentQuantity.add(item.getQuantity());
+                if (currentQuantity.compareTo(BigDecimal.ZERO) < 0) {
+                    throw exception(INVENTORY_QUANTITY_NOT_ENOUGH, beforeQuantity, item.getQuantity());
+                }
+                resultMap.put(item, new Tuple(beforeQuantity, currentQuantity));
+                totalChangeQuantity = totalChangeQuantity.add(item.getQuantity());
+                j++;
+            }
+
+            if (totalChangeQuantity.compareTo(BigDecimal.ZERO) != 0) {
+                inventoryMapper.updateQuantity(inventory.getId(), totalChangeQuantity);
+            }
+            i = j;
+        }
+        return resultMap;
+    }
 
     private WmsInventoryDO getOrCreateInventory(WmsInventoryChangeReqDTO.Item item) {
         // 1. 查询库存余额，使用 FOR UPDATE 锁定行
@@ -145,6 +179,25 @@ public class WmsInventoryServiceImpl implements WmsInventoryService {
                 .setExpirationDate(item.getExpirationDate())
                 .setAmount(item.getAmount()).setRemark(item.getRemark())
                 .setOrderId(reqDTO.getOrderId()).setOrderNo(reqDTO.getOrderNo()).setOrderType(reqDTO.getOrderType());
+    }
+
+    private boolean isIncrease(WmsInventoryChangeReqDTO.Item item) {
+        return item.getQuantity().compareTo(BigDecimal.ZERO) > 0;
+    }
+
+    private static List<WmsInventoryChangeReqDTO.Item> sortByInventoryKey(List<WmsInventoryChangeReqDTO.Item> items) {
+        return items.stream()
+                .sorted(Comparator.comparing(WmsInventoryChangeReqDTO.Item::getSkuId)
+                        .thenComparing(WmsInventoryChangeReqDTO.Item::getWarehouseId)
+                        .thenComparing(WmsInventoryChangeReqDTO.Item::getAreaId))
+                .toList();
+    }
+
+    private static boolean isSameInventoryKey(WmsInventoryChangeReqDTO.Item item1,
+                                              WmsInventoryChangeReqDTO.Item item2) {
+        return item1.getSkuId().equals(item2.getSkuId())
+                && item1.getWarehouseId().equals(item2.getWarehouseId())
+                && item1.getAreaId().equals(item2.getAreaId());
     }
 
 }

@@ -111,6 +111,16 @@ public class WmsCheckOrderDetailServiceImpl implements WmsCheckOrderDetailServic
         return details;
     }
 
+    @Override
+    public long getCheckOrderDetailCountBySkuId(Long skuId) {
+        return checkOrderDetailMapper.selectCountBySkuId(skuId);
+    }
+
+    @Override
+    public long getCheckOrderDetailCountByAreaId(Long areaId) {
+        return checkOrderDetailMapper.selectCountByAreaId(areaId);
+    }
+
     private List<WmsCheckOrderDetailDO> buildCheckOrderDetailList(WmsCheckOrderSaveReqVO reqVO) {
         if (CollUtil.isEmpty(reqVO.getDetails())) {
             return ListUtil.of();

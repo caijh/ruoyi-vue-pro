@@ -8,6 +8,10 @@ import cn.iocoder.yudao.module.wms.controller.admin.md.item.vo.sku.WmsItemSkuSav
 import cn.iocoder.yudao.module.wms.dal.dataobject.md.item.WmsItemSkuDO;
 import cn.iocoder.yudao.module.wms.dal.mysql.md.item.WmsItemSkuMapper;
 import cn.iocoder.yudao.module.wms.service.inventory.WmsInventoryService;
+import cn.iocoder.yudao.module.wms.service.order.check.WmsCheckOrderDetailService;
+import cn.iocoder.yudao.module.wms.service.order.movement.WmsMovementOrderDetailService;
+import cn.iocoder.yudao.module.wms.service.order.receipt.WmsReceiptOrderDetailService;
+import cn.iocoder.yudao.module.wms.service.order.shipment.WmsShipmentOrderDetailService;
 import cn.iocoder.yudao.module.wms.util.WmsUtils;
 import jakarta.annotation.Resource;
 import org.springframework.context.annotation.Lazy;
@@ -23,6 +27,7 @@ import java.util.Set;
 import static cn.iocoder.yudao.framework.common.exception.util.ServiceExceptionUtil.exception;
 import static cn.iocoder.yudao.framework.common.util.collection.CollectionUtils.*;
 import static cn.iocoder.yudao.module.wms.enums.ErrorCodeConstants.*;
+import static cn.iocoder.yudao.module.wms.enums.order.WmsOrderTypeConstants.*;
 
 /**
  * WMS 商品 SKU Service 实现类
@@ -38,6 +43,18 @@ public class WmsItemSkuServiceImpl implements WmsItemSkuService {
     @Resource
     @Lazy // 延迟加载，避免循环依赖
     private WmsInventoryService inventoryService;
+    @Resource
+    @Lazy // 延迟加载，避免循环依赖
+    private WmsReceiptOrderDetailService receiptOrderDetailService;
+    @Resource
+    @Lazy // 延迟加载，避免循环依赖
+    private WmsShipmentOrderDetailService shipmentOrderDetailService;
+    @Resource
+    @Lazy // 延迟加载，避免循环依赖
+    private WmsMovementOrderDetailService movementOrderDetailService;
+    @Resource
+    @Lazy // 延迟加载，避免循环依赖
+    private WmsCheckOrderDetailService checkOrderDetailService;
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -146,9 +163,25 @@ public class WmsItemSkuServiceImpl implements WmsItemSkuService {
             return;
         }
         for (WmsItemSkuDO sku : skus) {
+            validateItemSkuOrderUnused(sku);
             if (inventoryService.getInventoryCountBySkuId(sku.getId()) > 0) {
                 throw exception(ITEM_SKU_HAS_INVENTORY, sku.getName());
             }
+        }
+    }
+
+    private void validateItemSkuOrderUnused(WmsItemSkuDO sku) {
+        if (receiptOrderDetailService.getReceiptOrderDetailCountBySkuId(sku.getId()) > 0) {
+            throw exception(ITEM_SKU_HAS_ORDER, sku.getName(), ORDER_NAME_RECEIPT);
+        }
+        if (shipmentOrderDetailService.getShipmentOrderDetailCountBySkuId(sku.getId()) > 0) {
+            throw exception(ITEM_SKU_HAS_ORDER, sku.getName(), ORDER_NAME_SHIPMENT);
+        }
+        if (movementOrderDetailService.getMovementOrderDetailCountBySkuId(sku.getId()) > 0) {
+            throw exception(ITEM_SKU_HAS_ORDER, sku.getName(), ORDER_NAME_MOVEMENT);
+        }
+        if (checkOrderDetailService.getCheckOrderDetailCountBySkuId(sku.getId()) > 0) {
+            throw exception(ITEM_SKU_HAS_ORDER, sku.getName(), ORDER_NAME_CHECK);
         }
     }
 

@@ -65,4 +65,28 @@ public interface WmsReceiptOrderService {
      */
     PageResult<WmsReceiptOrderDO> getReceiptOrderPage(WmsReceiptOrderPageReqVO pageReqVO);
 
+    /**
+     * 获得指定往来企业的入库单数量
+     *
+     * @param merchantId 往来企业编号
+     * @return 入库单数量
+     */
+    long getReceiptOrderCountByMerchantId(Long merchantId);
+
+    /**
+     * 获得指定仓库的入库单数量
+     *
+     * @param warehouseId 仓库编号
+     * @return 入库单数量
+     */
+    long getReceiptOrderCountByWarehouseId(Long warehouseId);
+
+    /**
+     * 获得指定库区的入库单数量
+     *
+     * @param areaId 库区编号
+     * @return 入库单数量
+     */
+    long getReceiptOrderCountByAreaId(Long areaId);
+
 }

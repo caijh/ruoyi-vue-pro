@@ -60,4 +60,20 @@ public interface WmsCheckOrderDetailService {
      */
     List<WmsCheckOrderDetailDO> validateCheckOrderDetailListExists(Long orderId);
 
+    /**
+     * 获得指定 SKU 的盘库单明细数量
+     *
+     * @param skuId SKU 编号
+     * @return 盘库单明细数量
+     */
+    long getCheckOrderDetailCountBySkuId(Long skuId);
+
+    /**
+     * 获得指定库区的盘库单明细数量
+     *
+     * @param areaId 库区编号
+     * @return 盘库单明细数量
+     */
+    long getCheckOrderDetailCountByAreaId(Long areaId);
+
 }

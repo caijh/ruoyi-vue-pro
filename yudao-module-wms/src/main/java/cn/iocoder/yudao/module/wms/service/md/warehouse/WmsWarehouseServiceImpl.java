@@ -11,7 +11,12 @@ import cn.iocoder.yudao.module.wms.dal.dataobject.md.warehouse.WmsWarehouseDO;
 import cn.iocoder.yudao.module.wms.dal.mysql.md.warehouse.WmsWarehouseAreaMapper;
 import cn.iocoder.yudao.module.wms.dal.mysql.md.warehouse.WmsWarehouseMapper;
 import cn.iocoder.yudao.module.wms.framework.config.WmsProperties;
+import cn.iocoder.yudao.module.wms.service.order.check.WmsCheckOrderService;
+import cn.iocoder.yudao.module.wms.service.order.movement.WmsMovementOrderService;
+import cn.iocoder.yudao.module.wms.service.order.receipt.WmsReceiptOrderService;
+import cn.iocoder.yudao.module.wms.service.order.shipment.WmsShipmentOrderService;
 import jakarta.annotation.Resource;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
@@ -21,6 +26,7 @@ import java.util.List;
 
 import static cn.iocoder.yudao.framework.common.exception.util.ServiceExceptionUtil.exception;
 import static cn.iocoder.yudao.module.wms.enums.ErrorCodeConstants.*;
+import static cn.iocoder.yudao.module.wms.enums.order.WmsOrderTypeConstants.*;
 
 /**
  * WMS 仓库 Service 实现类
@@ -37,6 +43,18 @@ public class WmsWarehouseServiceImpl implements WmsWarehouseService {
     private WmsWarehouseAreaMapper warehouseAreaMapper;
     @Resource
     private WmsProperties wmsProperties;
+    @Resource
+    @Lazy // 延迟加载，避免循环依赖
+    private WmsReceiptOrderService receiptOrderService;
+    @Resource
+    @Lazy // 延迟加载，避免循环依赖
+    private WmsShipmentOrderService shipmentOrderService;
+    @Resource
+    @Lazy // 延迟加载，避免循环依赖
+    private WmsMovementOrderService movementOrderService;
+    @Resource
+    @Lazy // 延迟加载，避免循环依赖
+    private WmsCheckOrderService checkOrderService;
 
     @Override
     public Long createWarehouse(WmsWarehouseSaveReqVO createReqVO) {
@@ -93,6 +111,8 @@ public class WmsWarehouseServiceImpl implements WmsWarehouseService {
     public void deleteWarehouse(Long id) {
         // 校验存在
         validateWarehouseExists(id);
+        // 校验未被单据使用
+        validateWarehouseUnused(id);
         // 库区模式下，存在库区时不允许删除仓库
         if (wmsProperties.isAreaEnabled() && warehouseAreaMapper.selectCountByWarehouseId(id) > 0) {
             throw exception(WAREHOUSE_HAS_AREA);
@@ -100,6 +120,21 @@ public class WmsWarehouseServiceImpl implements WmsWarehouseService {
 
         // 删除
         warehouseMapper.deleteById(id);
+    }
+
+    private void validateWarehouseUnused(Long id) {
+        if (receiptOrderService.getReceiptOrderCountByWarehouseId(id) > 0) {
+            throw exception(WAREHOUSE_HAS_ORDER, ORDER_NAME_RECEIPT);
+        }
+        if (shipmentOrderService.getShipmentOrderCountByWarehouseId(id) > 0) {
+            throw exception(WAREHOUSE_HAS_ORDER, ORDER_NAME_SHIPMENT);
+        }
+        if (movementOrderService.getMovementOrderCountByWarehouseId(id) > 0) {
+            throw exception(WAREHOUSE_HAS_ORDER, ORDER_NAME_MOVEMENT);
+        }
+        if (checkOrderService.getCheckOrderCountByWarehouseId(id) > 0) {
+            throw exception(WAREHOUSE_HAS_ORDER, ORDER_NAME_CHECK);
+        }
     }
 
     @Override

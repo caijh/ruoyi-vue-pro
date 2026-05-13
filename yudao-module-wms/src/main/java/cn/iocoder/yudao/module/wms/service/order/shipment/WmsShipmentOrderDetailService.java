@@ -60,4 +60,20 @@ public interface WmsShipmentOrderDetailService {
      */
     List<WmsShipmentOrderDetailDO> validateShipmentOrderDetailListExists(Long orderId);
 
+    /**
+     * 获得指定 SKU 的出库单明细数量
+     *
+     * @param skuId SKU 编号
+     * @return 出库单明细数量
+     */
+    long getShipmentOrderDetailCountBySkuId(Long skuId);
+
+    /**
+     * 获得指定库区的出库单明细数量
+     *
+     * @param areaId 库区编号
+     * @return 出库单明细数量
+     */
+    long getShipmentOrderDetailCountByAreaId(Long areaId);
+
 }
