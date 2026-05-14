@@ -49,7 +49,7 @@ public interface WmsHomeStatisticsMapper {
      *
      * @param warehouseId 仓库编号
      * @param limit 数量限制
-     * @return [{ "itemId": 1, "itemName": "A4 复印纸", "quantity": 100 }, ...]
+     * @return [{ "id": 1, "name": "A4 复印纸", "quantity": 100 }, ...]
      */
     List<Map<String, Object>> selectInventoryItemRank(@Param("warehouseId") Long warehouseId,
                                                       @Param("limit") Integer limit);
@@ -59,7 +59,7 @@ public interface WmsHomeStatisticsMapper {
      *
      * @param warehouseId 仓库编号
      * @param limit 数量限制
-     * @return [{ "warehouseId": 1, "warehouseName": "上海仓", "quantity": 100 }, ...]
+     * @return [{ "id": 1, "name": "上海仓", "quantity": 100 }, ...]
      */
     List<Map<String, Object>> selectInventoryWarehouseRank(@Param("warehouseId") Long warehouseId,
                                                            @Param("limit") Integer limit);

@@ -55,8 +55,10 @@ public class WmsHomeStatisticsController {
     @Parameter(name = "warehouseId", description = "仓库编号", example = "1024")
     @PreAuthorize("@ss.hasPermission('wms:home:query')")
     public CommonResult<WmsHomeInventorySummaryRespVO> getInventorySummary(
-            @RequestParam(value = "warehouseId", required = false) Long warehouseId) {
-        return success(homeStatisticsService.getInventorySummary(warehouseId));
+            @RequestParam(value = "warehouseId", required = false) Long warehouseId,
+            @RequestParam(value = "goodsLimit", defaultValue = "5") @Min(1) @Max(20) Integer goodsLimit,
+            @RequestParam(value = "warehouseLimit", defaultValue = "8") @Min(1) @Max(20) Integer warehouseLimit) {
+        return success(homeStatisticsService.getInventorySummary(warehouseId, goodsLimit, warehouseLimit));
     }
 
 }
