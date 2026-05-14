@@ -1,6 +1,8 @@
 package cn.iocoder.yudao.module.wms.service.order.shipment;
 
 import cn.iocoder.yudao.framework.test.core.ut.BaseDbUnitTest;
+import cn.iocoder.yudao.module.wms.controller.admin.order.shipment.vo.detail.WmsShipmentOrderDetailSaveReqVO;
+import cn.iocoder.yudao.module.wms.controller.admin.order.shipment.vo.order.WmsShipmentOrderSaveReqVO;
 import cn.iocoder.yudao.module.wms.dal.dataobject.order.shipment.WmsShipmentOrderDO;
 import cn.iocoder.yudao.module.wms.dal.dataobject.order.shipment.WmsShipmentOrderDetailDO;
 import cn.iocoder.yudao.module.wms.dal.mysql.order.shipment.WmsShipmentOrderDetailMapper;
@@ -21,6 +23,7 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.Arrays;
 
 import static cn.iocoder.yudao.framework.test.core.util.AssertUtils.assertServiceException;
 import static cn.iocoder.yudao.module.wms.enums.ErrorCodeConstants.SHIPMENT_ORDER_DETAIL_REQUIRED;
@@ -51,6 +54,43 @@ public class WmsShipmentOrderServiceImplTest extends BaseDbUnitTest {
     private WmsItemSkuService itemSkuService;
     @MockitoBean
     private WmsInventoryService inventoryService;
+
+    @Test
+    public void testCreateShipmentOrder_calculateTotal() {
+        // mock 数据
+        WmsShipmentOrderSaveReqVO reqVO = createShipmentOrderSaveReqVO(null,
+                createShipmentOrderDetailReqVO(null, 2001L, "1.50", "10.00"),
+                createShipmentOrderDetailReqVO(null, 2002L, "2.50", "20.00"));
+
+        // 调用
+        Long orderId = shipmentOrderService.createShipmentOrder(reqVO);
+
+        // 断言
+        WmsShipmentOrderDO dbOrder = shipmentOrderMapper.selectById(orderId);
+        assertNotNull(dbOrder);
+        assertEquals(0, new BigDecimal("4.00").compareTo(dbOrder.getTotalQuantity()));
+        assertEquals(0, new BigDecimal("65.00").compareTo(dbOrder.getTotalPrice()));
+        assertEquals(2, shipmentOrderDetailMapper.selectListByOrderId(orderId).size());
+    }
+
+    @Test
+    public void testUpdateShipmentOrder_calculateTotal() {
+        // mock 数据
+        WmsShipmentOrderDO order = createShipmentOrder(100L);
+        shipmentOrderMapper.insert(order);
+        WmsShipmentOrderSaveReqVO reqVO = createShipmentOrderSaveReqVO(order.getId(),
+                createShipmentOrderDetailReqVO(null, 2001L, "3.00", "30.00"));
+
+        // 调用
+        shipmentOrderService.updateShipmentOrder(reqVO);
+
+        // 断言
+        WmsShipmentOrderDO dbOrder = shipmentOrderMapper.selectById(order.getId());
+        assertNotNull(dbOrder);
+        assertEquals(0, new BigDecimal("3.00").compareTo(dbOrder.getTotalQuantity()));
+        assertEquals(0, new BigDecimal("90.00").compareTo(dbOrder.getTotalPrice()));
+        assertEquals(1, shipmentOrderDetailMapper.selectListByOrderId(order.getId()).size());
+    }
 
     @Test
     public void testCompleteShipmentOrder_success() {
@@ -143,7 +183,29 @@ public class WmsShipmentOrderServiceImplTest extends BaseDbUnitTest {
                 .setStatus(WmsOrderStatusEnum.PREPARE.getStatus())
                 .setWarehouseId(warehouseId)
                 .setTotalQuantity(new BigDecimal("2.00"))
-                .setTotalAmount(new BigDecimal("20.00"));
+                .setTotalPrice(new BigDecimal("20.00"));
+    }
+
+    private static WmsShipmentOrderSaveReqVO createShipmentOrderSaveReqVO(Long id,
+                                                                          WmsShipmentOrderDetailSaveReqVO... details) {
+        WmsShipmentOrderSaveReqVO reqVO = new WmsShipmentOrderSaveReqVO();
+        reqVO.setId(id);
+        reqVO.setNo("CK202605120001");
+        reqVO.setType(WmsShipmentOrderTypeEnum.SALE.getType());
+        reqVO.setOrderTime(LocalDateTime.of(2026, 5, 12, 0, 0));
+        reqVO.setWarehouseId(100L);
+        reqVO.setDetails(Arrays.asList(details));
+        return reqVO;
+    }
+
+    private static WmsShipmentOrderDetailSaveReqVO createShipmentOrderDetailReqVO(Long id, Long skuId,
+                                                                                  String quantity, String price) {
+        WmsShipmentOrderDetailSaveReqVO reqVO = new WmsShipmentOrderDetailSaveReqVO();
+        reqVO.setId(id);
+        reqVO.setSkuId(skuId);
+        reqVO.setQuantity(new BigDecimal(quantity));
+        reqVO.setPrice(new BigDecimal(price));
+        return reqVO;
     }
 
     private static WmsShipmentOrderDetailDO createShipmentOrderDetail(Long orderId, Long skuId, Long warehouseId) {
@@ -152,7 +214,7 @@ public class WmsShipmentOrderServiceImplTest extends BaseDbUnitTest {
                 .skuId(skuId)
                 .warehouseId(warehouseId)
                 .quantity(new BigDecimal("2.00"))
-                .amount(new BigDecimal("20.00"))
+                .price(new BigDecimal("20.00"))
                 .build();
     }
 

@@ -46,8 +46,8 @@ public class WmsShipmentOrderDetailRespVO {
     @Schema(description = "出库数量", requiredMode = Schema.RequiredMode.REQUIRED, example = "100.00")
     private BigDecimal quantity;
 
-    @Schema(description = "金额", example = "1000.00")
-    private BigDecimal amount;
+    @Schema(description = "单价", example = "100.00")
+    private BigDecimal price;
 
     @Schema(description = "创建时间", requiredMode = Schema.RequiredMode.REQUIRED)
     private LocalDateTime createTime;

@@ -61,8 +61,8 @@ public class WmsShipmentOrderDetailDO extends BaseDO {
      */
     private BigDecimal quantity;
     /**
-     * 金额（小计、非单价）
+     * 单价
      */
-    private BigDecimal amount;
+    private BigDecimal price;
 
 }

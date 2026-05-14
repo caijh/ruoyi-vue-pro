@@ -10,7 +10,6 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
 
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -49,14 +48,6 @@ public class WmsShipmentOrderSaveReqVO {
     @Schema(description = "仓库编号", requiredMode = Schema.RequiredMode.REQUIRED, example = "1024")
     @NotNull(message = "仓库不能为空")
     private Long warehouseId;
-
-    @Schema(description = "出库数量", requiredMode = Schema.RequiredMode.REQUIRED, example = "100.00")
-    @NotNull(message = "出库数量不能为空")
-    private BigDecimal totalQuantity;
-
-    @Schema(description = "总金额", requiredMode = Schema.RequiredMode.REQUIRED, example = "1000.00")
-    @NotNull(message = "总金额不能为空")
-    private BigDecimal totalAmount;
 
     @Schema(description = "出库明细")
     @Valid

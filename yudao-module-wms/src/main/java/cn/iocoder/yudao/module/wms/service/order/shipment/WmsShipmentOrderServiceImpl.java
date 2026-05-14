@@ -1,8 +1,10 @@
 package cn.iocoder.yudao.module.wms.service.order.shipment;
 
+import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.ObjectUtil;
 import cn.iocoder.yudao.framework.common.pojo.PageResult;
 import cn.iocoder.yudao.framework.common.util.object.BeanUtils;
+import cn.iocoder.yudao.module.wms.controller.admin.order.shipment.vo.detail.WmsShipmentOrderDetailSaveReqVO;
 import cn.iocoder.yudao.module.wms.controller.admin.order.shipment.vo.order.WmsShipmentOrderPageReqVO;
 import cn.iocoder.yudao.module.wms.controller.admin.order.shipment.vo.order.WmsShipmentOrderSaveReqVO;
 import cn.iocoder.yudao.module.wms.dal.dataobject.order.shipment.WmsShipmentOrderDO;
@@ -55,6 +57,7 @@ public class WmsShipmentOrderServiceImpl implements WmsShipmentOrderService {
         // 2.1 插入出库单
         WmsShipmentOrderDO order = BeanUtils.toBean(createReqVO, WmsShipmentOrderDO.class);
         order.setStatus(WmsOrderStatusEnum.PREPARE.getStatus());
+        fillShipmentOrderTotal(order, createReqVO);
         shipmentOrderMapper.insert(order);
         // 2.2 插入出库单明细
         shipmentOrderDetailService.createShipmentOrderDetailList(order.getId(), createReqVO);
@@ -71,6 +74,7 @@ public class WmsShipmentOrderServiceImpl implements WmsShipmentOrderService {
         // 2.1 更新出库单
         WmsShipmentOrderDO updateObj = BeanUtils.toBean(updateReqVO, WmsShipmentOrderDO.class)
                 .setStatus(WmsOrderStatusEnum.PREPARE.getStatus());
+        fillShipmentOrderTotal(updateObj, updateReqVO);
         shipmentOrderMapper.updateById(updateObj);
         // 2.2 更新出库单明细
         shipmentOrderDetailService.updateShipmentOrderDetailList(updateReqVO.getId(), updateReqVO);
@@ -158,6 +162,22 @@ public class WmsShipmentOrderServiceImpl implements WmsShipmentOrderService {
         if (id == null || ObjectUtil.notEqual(order.getId(), id)) {
             throw exception(SHIPMENT_ORDER_NO_DUPLICATE);
         }
+    }
+
+    private void fillShipmentOrderTotal(WmsShipmentOrderDO order, WmsShipmentOrderSaveReqVO reqVO) {
+        BigDecimal totalQuantity = BigDecimal.ZERO;
+        BigDecimal totalPrice = BigDecimal.ZERO;
+        if (CollUtil.isNotEmpty(reqVO.getDetails())) {
+            for (WmsShipmentOrderDetailSaveReqVO detail : reqVO.getDetails()) {
+                if (detail.getQuantity() != null) {
+                    totalQuantity = totalQuantity.add(detail.getQuantity());
+                }
+                if (detail.getQuantity() != null && detail.getPrice() != null) {
+                    totalPrice = totalPrice.add(detail.getQuantity().multiply(detail.getPrice()));
+                }
+            }
+        }
+        order.setTotalQuantity(totalQuantity).setTotalPrice(totalPrice);
     }
 
     private WmsShipmentOrderDO validateShipmentOrderExists(Long id) {
