@@ -131,7 +131,7 @@ public class WmsMovementOrderDetailServiceImplTest extends BaseDbUnitTest {
         reqVO.setId(id);
         reqVO.setSkuId(skuId);
         reqVO.setQuantity(new BigDecimal(quantity));
-        reqVO.setAmount(new BigDecimal("100.00"));
+        reqVO.setPrice(new BigDecimal("100.00"));
         return reqVO;
     }
 
@@ -142,7 +142,7 @@ public class WmsMovementOrderDetailServiceImplTest extends BaseDbUnitTest {
                 .sourceWarehouseId(100L)
                 .targetWarehouseId(200L)
                 .quantity(new BigDecimal(quantity))
-                .amount(new BigDecimal("100.00"))
+                .price(new BigDecimal("100.00"))
                 .build();
     }
 

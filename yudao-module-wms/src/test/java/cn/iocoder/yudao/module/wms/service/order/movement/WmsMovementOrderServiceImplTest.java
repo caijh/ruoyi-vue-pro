@@ -1,6 +1,7 @@
 package cn.iocoder.yudao.module.wms.service.order.movement;
 
 import cn.iocoder.yudao.framework.test.core.ut.BaseDbUnitTest;
+import cn.iocoder.yudao.module.wms.controller.admin.order.movement.vo.detail.WmsMovementOrderDetailSaveReqVO;
 import cn.iocoder.yudao.module.wms.controller.admin.order.movement.vo.order.WmsMovementOrderSaveReqVO;
 import cn.iocoder.yudao.module.wms.dal.dataobject.order.movement.WmsMovementOrderDO;
 import cn.iocoder.yudao.module.wms.dal.dataobject.order.movement.WmsMovementOrderDetailDO;
@@ -20,6 +21,7 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.Arrays;
 
 import static cn.iocoder.yudao.framework.test.core.util.AssertUtils.assertServiceException;
 import static cn.iocoder.yudao.module.wms.enums.ErrorCodeConstants.MOVEMENT_ORDER_DETAIL_REQUIRED;
@@ -49,6 +51,43 @@ public class WmsMovementOrderServiceImplTest extends BaseDbUnitTest {
     private WmsItemSkuService itemSkuService;
     @MockitoBean
     private WmsInventoryService inventoryService;
+
+    @Test
+    public void testCreateMovementOrder_calculateTotal() {
+        // mock 数据
+        WmsMovementOrderSaveReqVO reqVO = createMovementOrderReqVO(null, 100L, 200L,
+                createMovementOrderDetailReqVO(null, 3001L, "1.50", "10.00"),
+                createMovementOrderDetailReqVO(null, 3002L, "2.50", "20.00"));
+
+        // 调用
+        Long orderId = movementOrderService.createMovementOrder(reqVO);
+
+        // 断言
+        WmsMovementOrderDO dbOrder = movementOrderMapper.selectById(orderId);
+        assertNotNull(dbOrder);
+        assertEquals(0, new BigDecimal("4.00").compareTo(dbOrder.getTotalQuantity()));
+        assertEquals(0, new BigDecimal("65.00").compareTo(dbOrder.getTotalPrice()));
+        assertEquals(2, movementOrderDetailMapper.selectListByOrderId(orderId).size());
+    }
+
+    @Test
+    public void testUpdateMovementOrder_calculateTotal() {
+        // mock 数据
+        WmsMovementOrderDO order = createMovementOrder(100L, 200L);
+        movementOrderMapper.insert(order);
+        WmsMovementOrderSaveReqVO reqVO = createMovementOrderReqVO(order.getId(), 100L, 200L,
+                createMovementOrderDetailReqVO(null, 3001L, "3.00", "30.00"));
+
+        // 调用
+        movementOrderService.updateMovementOrder(reqVO);
+
+        // 断言
+        WmsMovementOrderDO dbOrder = movementOrderMapper.selectById(order.getId());
+        assertNotNull(dbOrder);
+        assertEquals(0, new BigDecimal("3.00").compareTo(dbOrder.getTotalQuantity()));
+        assertEquals(0, new BigDecimal("90.00").compareTo(dbOrder.getTotalPrice()));
+        assertEquals(1, movementOrderDetailMapper.selectListByOrderId(order.getId()).size());
+    }
 
     @Test
     public void testCompleteMovementOrder_success() {
@@ -156,7 +195,7 @@ public class WmsMovementOrderServiceImplTest extends BaseDbUnitTest {
                 .setSourceWarehouseId(sourceWarehouseId)
                 .setTargetWarehouseId(targetWarehouseId)
                 .setTotalQuantity(new BigDecimal("2.00"))
-                .setTotalAmount(new BigDecimal("20.00"));
+                .setTotalPrice(new BigDecimal("20.00"));
     }
 
     private static WmsMovementOrderDetailDO createMovementOrderDetail(Long orderId, Long skuId,
@@ -167,18 +206,34 @@ public class WmsMovementOrderServiceImplTest extends BaseDbUnitTest {
                 .sourceWarehouseId(sourceWarehouseId)
                 .targetWarehouseId(targetWarehouseId)
                 .quantity(new BigDecimal("2.00"))
-                .amount(new BigDecimal("20.00"))
+                .price(new BigDecimal("20.00"))
                 .build();
     }
 
     private static WmsMovementOrderSaveReqVO createMovementOrderReqVO(Long sourceWarehouseId, Long targetWarehouseId) {
+        return createMovementOrderReqVO(null, sourceWarehouseId, targetWarehouseId);
+    }
+
+    private static WmsMovementOrderSaveReqVO createMovementOrderReqVO(Long id, Long sourceWarehouseId,
+                                                                      Long targetWarehouseId,
+                                                                      WmsMovementOrderDetailSaveReqVO... details) {
         WmsMovementOrderSaveReqVO reqVO = new WmsMovementOrderSaveReqVO();
+        reqVO.setId(id);
         reqVO.setNo("YK202605120001");
         reqVO.setOrderTime(LocalDateTime.of(2026, 5, 12, 0, 0));
         reqVO.setSourceWarehouseId(sourceWarehouseId);
         reqVO.setTargetWarehouseId(targetWarehouseId);
-        reqVO.setTotalQuantity(new BigDecimal("2.00"));
-        reqVO.setTotalAmount(new BigDecimal("20.00"));
+        reqVO.setDetails(Arrays.asList(details));
+        return reqVO;
+    }
+
+    private static WmsMovementOrderDetailSaveReqVO createMovementOrderDetailReqVO(Long id, Long skuId,
+                                                                                  String quantity, String price) {
+        WmsMovementOrderDetailSaveReqVO reqVO = new WmsMovementOrderDetailSaveReqVO();
+        reqVO.setId(id);
+        reqVO.setSkuId(skuId);
+        reqVO.setQuantity(new BigDecimal(quantity));
+        reqVO.setPrice(new BigDecimal(price));
         return reqVO;
     }
 

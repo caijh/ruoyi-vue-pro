@@ -44,10 +44,10 @@ public class WmsMovementOrderPageReqVO extends PageParam {
     private BigDecimal totalQuantityMax;
 
     @Schema(description = "最小总金额", example = "1.00")
-    private BigDecimal totalAmountMin;
+    private BigDecimal totalPriceMin;
 
     @Schema(description = "最大总金额", example = "1000.00")
-    private BigDecimal totalAmountMax;
+    private BigDecimal totalPriceMax;
 
     @Schema(description = "创建用户", example = "1")
     private String creator;

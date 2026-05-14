@@ -1,8 +1,10 @@
 package cn.iocoder.yudao.module.wms.service.order.movement;
 
+import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.ObjectUtil;
 import cn.iocoder.yudao.framework.common.pojo.PageResult;
 import cn.iocoder.yudao.framework.common.util.object.BeanUtils;
+import cn.iocoder.yudao.module.wms.controller.admin.order.movement.vo.detail.WmsMovementOrderDetailSaveReqVO;
 import cn.iocoder.yudao.module.wms.controller.admin.order.movement.vo.order.WmsMovementOrderPageReqVO;
 import cn.iocoder.yudao.module.wms.controller.admin.order.movement.vo.order.WmsMovementOrderSaveReqVO;
 import cn.iocoder.yudao.module.wms.dal.dataobject.order.movement.WmsMovementOrderDO;
@@ -18,6 +20,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -51,6 +54,7 @@ public class WmsMovementOrderServiceImpl implements WmsMovementOrderService {
         // 2.1 插入移库单
         WmsMovementOrderDO order = BeanUtils.toBean(createReqVO, WmsMovementOrderDO.class);
         order.setStatus(WmsOrderStatusEnum.PREPARE.getStatus());
+        fillMovementOrderTotal(order, createReqVO);
         movementOrderMapper.insert(order);
         // 2.2 插入移库单明细
         movementOrderDetailService.createMovementOrderDetailList(order.getId(), createReqVO);
@@ -67,6 +71,7 @@ public class WmsMovementOrderServiceImpl implements WmsMovementOrderService {
         // 2.1 更新移库单
         WmsMovementOrderDO updateObj = BeanUtils.toBean(updateReqVO, WmsMovementOrderDO.class)
                 .setStatus(WmsOrderStatusEnum.PREPARE.getStatus());
+        fillMovementOrderTotal(updateObj, updateReqVO);
         movementOrderMapper.updateById(updateObj);
         // 2.2 更新移库单明细
         movementOrderDetailService.updateMovementOrderDetailList(updateReqVO.getId(), updateReqVO);
@@ -150,6 +155,22 @@ public class WmsMovementOrderServiceImpl implements WmsMovementOrderService {
         if (id == null || ObjectUtil.notEqual(order.getId(), id)) {
             throw exception(MOVEMENT_ORDER_NO_DUPLICATE);
         }
+    }
+
+    private void fillMovementOrderTotal(WmsMovementOrderDO order, WmsMovementOrderSaveReqVO reqVO) {
+        BigDecimal totalQuantity = BigDecimal.ZERO;
+        BigDecimal totalPrice = BigDecimal.ZERO;
+        if (CollUtil.isNotEmpty(reqVO.getDetails())) {
+            for (WmsMovementOrderDetailSaveReqVO detail : reqVO.getDetails()) {
+                if (detail.getQuantity() != null) {
+                    totalQuantity = totalQuantity.add(detail.getQuantity());
+                }
+                if (detail.getQuantity() != null && detail.getPrice() != null) {
+                    totalPrice = totalPrice.add(detail.getQuantity().multiply(detail.getPrice()));
+                }
+            }
+        }
+        order.setTotalQuantity(totalQuantity).setTotalPrice(totalPrice);
     }
 
     private WmsMovementOrderDO validateMovementOrderExists(Long id) {

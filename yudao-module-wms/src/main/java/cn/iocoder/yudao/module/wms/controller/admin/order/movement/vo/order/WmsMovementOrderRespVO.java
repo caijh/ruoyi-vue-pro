@@ -57,7 +57,7 @@ public class WmsMovementOrderRespVO {
 
     @Schema(description = "总金额", example = "1000.00")
     @ExcelProperty("总金额")
-    private BigDecimal totalAmount;
+    private BigDecimal totalPrice;
 
     @Schema(description = "移库明细")
     private List<WmsMovementOrderDetailRespVO> details;

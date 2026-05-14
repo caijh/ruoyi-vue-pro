@@ -23,8 +23,8 @@ public class WmsMovementOrderDetailSaveReqVO {
     @DecimalMin(value = "0", inclusive = false, message = "移库数量必须大于 0")
     private BigDecimal quantity;
 
-    @Schema(description = "金额", example = "1000.00")
-    @DecimalMin(value = "0", message = "金额不能小于 0")
-    private BigDecimal amount;
+    @Schema(description = "单价", example = "100.00")
+    @DecimalMin(value = "0", message = "单价不能小于 0")
+    private BigDecimal price;
 
 }
