@@ -35,8 +35,8 @@ public class WmsCheckOrderDetailSaveReqVO {
     @DecimalMin(value = "0", message = "实盘数量不能小于 0")
     private BigDecimal checkQuantity;
 
-    @Schema(description = "金额", example = "1000.00")
-    @DecimalMin(value = "0", message = "金额不能小于 0")
-    private BigDecimal amount;
+    @Schema(description = "单价", example = "1000.00")
+    @DecimalMin(value = "0", message = "单价不能小于 0")
+    private BigDecimal price;
 
 }

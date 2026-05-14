@@ -9,6 +9,7 @@ import cn.iocoder.yudao.module.wms.controller.admin.md.warehouse.vo.WmsWarehouse
 import cn.iocoder.yudao.module.wms.controller.admin.md.warehouse.vo.WmsWarehouseSaveReqVO;
 import cn.iocoder.yudao.module.wms.dal.dataobject.md.warehouse.WmsWarehouseDO;
 import cn.iocoder.yudao.module.wms.dal.mysql.md.warehouse.WmsWarehouseMapper;
+import cn.iocoder.yudao.module.wms.enums.order.WmsOrderTypeEnum;
 import cn.iocoder.yudao.module.wms.service.order.check.WmsCheckOrderService;
 import cn.iocoder.yudao.module.wms.service.order.movement.WmsMovementOrderService;
 import cn.iocoder.yudao.module.wms.service.order.receipt.WmsReceiptOrderService;
@@ -24,7 +25,6 @@ import java.util.List;
 
 import static cn.iocoder.yudao.framework.common.exception.util.ServiceExceptionUtil.exception;
 import static cn.iocoder.yudao.module.wms.enums.ErrorCodeConstants.*;
-import static cn.iocoder.yudao.module.wms.enums.order.WmsOrderTypeConstants.*;
 
 /**
  * WMS 仓库 Service 实现类
@@ -114,16 +114,16 @@ public class WmsWarehouseServiceImpl implements WmsWarehouseService {
 
     private void validateWarehouseUnused(Long id) {
         if (receiptOrderService.getReceiptOrderCountByWarehouseId(id) > 0) {
-            throw exception(WAREHOUSE_HAS_ORDER, ORDER_NAME_RECEIPT);
+            throw exception(WAREHOUSE_HAS_ORDER, WmsOrderTypeEnum.RECEIPT.getName());
         }
         if (shipmentOrderService.getShipmentOrderCountByWarehouseId(id) > 0) {
-            throw exception(WAREHOUSE_HAS_ORDER, ORDER_NAME_SHIPMENT);
+            throw exception(WAREHOUSE_HAS_ORDER, WmsOrderTypeEnum.SHIPMENT.getName());
         }
         if (movementOrderService.getMovementOrderCountByWarehouseId(id) > 0) {
-            throw exception(WAREHOUSE_HAS_ORDER, ORDER_NAME_MOVEMENT);
+            throw exception(WAREHOUSE_HAS_ORDER, WmsOrderTypeEnum.MOVEMENT.getName());
         }
         if (checkOrderService.getCheckOrderCountByWarehouseId(id) > 0) {
-            throw exception(WAREHOUSE_HAS_ORDER, ORDER_NAME_CHECK);
+            throw exception(WAREHOUSE_HAS_ORDER, WmsOrderTypeEnum.CHECK.getName());
         }
     }
 

@@ -45,11 +45,11 @@ public class WmsInventoryHistoryRespVO {
     @Schema(description = "备注", example = "备注")
     private String remark;
 
-    @Schema(description = "操作单编号", example = "1024")
+    @Schema(description = "单据编号", example = "1024")
     private Long orderId;
-    @Schema(description = "操作单号", example = "RK202605110001")
+    @Schema(description = "单据号", example = "RK202605110001")
     private String orderNo;
-    @Schema(description = "操作类型", example = "1")
+    @Schema(description = "单据类型", example = "1")
     private Integer orderType;
     @Schema(description = "创建时间", requiredMode = Schema.RequiredMode.REQUIRED)
     private LocalDateTime createTime;

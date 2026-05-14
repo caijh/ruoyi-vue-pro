@@ -4,12 +4,13 @@ import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.ObjectUtil;
 import cn.iocoder.yudao.framework.common.pojo.PageResult;
 import cn.iocoder.yudao.framework.common.util.object.BeanUtils;
+import cn.iocoder.yudao.module.wms.controller.admin.order.check.vo.detail.WmsCheckOrderDetailSaveReqVO;
 import cn.iocoder.yudao.module.wms.controller.admin.order.check.vo.order.WmsCheckOrderPageReqVO;
 import cn.iocoder.yudao.module.wms.controller.admin.order.check.vo.order.WmsCheckOrderSaveReqVO;
 import cn.iocoder.yudao.module.wms.dal.dataobject.order.check.WmsCheckOrderDO;
 import cn.iocoder.yudao.module.wms.dal.dataobject.order.check.WmsCheckOrderDetailDO;
 import cn.iocoder.yudao.module.wms.dal.mysql.order.check.WmsCheckOrderMapper;
-import cn.iocoder.yudao.module.wms.enums.inventory.WmsInventoryOrderTypeEnum;
+import cn.iocoder.yudao.module.wms.enums.order.WmsOrderTypeEnum;
 import cn.iocoder.yudao.module.wms.enums.order.WmsOrderStatusEnum;
 import cn.iocoder.yudao.module.wms.service.inventory.WmsInventoryService;
 import cn.iocoder.yudao.module.wms.service.inventory.dto.WmsInventoryChangeReqDTO;
@@ -53,6 +54,7 @@ public class WmsCheckOrderServiceImpl implements WmsCheckOrderService {
         // 2.1 插入盘库单
         WmsCheckOrderDO order = BeanUtils.toBean(createReqVO, WmsCheckOrderDO.class);
         order.setStatus(WmsOrderStatusEnum.PREPARE.getStatus());
+        fillCheckOrderTotal(order, createReqVO);
         checkOrderMapper.insert(order);
         // 2.2 插入盘库单明细
         checkOrderDetailService.createCheckOrderDetailList(order.getId(), createReqVO);
@@ -69,6 +71,7 @@ public class WmsCheckOrderServiceImpl implements WmsCheckOrderService {
         // 2.1 更新盘库单
         WmsCheckOrderDO updateObj = BeanUtils.toBean(updateReqVO, WmsCheckOrderDO.class)
                 .setStatus(WmsOrderStatusEnum.PREPARE.getStatus());
+        fillCheckOrderTotal(updateObj, updateReqVO);
         checkOrderMapper.updateById(updateObj);
         // 2.2 更新盘库单明细
         checkOrderDetailService.updateCheckOrderDetailList(updateReqVO.getId(), updateReqVO);
@@ -149,6 +152,35 @@ public class WmsCheckOrderServiceImpl implements WmsCheckOrderService {
         }
     }
 
+    private void fillCheckOrderTotal(WmsCheckOrderDO order, WmsCheckOrderSaveReqVO reqVO) {
+        BigDecimal totalQuantity = BigDecimal.ZERO;
+        BigDecimal totalPrice = BigDecimal.ZERO;
+        BigDecimal actualPrice = BigDecimal.ZERO;
+        if (CollUtil.isNotEmpty(reqVO.getDetails())) {
+            for (WmsCheckOrderDetailSaveReqVO detail : reqVO.getDetails()) {
+                BigDecimal differenceQuantity = calculateDifferenceQuantity(detail.getQuantity(), detail.getCheckQuantity());
+                totalQuantity = totalQuantity.add(differenceQuantity);
+                if (detail.getPrice() == null) {
+                    continue;
+                }
+                if (detail.getQuantity() != null) {
+                    totalPrice = totalPrice.add(detail.getQuantity().multiply(detail.getPrice()));
+                }
+                if (detail.getCheckQuantity() != null) {
+                    actualPrice = actualPrice.add(detail.getCheckQuantity().multiply(detail.getPrice()));
+                }
+            }
+        }
+        order.setTotalQuantity(totalQuantity).setTotalPrice(totalPrice).setActualPrice(actualPrice);
+    }
+
+    private BigDecimal calculateDifferenceQuantity(BigDecimal quantity, BigDecimal checkQuantity) {
+        if (quantity == null || checkQuantity == null) {
+            return BigDecimal.ZERO;
+        }
+        return checkQuantity.subtract(quantity);
+    }
+
     private WmsCheckOrderDO validateCheckOrderExists(Long id) {
         WmsCheckOrderDO order = id == null ? null : checkOrderMapper.selectById(id);
         if (order == null) {
@@ -180,7 +212,7 @@ public class WmsCheckOrderServiceImpl implements WmsCheckOrderService {
     private void changeInventory(WmsCheckOrderDO order, List<WmsCheckOrderDetailDO> details) {
         List<WmsInventoryChangeReqDTO.Item> items = new ArrayList<>(details.size());
         for (WmsCheckOrderDetailDO detail : details) {
-            BigDecimal differenceQuantity = detail.getCheckQuantity().subtract(detail.getQuantity());
+            BigDecimal differenceQuantity = calculateDifferenceQuantity(detail.getQuantity(), detail.getCheckQuantity());
             if (differenceQuantity.compareTo(BigDecimal.ZERO) == 0) {
                 continue;
             }
@@ -193,7 +225,7 @@ public class WmsCheckOrderServiceImpl implements WmsCheckOrderService {
         }
         inventoryService.changeInventory(new WmsInventoryChangeReqDTO()
                 .setOrderId(order.getId()).setOrderNo(order.getNo())
-                .setOrderType(WmsInventoryOrderTypeEnum.CHECK.getType()).setItems(items));
+                .setOrderType(WmsOrderTypeEnum.CHECK.getType()).setItems(items));
     }
 
 }

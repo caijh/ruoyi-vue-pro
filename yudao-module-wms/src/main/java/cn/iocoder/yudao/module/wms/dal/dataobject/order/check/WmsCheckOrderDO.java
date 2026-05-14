@@ -66,8 +66,12 @@ public class WmsCheckOrderDO extends BaseDO {
      */
     private BigDecimal totalQuantity;
     /**
-     * 总金额
+     * 总金额（账面金额）
      */
-    private BigDecimal totalAmount;
+    private BigDecimal totalPrice;
+    /**
+     * 实际金额
+     */
+    private BigDecimal actualPrice;
 
 }

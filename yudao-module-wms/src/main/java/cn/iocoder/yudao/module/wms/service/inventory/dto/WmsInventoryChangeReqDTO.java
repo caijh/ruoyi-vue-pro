@@ -1,6 +1,6 @@
 package cn.iocoder.yudao.module.wms.service.inventory.dto;
 
-import cn.iocoder.yudao.module.wms.enums.inventory.WmsInventoryOrderTypeEnum;
+import cn.iocoder.yudao.module.wms.enums.order.WmsOrderTypeEnum;
 import lombok.Data;
 
 import java.math.BigDecimal;
@@ -15,17 +15,17 @@ import java.util.List;
 public class WmsInventoryChangeReqDTO {
 
     /**
-     * 操作单编号
+     * 单据编号
      */
     private Long orderId;
     /**
-     * 操作单号
+     * 单据号
      */
     private String orderNo;
     /**
-     * 操作类型
+     * 单据类型
      *
-     * 枚举 {@link WmsInventoryOrderTypeEnum#getType()}
+     * 枚举 {@link WmsOrderTypeEnum#getType()}
      */
     private Integer orderType;
 

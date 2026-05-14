@@ -3,7 +3,7 @@ package cn.iocoder.yudao.module.wms.dal.dataobject.inventory;
 import cn.iocoder.yudao.framework.mybatis.core.dataobject.BaseDO;
 import cn.iocoder.yudao.module.wms.dal.dataobject.md.item.WmsItemSkuDO;
 import cn.iocoder.yudao.module.wms.dal.dataobject.md.warehouse.WmsWarehouseDO;
-import cn.iocoder.yudao.module.wms.enums.inventory.WmsInventoryOrderTypeEnum;
+import cn.iocoder.yudao.module.wms.enums.order.WmsOrderTypeEnum;
 import com.baomidou.mybatisplus.annotation.KeySequence;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
@@ -73,17 +73,17 @@ public class WmsInventoryHistoryDO extends BaseDO {
     // ========= 来源单据相关字段 =========
 
     /**
-     * 操作单编号
+     * 单据编号
      */
     private Long orderId;
     /**
-     * 操作单号
+     * 单据号
      */
     private String orderNo;
     /**
-     * 操作类型
+     * 单据类型
      *
-     * 枚举 {@link WmsInventoryOrderTypeEnum#getType()}
+     * 枚举 {@link WmsOrderTypeEnum#getType()}
      */
     private Integer orderType;
 

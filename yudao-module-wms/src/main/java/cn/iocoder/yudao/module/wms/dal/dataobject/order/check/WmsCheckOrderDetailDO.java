@@ -78,8 +78,8 @@ public class WmsCheckOrderDetailDO extends BaseDO {
      */
     private BigDecimal checkQuantity;
     /**
-     * 金额（小计、非单价）
+     * 单价
      */
-    private BigDecimal amount;
+    private BigDecimal price;
 
 }

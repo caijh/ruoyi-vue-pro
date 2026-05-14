@@ -35,10 +35,10 @@ public class WmsInventoryHistoryPageReqVO extends PageParam {
     @Schema(description = "仓库编号", example = "2048")
     private Long warehouseId;
 
-    @Schema(description = "操作单号", example = "RK202605110001")
+    @Schema(description = "单据号", example = "RK202605110001")
     private String orderNo;
 
-    @Schema(description = "操作类型", example = "1")
+    @Schema(description = "单据类型", example = "1")
     private Integer orderType;
 
     @Schema(description = "操作时间")

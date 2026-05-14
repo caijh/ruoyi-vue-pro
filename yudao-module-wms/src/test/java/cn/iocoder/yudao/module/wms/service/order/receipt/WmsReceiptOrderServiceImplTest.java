@@ -7,7 +7,7 @@ import cn.iocoder.yudao.module.wms.dal.dataobject.order.receipt.WmsReceiptOrderD
 import cn.iocoder.yudao.module.wms.dal.dataobject.order.receipt.WmsReceiptOrderDetailDO;
 import cn.iocoder.yudao.module.wms.dal.mysql.order.receipt.WmsReceiptOrderDetailMapper;
 import cn.iocoder.yudao.module.wms.dal.mysql.order.receipt.WmsReceiptOrderMapper;
-import cn.iocoder.yudao.module.wms.enums.inventory.WmsInventoryOrderTypeEnum;
+import cn.iocoder.yudao.module.wms.enums.order.WmsOrderTypeEnum;
 import cn.iocoder.yudao.module.wms.enums.order.WmsOrderStatusEnum;
 import cn.iocoder.yudao.module.wms.enums.order.WmsReceiptOrderTypeEnum;
 import cn.iocoder.yudao.module.wms.service.inventory.WmsInventoryService;
@@ -114,7 +114,7 @@ public class WmsReceiptOrderServiceImplTest extends BaseDbUnitTest {
         WmsInventoryChangeReqDTO inventoryReqDTO = captor.getValue();
         assertEquals(order.getId(), inventoryReqDTO.getOrderId());
         assertEquals(order.getNo(), inventoryReqDTO.getOrderNo());
-        assertEquals(WmsInventoryOrderTypeEnum.RECEIPT.getType(), inventoryReqDTO.getOrderType());
+        assertEquals(WmsOrderTypeEnum.RECEIPT.getType(), inventoryReqDTO.getOrderType());
         assertEquals(1, inventoryReqDTO.getItems().size());
         assertEquals(skuId, inventoryReqDTO.getItems().get(0).getSkuId());
         assertEquals(warehouseId, inventoryReqDTO.getItems().get(0).getWarehouseId());

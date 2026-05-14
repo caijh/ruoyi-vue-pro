@@ -10,7 +10,7 @@ import cn.iocoder.yudao.module.wms.controller.admin.order.shipment.vo.order.WmsS
 import cn.iocoder.yudao.module.wms.dal.dataobject.order.shipment.WmsShipmentOrderDO;
 import cn.iocoder.yudao.module.wms.dal.dataobject.order.shipment.WmsShipmentOrderDetailDO;
 import cn.iocoder.yudao.module.wms.dal.mysql.order.shipment.WmsShipmentOrderMapper;
-import cn.iocoder.yudao.module.wms.enums.inventory.WmsInventoryOrderTypeEnum;
+import cn.iocoder.yudao.module.wms.enums.order.WmsOrderTypeEnum;
 import cn.iocoder.yudao.module.wms.enums.order.WmsOrderStatusEnum;
 import cn.iocoder.yudao.module.wms.service.inventory.WmsInventoryService;
 import cn.iocoder.yudao.module.wms.service.inventory.dto.WmsInventoryChangeReqDTO;
@@ -214,7 +214,7 @@ public class WmsShipmentOrderServiceImpl implements WmsShipmentOrderService {
                         .setQuantity(detail.getQuantity().multiply(BigDecimal.valueOf(-1L))));
         inventoryService.changeInventory(new WmsInventoryChangeReqDTO()
                 .setOrderId(order.getId()).setOrderNo(order.getNo())
-                .setOrderType(WmsInventoryOrderTypeEnum.SHIPMENT.getType()).setItems(items));
+                .setOrderType(WmsOrderTypeEnum.SHIPMENT.getType()).setItems(items));
     }
 
 }

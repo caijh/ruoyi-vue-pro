@@ -10,7 +10,7 @@ import cn.iocoder.yudao.module.wms.controller.admin.order.movement.vo.order.WmsM
 import cn.iocoder.yudao.module.wms.dal.dataobject.order.movement.WmsMovementOrderDO;
 import cn.iocoder.yudao.module.wms.dal.dataobject.order.movement.WmsMovementOrderDetailDO;
 import cn.iocoder.yudao.module.wms.dal.mysql.order.movement.WmsMovementOrderMapper;
-import cn.iocoder.yudao.module.wms.enums.inventory.WmsInventoryOrderTypeEnum;
+import cn.iocoder.yudao.module.wms.enums.order.WmsOrderTypeEnum;
 import cn.iocoder.yudao.module.wms.enums.order.WmsOrderStatusEnum;
 import cn.iocoder.yudao.module.wms.service.inventory.WmsInventoryService;
 import cn.iocoder.yudao.module.wms.service.inventory.dto.WmsInventoryChangeReqDTO;
@@ -211,7 +211,7 @@ public class WmsMovementOrderServiceImpl implements WmsMovementOrderService {
         }
         inventoryService.changeInventory(new WmsInventoryChangeReqDTO()
                 .setOrderId(order.getId()).setOrderNo(order.getNo())
-                .setOrderType(WmsInventoryOrderTypeEnum.MOVEMENT.getType()).setItems(items));
+                .setOrderType(WmsOrderTypeEnum.MOVEMENT.getType()).setItems(items));
     }
 
 }

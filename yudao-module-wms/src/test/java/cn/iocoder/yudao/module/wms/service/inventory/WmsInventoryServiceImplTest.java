@@ -11,7 +11,7 @@ import cn.iocoder.yudao.module.wms.dal.mysql.inventory.WmsInventoryHistoryMapper
 import cn.iocoder.yudao.module.wms.dal.mysql.inventory.WmsInventoryMapper;
 import cn.iocoder.yudao.module.wms.dal.mysql.md.item.WmsItemMapper;
 import cn.iocoder.yudao.module.wms.dal.mysql.md.item.WmsItemSkuMapper;
-import cn.iocoder.yudao.module.wms.enums.inventory.WmsInventoryOrderTypeEnum;
+import cn.iocoder.yudao.module.wms.enums.order.WmsOrderTypeEnum;
 import cn.iocoder.yudao.module.wms.service.inventory.dto.WmsInventoryChangeReqDTO;
 import cn.iocoder.yudao.module.wms.service.md.item.WmsItemService;
 import cn.iocoder.yudao.module.wms.service.md.item.WmsItemSkuService;
@@ -406,7 +406,7 @@ public class WmsInventoryServiceImplTest extends BaseDbUnitTest {
         return new WmsInventoryChangeReqDTO()
                 .setOrderId(1L)
                 .setOrderNo("RK202605120001")
-                .setOrderType(WmsInventoryOrderTypeEnum.RECEIPT.getType())
+                .setOrderType(WmsOrderTypeEnum.RECEIPT.getType())
                 .setItems(Collections.singletonList(new WmsInventoryChangeReqDTO.Item()
                         .setSkuId(skuId)
                         .setWarehouseId(warehouseId)

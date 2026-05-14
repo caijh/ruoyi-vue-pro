@@ -7,6 +7,7 @@ import cn.iocoder.yudao.framework.common.util.object.BeanUtils;
 import cn.iocoder.yudao.module.wms.controller.admin.md.item.vo.sku.WmsItemSkuSaveReqVO;
 import cn.iocoder.yudao.module.wms.dal.dataobject.md.item.WmsItemSkuDO;
 import cn.iocoder.yudao.module.wms.dal.mysql.md.item.WmsItemSkuMapper;
+import cn.iocoder.yudao.module.wms.enums.order.WmsOrderTypeEnum;
 import cn.iocoder.yudao.module.wms.service.inventory.WmsInventoryService;
 import cn.iocoder.yudao.module.wms.service.order.check.WmsCheckOrderDetailService;
 import cn.iocoder.yudao.module.wms.service.order.movement.WmsMovementOrderDetailService;
@@ -27,7 +28,6 @@ import java.util.Set;
 import static cn.iocoder.yudao.framework.common.exception.util.ServiceExceptionUtil.exception;
 import static cn.iocoder.yudao.framework.common.util.collection.CollectionUtils.*;
 import static cn.iocoder.yudao.module.wms.enums.ErrorCodeConstants.*;
-import static cn.iocoder.yudao.module.wms.enums.order.WmsOrderTypeConstants.*;
 
 /**
  * WMS 商品 SKU Service 实现类
@@ -172,16 +172,16 @@ public class WmsItemSkuServiceImpl implements WmsItemSkuService {
 
     private void validateItemSkuOrderUnused(WmsItemSkuDO sku) {
         if (receiptOrderDetailService.getReceiptOrderDetailCountBySkuId(sku.getId()) > 0) {
-            throw exception(ITEM_SKU_HAS_ORDER, sku.getName(), ORDER_NAME_RECEIPT);
+            throw exception(ITEM_SKU_HAS_ORDER, sku.getName(), WmsOrderTypeEnum.RECEIPT.getName());
         }
         if (shipmentOrderDetailService.getShipmentOrderDetailCountBySkuId(sku.getId()) > 0) {
-            throw exception(ITEM_SKU_HAS_ORDER, sku.getName(), ORDER_NAME_SHIPMENT);
+            throw exception(ITEM_SKU_HAS_ORDER, sku.getName(), WmsOrderTypeEnum.SHIPMENT.getName());
         }
         if (movementOrderDetailService.getMovementOrderDetailCountBySkuId(sku.getId()) > 0) {
-            throw exception(ITEM_SKU_HAS_ORDER, sku.getName(), ORDER_NAME_MOVEMENT);
+            throw exception(ITEM_SKU_HAS_ORDER, sku.getName(), WmsOrderTypeEnum.MOVEMENT.getName());
         }
         if (checkOrderDetailService.getCheckOrderDetailCountBySkuId(sku.getId()) > 0) {
-            throw exception(ITEM_SKU_HAS_ORDER, sku.getName(), ORDER_NAME_CHECK);
+            throw exception(ITEM_SKU_HAS_ORDER, sku.getName(), WmsOrderTypeEnum.CHECK.getName());
         }
     }
 

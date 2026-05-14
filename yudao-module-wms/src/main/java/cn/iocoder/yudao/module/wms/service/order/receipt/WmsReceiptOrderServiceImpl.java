@@ -10,7 +10,7 @@ import cn.iocoder.yudao.module.wms.controller.admin.order.receipt.vo.order.WmsRe
 import cn.iocoder.yudao.module.wms.dal.dataobject.order.receipt.WmsReceiptOrderDO;
 import cn.iocoder.yudao.module.wms.dal.dataobject.order.receipt.WmsReceiptOrderDetailDO;
 import cn.iocoder.yudao.module.wms.dal.mysql.order.receipt.WmsReceiptOrderMapper;
-import cn.iocoder.yudao.module.wms.enums.inventory.WmsInventoryOrderTypeEnum;
+import cn.iocoder.yudao.module.wms.enums.order.WmsOrderTypeEnum;
 import cn.iocoder.yudao.module.wms.enums.order.WmsOrderStatusEnum;
 import cn.iocoder.yudao.module.wms.service.inventory.WmsInventoryService;
 import cn.iocoder.yudao.module.wms.service.inventory.dto.WmsInventoryChangeReqDTO;
@@ -215,7 +215,7 @@ public class WmsReceiptOrderServiceImpl implements WmsReceiptOrderService {
                 detail -> BeanUtils.toBean(detail, WmsInventoryChangeReqDTO.Item.class));
         inventoryService.changeInventory(new WmsInventoryChangeReqDTO()
                 .setOrderId(order.getId()).setOrderNo(order.getNo())
-                .setOrderType(WmsInventoryOrderTypeEnum.RECEIPT.getType()).setItems(items));
+                .setOrderType(WmsOrderTypeEnum.RECEIPT.getType()).setItems(items));
     }
 
 }

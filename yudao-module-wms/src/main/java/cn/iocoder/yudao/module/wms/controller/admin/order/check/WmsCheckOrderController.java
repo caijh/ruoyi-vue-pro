@@ -36,7 +36,6 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
-import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -193,11 +192,6 @@ public class WmsCheckOrderController {
                         .setItemName(item.getName()).setUnit(item.getUnit()));
             });
             MapUtils.findAndThen(warehouseMap, vo.getWarehouseId(), warehouse -> vo.setWarehouseName(warehouse.getName()));
-            if (vo.getQuantity() != null && vo.getCheckQuantity() != null) {
-                vo.setDifferenceQuantity(vo.getCheckQuantity().subtract(vo.getQuantity()));
-            } else {
-                vo.setDifferenceQuantity(BigDecimal.ZERO);
-            }
         });
     }
 

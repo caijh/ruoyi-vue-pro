@@ -1,7 +1,7 @@
 package cn.iocoder.yudao.module.wms.enums.order;
 
 /**
- * WMS 单据类型常量
+ * WMS 单据业务类型常量
  *
  * 集中管理业务类型枚举的编号，按业务域分段。
  * 各枚举类引用此处常量，避免硬编码数字。（也避免冲突！！！）
@@ -11,13 +11,6 @@ package cn.iocoder.yudao.module.wms.enums.order;
 public final class WmsOrderTypeConstants {
 
     private WmsOrderTypeConstants() {}
-
-    // ========== 单据名称 ==========
-
-    public static final String ORDER_NAME_RECEIPT = "入库单";
-    public static final String ORDER_NAME_SHIPMENT = "出库单";
-    public static final String ORDER_NAME_MOVEMENT = "移库单";
-    public static final String ORDER_NAME_CHECK = "盘库单";
 
     // ========== 入库单类型 [100, 200) ==========
 

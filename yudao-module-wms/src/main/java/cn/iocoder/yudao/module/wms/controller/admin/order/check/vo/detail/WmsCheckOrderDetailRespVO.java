@@ -55,11 +55,8 @@ public class WmsCheckOrderDetailRespVO {
     @Schema(description = "实盘数量", requiredMode = Schema.RequiredMode.REQUIRED, example = "98.00")
     private BigDecimal checkQuantity;
 
-    @Schema(description = "盈亏数量", example = "-2.00")
-    private BigDecimal differenceQuantity;
-
-    @Schema(description = "金额", example = "1000.00")
-    private BigDecimal amount;
+    @Schema(description = "单价", example = "1000.00")
+    private BigDecimal price;
 
     @Schema(description = "创建时间", requiredMode = Schema.RequiredMode.REQUIRED)
     private LocalDateTime createTime;

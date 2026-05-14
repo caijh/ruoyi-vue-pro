@@ -91,6 +91,7 @@ public class WmsCheckOrderDetailServiceImplTest extends BaseDbUnitTest {
         assertEquals(2001L, dbUpdateDetail.getSkuId());
         assertEquals(0, new BigDecimal("11.00").compareTo(dbUpdateDetail.getQuantity()));
         assertEquals(0, new BigDecimal("8.00").compareTo(dbUpdateDetail.getCheckQuantity()));
+        assertEquals(0, new BigDecimal("100.00").compareTo(dbUpdateDetail.getPrice()));
         assertEquals(100L, dbUpdateDetail.getWarehouseId());
         // 断言：新增
         List<WmsCheckOrderDetailDO> details = checkOrderDetailMapper.selectListByOrderId(orderId);
@@ -133,7 +134,7 @@ public class WmsCheckOrderDetailServiceImplTest extends BaseDbUnitTest {
         reqVO.setInventoryId(300L);
         reqVO.setQuantity(new BigDecimal(quantity));
         reqVO.setCheckQuantity(new BigDecimal(checkQuantity));
-        reqVO.setAmount(new BigDecimal("100.00"));
+        reqVO.setPrice(new BigDecimal("100.00"));
         return reqVO;
     }
 
@@ -146,7 +147,7 @@ public class WmsCheckOrderDetailServiceImplTest extends BaseDbUnitTest {
                 .inventoryId(300L)
                 .quantity(new BigDecimal(quantity))
                 .checkQuantity(new BigDecimal(checkQuantity))
-                .amount(new BigDecimal("100.00"))
+                .price(new BigDecimal("100.00"))
                 .build();
     }
 

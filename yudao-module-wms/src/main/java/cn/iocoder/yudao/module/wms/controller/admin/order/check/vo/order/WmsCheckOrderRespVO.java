@@ -48,9 +48,13 @@ public class WmsCheckOrderRespVO {
     @ExcelProperty("盈亏数量")
     private BigDecimal totalQuantity;
 
-    @Schema(description = "总金额", example = "1000.00")
+    @Schema(description = "总金额（账面金额）", example = "1000.00")
     @ExcelProperty("总金额")
-    private BigDecimal totalAmount;
+    private BigDecimal totalPrice;
+
+    @Schema(description = "实际金额", example = "980.00")
+    @ExcelProperty("实际金额")
+    private BigDecimal actualPrice;
 
     @Schema(description = "盘库明细")
     private List<WmsCheckOrderDetailRespVO> details;
