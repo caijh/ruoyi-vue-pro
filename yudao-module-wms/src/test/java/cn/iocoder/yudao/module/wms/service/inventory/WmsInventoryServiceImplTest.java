@@ -115,7 +115,7 @@ public class WmsInventoryServiceImplTest extends BaseDbUnitTest {
                 .setSkuId(sku.getId())
                 .setWarehouseId(100L)
                 .setQuantity(new BigDecimal("7.00"))
-                .setAmount(new BigDecimal("140.00"))
+                .setPrice(new BigDecimal("140.00"))
                 .setRemark("测试入库 2"));
         reqDTO.setItems(items);
 
@@ -150,7 +150,7 @@ public class WmsInventoryServiceImplTest extends BaseDbUnitTest {
                 .setSkuId(sku.getId())
                 .setWarehouseId(100L)
                 .setQuantity(new BigDecimal("4.00"))
-                .setAmount(new BigDecimal("80.00"))
+                .setPrice(new BigDecimal("80.00"))
                 .setRemark("测试入库 2"));
         reqDTO.setItems(items);
 
@@ -184,13 +184,13 @@ public class WmsInventoryServiceImplTest extends BaseDbUnitTest {
                 .setSkuId(sku.getId())
                 .setWarehouseId(200L)
                 .setQuantity(new BigDecimal("3.00"))
-                .setAmount(new BigDecimal("60.00"))
+                .setPrice(new BigDecimal("60.00"))
                 .setRemark("测试入库 2"));
         items.add(new WmsInventoryChangeReqDTO.Item()
                 .setSkuId(sku.getId())
                 .setWarehouseId(100L)
                 .setQuantity(new BigDecimal("-2.00"))
-                .setAmount(new BigDecimal("40.00"))
+                .setPrice(new BigDecimal("40.00"))
                 .setRemark("测试出库"));
         reqDTO.setItems(items);
 
@@ -263,7 +263,7 @@ public class WmsInventoryServiceImplTest extends BaseDbUnitTest {
                 .setSkuId(sku.getId())
                 .setWarehouseId(200L)
                 .setQuantity(new BigDecimal("-1.00"))
-                .setAmount(new BigDecimal("20.00"))
+                .setPrice(new BigDecimal("20.00"))
                 .setRemark("测试出库"));
         reqDTO.setItems(items);
         mockItemSkuAndItem(item, sku);
@@ -411,7 +411,7 @@ public class WmsInventoryServiceImplTest extends BaseDbUnitTest {
                         .setSkuId(skuId)
                         .setWarehouseId(warehouseId)
                         .setQuantity(new BigDecimal(quantity))
-                        .setAmount(new BigDecimal("100.00"))
+                        .setPrice(new BigDecimal("100.00"))
                         .setRemark("测试入库")));
     }
 

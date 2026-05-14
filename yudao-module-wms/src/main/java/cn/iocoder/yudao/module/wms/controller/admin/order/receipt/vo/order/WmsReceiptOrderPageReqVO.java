@@ -45,10 +45,10 @@ public class WmsReceiptOrderPageReqVO extends PageParam {
     private BigDecimal totalQuantityMax;
 
     @Schema(description = "最小总金额", example = "1.00")
-    private BigDecimal totalAmountMin;
+    private BigDecimal totalPriceMin;
 
     @Schema(description = "最大总金额", example = "1000.00")
-    private BigDecimal totalAmountMax;
+    private BigDecimal totalPriceMax;
 
     @Schema(description = "入库类型", example = "101")
     @InEnum(WmsReceiptOrderTypeEnum.class)

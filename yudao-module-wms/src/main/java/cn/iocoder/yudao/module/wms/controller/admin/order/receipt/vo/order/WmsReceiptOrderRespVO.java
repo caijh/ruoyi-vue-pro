@@ -66,7 +66,7 @@ public class WmsReceiptOrderRespVO {
 
     @Schema(description = "总金额", example = "1000.00")
     @ExcelProperty("总金额")
-    private BigDecimal totalAmount;
+    private BigDecimal totalPrice;
 
     @Schema(description = "入库明细")
     private List<WmsReceiptOrderDetailRespVO> details;

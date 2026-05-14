@@ -87,6 +87,6 @@ public class WmsReceiptOrderDO extends BaseDO {
     /**
      * 总金额
      */
-    private BigDecimal totalAmount;
+    private BigDecimal totalPrice;
 
 }

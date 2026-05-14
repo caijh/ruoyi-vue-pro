@@ -40,8 +40,8 @@ public class WmsInventoryHistoryRespVO {
     private BigDecimal beforeQuantity;
     @Schema(description = "变化后库存数量", example = "100.00")
     private BigDecimal afterQuantity;
-    @Schema(description = "金额", example = "1000.00")
-    private BigDecimal amount;
+    @Schema(description = "单价", example = "1000.00")
+    private BigDecimal price;
     @Schema(description = "备注", example = "备注")
     private String remark;
 

@@ -54,15 +54,15 @@ public class WmsReceiptOrderDetailDO extends BaseDO {
      */
     private Long warehouseId;
 
-    // ========= 汇总金额字段 =========
+    // ========= 数量金额字段 =========
 
     /**
      * 入库数量
      */
     private BigDecimal quantity;
     /**
-     * 金额（小计、非单价）
+     * 单价
      */
-    private BigDecimal amount;
+    private BigDecimal price;
 
 }

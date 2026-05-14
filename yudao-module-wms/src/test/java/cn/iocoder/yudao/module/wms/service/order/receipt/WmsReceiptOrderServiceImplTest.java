@@ -1,6 +1,8 @@
 package cn.iocoder.yudao.module.wms.service.order.receipt;
 
 import cn.iocoder.yudao.framework.test.core.ut.BaseDbUnitTest;
+import cn.iocoder.yudao.module.wms.controller.admin.order.receipt.vo.detail.WmsReceiptOrderDetailSaveReqVO;
+import cn.iocoder.yudao.module.wms.controller.admin.order.receipt.vo.order.WmsReceiptOrderSaveReqVO;
 import cn.iocoder.yudao.module.wms.dal.dataobject.order.receipt.WmsReceiptOrderDO;
 import cn.iocoder.yudao.module.wms.dal.dataobject.order.receipt.WmsReceiptOrderDetailDO;
 import cn.iocoder.yudao.module.wms.dal.mysql.order.receipt.WmsReceiptOrderDetailMapper;
@@ -21,6 +23,7 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.Arrays;
 
 import static cn.iocoder.yudao.framework.test.core.util.AssertUtils.assertServiceException;
 import static cn.iocoder.yudao.module.wms.enums.ErrorCodeConstants.RECEIPT_ORDER_DETAIL_REQUIRED;
@@ -51,6 +54,43 @@ public class WmsReceiptOrderServiceImplTest extends BaseDbUnitTest {
     private WmsItemSkuService itemSkuService;
     @MockitoBean
     private WmsInventoryService inventoryService;
+
+    @Test
+    public void testCreateReceiptOrder_calculateTotal() {
+        // mock 数据
+        WmsReceiptOrderSaveReqVO reqVO = createReceiptOrderSaveReqVO(null,
+                createReceiptOrderDetailReqVO(null, 2001L, "1.50", "10.00"),
+                createReceiptOrderDetailReqVO(null, 2002L, "2.50", "20.00"));
+
+        // 调用
+        Long orderId = receiptOrderService.createReceiptOrder(reqVO);
+
+        // 断言
+        WmsReceiptOrderDO dbOrder = receiptOrderMapper.selectById(orderId);
+        assertNotNull(dbOrder);
+        assertEquals(0, new BigDecimal("4.00").compareTo(dbOrder.getTotalQuantity()));
+        assertEquals(0, new BigDecimal("65.00").compareTo(dbOrder.getTotalPrice()));
+        assertEquals(2, receiptOrderDetailMapper.selectListByOrderId(orderId).size());
+    }
+
+    @Test
+    public void testUpdateReceiptOrder_calculateTotal() {
+        // mock 数据
+        WmsReceiptOrderDO order = createReceiptOrder(100L);
+        receiptOrderMapper.insert(order);
+        WmsReceiptOrderSaveReqVO reqVO = createReceiptOrderSaveReqVO(order.getId(),
+                createReceiptOrderDetailReqVO(null, 2001L, "3.00", "30.00"));
+
+        // 调用
+        receiptOrderService.updateReceiptOrder(reqVO);
+
+        // 断言
+        WmsReceiptOrderDO dbOrder = receiptOrderMapper.selectById(order.getId());
+        assertNotNull(dbOrder);
+        assertEquals(0, new BigDecimal("3.00").compareTo(dbOrder.getTotalQuantity()));
+        assertEquals(0, new BigDecimal("90.00").compareTo(dbOrder.getTotalPrice()));
+        assertEquals(1, receiptOrderDetailMapper.selectListByOrderId(order.getId()).size());
+    }
 
     @Test
     public void testCompleteReceiptOrder_success() {
@@ -143,7 +183,29 @@ public class WmsReceiptOrderServiceImplTest extends BaseDbUnitTest {
                 .setStatus(WmsOrderStatusEnum.PREPARE.getStatus())
                 .setWarehouseId(warehouseId)
                 .setTotalQuantity(new BigDecimal("2.00"))
-                .setTotalAmount(new BigDecimal("20.00"));
+                .setTotalPrice(new BigDecimal("20.00"));
+    }
+
+    private static WmsReceiptOrderSaveReqVO createReceiptOrderSaveReqVO(Long id,
+                                                                        WmsReceiptOrderDetailSaveReqVO... details) {
+        WmsReceiptOrderSaveReqVO reqVO = new WmsReceiptOrderSaveReqVO();
+        reqVO.setId(id);
+        reqVO.setNo("RK202605120001");
+        reqVO.setType(WmsReceiptOrderTypeEnum.PURCHASE.getType());
+        reqVO.setOrderTime(LocalDateTime.of(2026, 5, 12, 0, 0));
+        reqVO.setWarehouseId(100L);
+        reqVO.setDetails(Arrays.asList(details));
+        return reqVO;
+    }
+
+    private static WmsReceiptOrderDetailSaveReqVO createReceiptOrderDetailReqVO(Long id, Long skuId,
+                                                                                String quantity, String price) {
+        WmsReceiptOrderDetailSaveReqVO reqVO = new WmsReceiptOrderDetailSaveReqVO();
+        reqVO.setId(id);
+        reqVO.setSkuId(skuId);
+        reqVO.setQuantity(new BigDecimal(quantity));
+        reqVO.setPrice(new BigDecimal(price));
+        return reqVO;
     }
 
     private static WmsReceiptOrderDetailDO createReceiptOrderDetail(Long orderId, Long skuId, Long warehouseId) {
@@ -152,7 +214,7 @@ public class WmsReceiptOrderServiceImplTest extends BaseDbUnitTest {
                 .skuId(skuId)
                 .warehouseId(warehouseId)
                 .quantity(new BigDecimal("2.00"))
-                .amount(new BigDecimal("20.00"))
+                .price(new BigDecimal("20.00"))
                 .build();
     }
 

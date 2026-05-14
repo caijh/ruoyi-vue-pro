@@ -53,12 +53,12 @@ public class WmsInventoryChangeReqDTO {
          */
         private BigDecimal quantity;
 
-        // ========= 金额备注相关字段 =========
+        // ========= 单价备注相关字段 =========
 
         /**
-         * 金额（小计、非单价）
+         * 单价
          */
-        private BigDecimal amount;
+        private BigDecimal price;
         /**
          * 备注
          */

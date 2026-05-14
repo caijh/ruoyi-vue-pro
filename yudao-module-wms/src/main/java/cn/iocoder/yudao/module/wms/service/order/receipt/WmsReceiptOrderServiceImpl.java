@@ -1,8 +1,10 @@
 package cn.iocoder.yudao.module.wms.service.order.receipt;
 
+import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.ObjectUtil;
 import cn.iocoder.yudao.framework.common.pojo.PageResult;
 import cn.iocoder.yudao.framework.common.util.object.BeanUtils;
+import cn.iocoder.yudao.module.wms.controller.admin.order.receipt.vo.detail.WmsReceiptOrderDetailSaveReqVO;
 import cn.iocoder.yudao.module.wms.controller.admin.order.receipt.vo.order.WmsReceiptOrderPageReqVO;
 import cn.iocoder.yudao.module.wms.controller.admin.order.receipt.vo.order.WmsReceiptOrderSaveReqVO;
 import cn.iocoder.yudao.module.wms.dal.dataobject.order.receipt.WmsReceiptOrderDO;
@@ -19,6 +21,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import static cn.iocoder.yudao.framework.common.exception.util.ServiceExceptionUtil.exception;
@@ -54,6 +57,7 @@ public class WmsReceiptOrderServiceImpl implements WmsReceiptOrderService {
         // 2.1 插入入库单
         WmsReceiptOrderDO order = BeanUtils.toBean(createReqVO, WmsReceiptOrderDO.class);
         order.setStatus(WmsOrderStatusEnum.PREPARE.getStatus());
+        fillReceiptOrderTotal(order, createReqVO);
         receiptOrderMapper.insert(order);
         // 2.2 插入入库单明细
         receiptOrderDetailService.createReceiptOrderDetailList(order.getId(), createReqVO);
@@ -70,6 +74,7 @@ public class WmsReceiptOrderServiceImpl implements WmsReceiptOrderService {
         // 2.1 更新入库单
         WmsReceiptOrderDO updateObj = BeanUtils.toBean(updateReqVO, WmsReceiptOrderDO.class)
                 .setStatus(WmsOrderStatusEnum.PREPARE.getStatus());
+        fillReceiptOrderTotal(updateObj, updateReqVO);
         receiptOrderMapper.updateById(updateObj);
         // 2.2 更新入库单明细
         receiptOrderDetailService.updateReceiptOrderDetailList(updateReqVO.getId(), updateReqVO);
@@ -157,6 +162,22 @@ public class WmsReceiptOrderServiceImpl implements WmsReceiptOrderService {
         if (id == null || ObjectUtil.notEqual(order.getId(), id)) {
             throw exception(RECEIPT_ORDER_NO_DUPLICATE);
         }
+    }
+
+    private void fillReceiptOrderTotal(WmsReceiptOrderDO order, WmsReceiptOrderSaveReqVO reqVO) {
+        BigDecimal totalQuantity = BigDecimal.ZERO;
+        BigDecimal totalPrice = BigDecimal.ZERO;
+        if (CollUtil.isNotEmpty(reqVO.getDetails())) {
+            for (WmsReceiptOrderDetailSaveReqVO detail : reqVO.getDetails()) {
+                if (detail.getQuantity() != null) {
+                    totalQuantity = totalQuantity.add(detail.getQuantity());
+                }
+                if (detail.getQuantity() != null && detail.getPrice() != null) {
+                    totalPrice = totalPrice.add(detail.getQuantity().multiply(detail.getPrice()));
+                }
+            }
+        }
+        order.setTotalQuantity(totalQuantity).setTotalPrice(totalPrice);
     }
 
     private WmsReceiptOrderDO validateReceiptOrderExists(Long id) {

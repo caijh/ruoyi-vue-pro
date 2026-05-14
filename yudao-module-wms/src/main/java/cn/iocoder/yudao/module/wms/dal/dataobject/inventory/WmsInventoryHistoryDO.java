@@ -59,12 +59,12 @@ public class WmsInventoryHistoryDO extends BaseDO {
      */
     private BigDecimal afterQuantity;
 
-    // ========= 金额备注相关字段 =========
+    // ========= 单价备注相关字段 =========
 
     /**
-     * 金额
+     * 单价
      */
-    private BigDecimal amount;
+    private BigDecimal price;
     /**
      * 备注
      */
