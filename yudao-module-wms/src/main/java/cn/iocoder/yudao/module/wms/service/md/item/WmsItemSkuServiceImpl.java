@@ -2,6 +2,7 @@ package cn.iocoder.yudao.module.wms.service.md.item;
 
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.collection.ListUtil;
+import cn.hutool.core.util.ObjectUtil;
 import cn.iocoder.yudao.framework.common.pojo.PageResult;
 import cn.iocoder.yudao.framework.common.util.object.BeanUtils;
 import cn.iocoder.yudao.module.wms.controller.admin.md.item.vo.sku.WmsItemSkuPageReqVO;
@@ -23,7 +24,6 @@ import org.springframework.validation.annotation.Validated;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Objects;
 import java.util.Set;
 
 import static cn.iocoder.yudao.framework.common.exception.util.ServiceExceptionUtil.exception;
@@ -75,7 +75,7 @@ public class WmsItemSkuServiceImpl implements WmsItemSkuService {
         List<WmsItemSkuDO> oldList = itemSkuMapper.selectListByItemId(itemId);
         List<WmsItemSkuDO> newList = BeanUtils.toBean(skus, WmsItemSkuDO.class);
         List<List<WmsItemSkuDO>> diffList = diffList(oldList, newList, // id 不同，就认为是不同的记录
-                (oldVal, newVal) -> Objects.equals(oldVal.getId(), newVal.getId()));
+                (oldVal, newVal) -> ObjectUtil.equal(oldVal.getId(), newVal.getId()));
 
         // 第二步，批量添加、修改、删除
         if (CollUtil.isNotEmpty(diffList.get(2))) {

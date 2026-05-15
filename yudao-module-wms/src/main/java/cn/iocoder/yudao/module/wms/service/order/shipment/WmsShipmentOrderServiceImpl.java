@@ -195,9 +195,6 @@ public class WmsShipmentOrderServiceImpl implements WmsShipmentOrderService {
         if (totalPrice != null) {
             return totalPrice;
         }
-        if (quantity == null || price == null) {
-            return null;
-        }
         return MoneyUtils.priceMultiply(price, quantity);
     }
 
