@@ -23,10 +23,12 @@ public interface ErrorCodeConstants {
     ErrorCode ITEM_CATEGORY_PARENT_IS_CHILD = new ErrorCode(1_060_102_004, "不能设置自己的子商品分类为父商品分类");
     ErrorCode ITEM_CATEGORY_HAS_CHILDREN = new ErrorCode(1_060_102_005, "删除失败！请先删除该分类下的子分类！");
     ErrorCode ITEM_CATEGORY_HAS_ITEM = new ErrorCode(1_060_102_006, "删除失败！分类已被商品使用！");
+    ErrorCode ITEM_CATEGORY_CODE_DUPLICATE = new ErrorCode(1_060_102_007, "商品分类编号重复");
 
     // ========== WMS 基础数据-商品品牌 1-060-103-000 ==========
     ErrorCode ITEM_BRAND_NOT_EXISTS = new ErrorCode(1_060_103_000, "商品品牌不存在");
     ErrorCode ITEM_BRAND_HAS_ITEM = new ErrorCode(1_060_103_001, "删除失败！品牌已被商品使用！");
+    ErrorCode ITEM_BRAND_CODE_DUPLICATE = new ErrorCode(1_060_103_002, "商品品牌编号重复");
 
     // ========== WMS 基础数据-商品 1-060-104-000 ==========
     ErrorCode ITEM_NOT_EXISTS = new ErrorCode(1_060_104_000, "商品不存在");
@@ -75,6 +77,7 @@ public interface ErrorCodeConstants {
     ErrorCode CHECK_ORDER_DETAIL_REQUIRED = new ErrorCode(1_060_203_003, "盘库单至少包含一条明细");
     ErrorCode CHECK_ORDER_STATUS_NOT_DELETABLE = new ErrorCode(1_060_203_005, "盘库单状态不是草稿或已作废，不能删除");
     ErrorCode CHECK_ORDER_DETAIL_NOT_EXISTS = new ErrorCode(1_060_203_006, "盘库单明细不存在");
+    ErrorCode CHECK_ORDER_INVENTORY_CHANGED = new ErrorCode(1_060_203_007, "盘库单库存已变化，请重新加载库存后再完成");
 
     // ========== WMS 库存 1-060-300-000 ==========
     ErrorCode INVENTORY_QUANTITY_NOT_ENOUGH = new ErrorCode(1_060_300_000,

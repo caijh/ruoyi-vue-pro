@@ -2,7 +2,9 @@ package cn.iocoder.yudao.module.wms.service.md.item;
 
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.collection.ListUtil;
+import cn.iocoder.yudao.framework.common.pojo.PageResult;
 import cn.iocoder.yudao.framework.common.util.object.BeanUtils;
+import cn.iocoder.yudao.module.wms.controller.admin.md.item.vo.sku.WmsItemSkuPageReqVO;
 import cn.iocoder.yudao.module.wms.controller.admin.md.item.vo.sku.WmsItemSkuSaveReqVO;
 import cn.iocoder.yudao.module.wms.dal.dataobject.md.item.WmsItemSkuDO;
 import cn.iocoder.yudao.module.wms.dal.mysql.md.item.WmsItemSkuMapper;
@@ -137,6 +139,11 @@ public class WmsItemSkuServiceImpl implements WmsItemSkuService {
             return ListUtil.of();
         }
         return itemSkuMapper.selectByIds(ids);
+    }
+
+    @Override
+    public PageResult<WmsItemSkuDO> getItemSkuPage(WmsItemSkuPageReqVO pageReqVO) {
+        return itemSkuMapper.selectPage(pageReqVO);
     }
 
     private void validateItemSkuList(List<WmsItemSkuSaveReqVO> skus) {

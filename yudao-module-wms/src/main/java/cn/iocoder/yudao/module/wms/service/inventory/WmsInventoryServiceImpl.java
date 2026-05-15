@@ -77,10 +77,13 @@ public class WmsInventoryServiceImpl implements WmsInventoryService {
             return;
         }
 
+        // 1. 逐条复核账面库存，并计算库存调整和库存流水
         List<WmsInventoryDO> updateInventories = new ArrayList<>(reqDTO.getItems().size());
         List<WmsInventoryHistoryDO> histories = new ArrayList<>(reqDTO.getItems().size());
         for (WmsInventoryCheckReqDTO.Item item : reqDTO.getItems()) {
+            // 1.1 锁定或创建库存余额行
             WmsInventoryDO inventory = getOrCreateCheckInventory(item);
+            // 1.2 无盈亏时不更新库存，也不生成库存流水
             BigDecimal beforeQuantity = inventory.getQuantity();
             BigDecimal afterQuantity = item.getCheckQuantity();
             if (beforeQuantity.compareTo(afterQuantity) == 0) {
@@ -89,9 +92,12 @@ public class WmsInventoryServiceImpl implements WmsInventoryService {
             updateInventories.add(new WmsInventoryDO().setId(inventory.getId()).setQuantity(afterQuantity));
             histories.add(buildInventoryHistory(reqDTO, item, beforeQuantity, afterQuantity));
         }
+
+        // 2.1 批量更新库存余额
         if (CollUtil.isNotEmpty(updateInventories)) {
             inventoryMapper.updateBatch(updateInventories);
         }
+        // 2.2 批量写入库存流水
         if (CollUtil.isNotEmpty(histories)) {
             inventoryHistoryService.createInventoryHistoryList(histories);
         }

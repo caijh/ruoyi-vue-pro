@@ -13,7 +13,7 @@ import cn.iocoder.yudao.module.wms.dal.mysql.order.check.WmsCheckOrderMapper;
 import cn.iocoder.yudao.module.wms.enums.order.WmsOrderTypeEnum;
 import cn.iocoder.yudao.module.wms.enums.order.WmsOrderStatusEnum;
 import cn.iocoder.yudao.module.wms.service.inventory.WmsInventoryService;
-import cn.iocoder.yudao.module.wms.service.inventory.dto.WmsInventoryChangeReqDTO;
+import cn.iocoder.yudao.module.wms.service.inventory.dto.WmsInventoryCheckReqDTO;
 import cn.iocoder.yudao.module.wms.service.md.warehouse.WmsWarehouseService;
 import jakarta.annotation.Resource;
 import org.springframework.stereotype.Service;
@@ -21,7 +21,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.List;
 
 import static cn.iocoder.yudao.framework.common.exception.util.ServiceExceptionUtil.exception;
@@ -108,7 +107,7 @@ public class WmsCheckOrderServiceImpl implements WmsCheckOrderService {
         }
 
         // 3. 盘点库存
-        changeInventory(order, details);
+        inventoryService.checkInventory(buildCheckInventoryReqDTO(order, details));
     }
 
     @Override
@@ -207,29 +206,12 @@ public class WmsCheckOrderServiceImpl implements WmsCheckOrderService {
         return order;
     }
 
-    /**
-     * 盘点盘库单对应库存
-     *
-     * @param order 盘库单
-     * @param details 盘库单明细列表
-     */
-    private void changeInventory(WmsCheckOrderDO order, List<WmsCheckOrderDetailDO> details) {
-        List<WmsInventoryChangeReqDTO.Item> items = new ArrayList<>(details.size());
-        for (WmsCheckOrderDetailDO detail : details) {
-            BigDecimal differenceQuantity = calculateDifferenceQuantity(detail.getQuantity(), detail.getCheckQuantity());
-            if (differenceQuantity.compareTo(BigDecimal.ZERO) == 0) {
-                continue;
-            }
-            WmsInventoryChangeReqDTO.Item item = BeanUtils.toBean(detail, WmsInventoryChangeReqDTO.Item.class)
-                    .setQuantity(differenceQuantity);
-            items.add(item);
-        }
-        if (CollUtil.isEmpty(items)) {
-            return;
-        }
-        inventoryService.changeInventory(new WmsInventoryChangeReqDTO()
+    private WmsInventoryCheckReqDTO buildCheckInventoryReqDTO(WmsCheckOrderDO order,
+                                                             List<WmsCheckOrderDetailDO> details) {
+        return new WmsInventoryCheckReqDTO()
                 .setOrderId(order.getId()).setOrderNo(order.getNo())
-                .setOrderType(WmsOrderTypeEnum.CHECK.getType()).setItems(items));
+                .setOrderType(WmsOrderTypeEnum.CHECK.getType())
+                .setItems(BeanUtils.toBean(details, WmsInventoryCheckReqDTO.Item.class));
     }
 
 }

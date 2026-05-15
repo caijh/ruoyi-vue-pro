@@ -1,5 +1,7 @@
 package cn.iocoder.yudao.module.wms.service.md.item;
 
+import cn.iocoder.yudao.framework.common.pojo.PageResult;
+import cn.iocoder.yudao.module.wms.controller.admin.md.item.vo.sku.WmsItemSkuPageReqVO;
 import cn.iocoder.yudao.module.wms.controller.admin.md.item.vo.sku.WmsItemSkuSaveReqVO;
 import cn.iocoder.yudao.module.wms.dal.dataobject.md.item.WmsItemSkuDO;
 import jakarta.validation.Valid;
@@ -82,6 +84,14 @@ public interface WmsItemSkuService {
      * @return SKU 列表
      */
     List<WmsItemSkuDO> getItemSkuListByIds(Collection<Long> ids);
+
+    /**
+     * 按 SKU 维度分页查询，支持商品 / 品牌 / 分类多表联查筛选。
+     *
+     * @param pageReqVO 分页与筛选条件
+     * @return SKU 分页结果
+     */
+    PageResult<WmsItemSkuDO> getItemSkuPage(WmsItemSkuPageReqVO pageReqVO);
 
     /**
      * 按编号集合获得 SKU Map
