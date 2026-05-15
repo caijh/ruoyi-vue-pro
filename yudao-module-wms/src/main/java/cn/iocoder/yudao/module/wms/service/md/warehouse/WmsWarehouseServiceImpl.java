@@ -2,7 +2,6 @@ package cn.iocoder.yudao.module.wms.service.md.warehouse;
 
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.ObjUtil;
-import cn.hutool.core.util.StrUtil;
 import cn.iocoder.yudao.framework.common.pojo.PageResult;
 import cn.iocoder.yudao.framework.common.util.object.BeanUtils;
 import cn.iocoder.yudao.module.wms.controller.admin.md.warehouse.vo.WmsWarehousePageReqVO;
@@ -94,9 +93,6 @@ public class WmsWarehouseServiceImpl implements WmsWarehouseService {
     }
 
     private void validateWarehouseCodeUnique(Long id, String code) {
-        if (StrUtil.isBlank(code)) {
-            return;
-        }
         WmsWarehouseDO warehouse = warehouseMapper.selectByCode(code);
         if (warehouse == null) {
             return;
