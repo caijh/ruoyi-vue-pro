@@ -2,6 +2,7 @@ package cn.iocoder.yudao.module.wms.controller.admin.inventory.vo;
 
 import cn.iocoder.yudao.framework.common.pojo.PageParam;
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
@@ -24,7 +25,8 @@ public class WmsInventoryPageReqVO extends PageParam {
      */
     public static final String TYPE_ITEM = "item";
 
-    @Schema(description = "统计维度", example = "warehouse")
+    @Schema(description = "统计维度", requiredMode = Schema.RequiredMode.REQUIRED, example = "warehouse")
+    @NotBlank(message = "统计维度不能为空")
     private String type;
 
     @Schema(description = "商品编号", example = "ITEM001")
