@@ -6,6 +6,7 @@ import cn.iocoder.yudao.framework.common.pojo.PageResult;
 import cn.iocoder.yudao.framework.mybatis.core.mapper.BaseMapperX;
 import cn.iocoder.yudao.framework.mybatis.core.query.LambdaQueryWrapperX;
 import cn.iocoder.yudao.framework.mybatis.core.query.MPJLambdaWrapperX;
+import cn.iocoder.yudao.module.wms.controller.admin.inventory.vo.WmsInventoryListReqVO;
 import cn.iocoder.yudao.module.wms.controller.admin.inventory.vo.WmsInventoryPageReqVO;
 import cn.iocoder.yudao.module.wms.dal.dataobject.inventory.WmsInventoryDO;
 import cn.iocoder.yudao.module.wms.dal.dataobject.md.item.WmsItemDO;
@@ -48,9 +49,22 @@ public interface WmsInventoryMapper extends BaseMapperX<WmsInventoryDO> {
         return selectCount(WmsInventoryDO::getSkuId, skuId);
     }
 
+    default List<WmsInventoryDO> selectList(WmsInventoryListReqVO reqVO) {
+        return selectList(new LambdaQueryWrapperX<WmsInventoryDO>()
+                .eq(WmsInventoryDO::getWarehouseId, reqVO.getWarehouseId())
+                .orderByAsc(WmsInventoryDO::getSkuId)
+                .orderByAsc(WmsInventoryDO::getId));
+    }
+
     default WmsInventoryDO selectBySkuIdAndWarehouseId(Long skuId, Long warehouseId) {
         return selectOne(WmsInventoryDO::getSkuId, skuId,
                 WmsInventoryDO::getWarehouseId, warehouseId);
+    }
+
+    default WmsInventoryDO selectByIdForUpdate(Long id) {
+        return selectOne(new LambdaQueryWrapperX<WmsInventoryDO>()
+                .eq(WmsInventoryDO::getId, id)
+                .last("FOR UPDATE"));
     }
 
     /**

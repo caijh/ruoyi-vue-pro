@@ -21,6 +21,7 @@ import org.springframework.validation.annotation.Validated;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
 import static cn.iocoder.yudao.framework.common.exception.util.ServiceExceptionUtil.exception;
@@ -58,10 +59,8 @@ public class WmsItemSkuServiceImpl implements WmsItemSkuService {
     @Transactional(rollbackFor = Exception.class)
     public void createItemSkuList(Long itemId, List<WmsItemSkuSaveReqVO> skus) {
         validateItemSkuList(skus);
-        List<WmsItemSkuDO> list = BeanUtils.toBean(skus, WmsItemSkuDO.class, sku -> sku.setItemId(itemId));
-        if (CollUtil.isNotEmpty(convertList(list, WmsItemSkuDO::getId))) {
-            throw exception(ITEM_SKU_NOT_EXISTS);
-        }
+        List<WmsItemSkuDO> list = BeanUtils.toBean(skus, WmsItemSkuDO.class, sku ->
+                sku.setItemId(itemId).setId(null)); // id 由数据库自增分配，避免前端误操作
         itemSkuMapper.insertBatch(list);
     }
 
@@ -74,7 +73,7 @@ public class WmsItemSkuServiceImpl implements WmsItemSkuService {
         List<WmsItemSkuDO> oldList = itemSkuMapper.selectListByItemId(itemId);
         List<WmsItemSkuDO> newList = BeanUtils.toBean(skus, WmsItemSkuDO.class);
         List<List<WmsItemSkuDO>> diffList = diffList(oldList, newList, // id 不同，就认为是不同的记录
-                (oldVal, newVal) -> oldVal.getId().equals(newVal.getId()));
+                (oldVal, newVal) -> Objects.equals(oldVal.getId(), newVal.getId()));
 
         // 第二步，批量添加、修改、删除
         if (CollUtil.isNotEmpty(diffList.get(2))) {
@@ -85,10 +84,11 @@ public class WmsItemSkuServiceImpl implements WmsItemSkuService {
             itemSkuMapper.deleteByIds(deleteSkuIds);
         }
         if (CollUtil.isNotEmpty(diffList.get(0))) {
-            if (CollUtil.isNotEmpty(convertList(diffList.get(0), WmsItemSkuDO::getId))) {
-                throw exception(ITEM_SKU_NOT_EXISTS);
-            }
-            diffList.get(0).forEach(sku -> sku.setItemId(itemId));
+            // 新增场景下忽略前端误传的 SKU id：统一置 null，由数据库自增分配
+            diffList.get(0).forEach(sku -> {
+                sku.setItemId(itemId);
+                sku.setId(null);
+            });
             itemSkuMapper.insertBatch(diffList.get(0));
         }
         if (CollUtil.isNotEmpty(diffList.get(1))) {

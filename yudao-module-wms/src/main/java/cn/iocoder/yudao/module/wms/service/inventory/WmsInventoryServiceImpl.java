@@ -5,6 +5,7 @@ import cn.hutool.core.lang.Tuple;
 import cn.hutool.core.util.ObjectUtil;
 import cn.iocoder.yudao.framework.common.exception.ServiceException;
 import cn.iocoder.yudao.framework.common.pojo.PageResult;
+import cn.iocoder.yudao.module.wms.controller.admin.inventory.vo.WmsInventoryListReqVO;
 import cn.iocoder.yudao.module.wms.controller.admin.inventory.vo.WmsInventoryPageReqVO;
 import cn.iocoder.yudao.module.wms.dal.dataobject.inventory.WmsInventoryDO;
 import cn.iocoder.yudao.module.wms.dal.dataobject.inventory.WmsInventoryHistoryDO;
@@ -12,6 +13,7 @@ import cn.iocoder.yudao.module.wms.dal.dataobject.md.item.WmsItemDO;
 import cn.iocoder.yudao.module.wms.dal.dataobject.md.item.WmsItemSkuDO;
 import cn.iocoder.yudao.module.wms.dal.mysql.inventory.WmsInventoryMapper;
 import cn.iocoder.yudao.module.wms.service.inventory.dto.WmsInventoryChangeReqDTO;
+import cn.iocoder.yudao.module.wms.service.inventory.dto.WmsInventoryCheckReqDTO;
 import cn.iocoder.yudao.module.wms.service.md.item.WmsItemService;
 import cn.iocoder.yudao.module.wms.service.md.item.WmsItemSkuService;
 import jakarta.annotation.Resource;
@@ -59,8 +61,40 @@ public class WmsInventoryServiceImpl implements WmsInventoryService {
     }
 
     @Override
+    public List<WmsInventoryDO> getInventoryList(WmsInventoryListReqVO listReqVO) {
+        return inventoryMapper.selectList(listReqVO);
+    }
+
+    @Override
     public long getInventoryCountBySkuId(Long skuId) {
         return inventoryMapper.selectCountBySkuId(skuId);
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void checkInventory(WmsInventoryCheckReqDTO reqDTO) {
+        if (reqDTO == null || CollUtil.isEmpty(reqDTO.getItems())) {
+            return;
+        }
+
+        List<WmsInventoryDO> updateInventories = new ArrayList<>(reqDTO.getItems().size());
+        List<WmsInventoryHistoryDO> histories = new ArrayList<>(reqDTO.getItems().size());
+        for (WmsInventoryCheckReqDTO.Item item : reqDTO.getItems()) {
+            WmsInventoryDO inventory = getOrCreateCheckInventory(item);
+            BigDecimal beforeQuantity = inventory.getQuantity();
+            BigDecimal afterQuantity = item.getCheckQuantity();
+            if (beforeQuantity.compareTo(afterQuantity) == 0) {
+                continue;
+            }
+            updateInventories.add(new WmsInventoryDO().setId(inventory.getId()).setQuantity(afterQuantity));
+            histories.add(buildInventoryHistory(reqDTO, item, beforeQuantity, afterQuantity));
+        }
+        if (CollUtil.isNotEmpty(updateInventories)) {
+            inventoryMapper.updateBatch(updateInventories);
+        }
+        if (CollUtil.isNotEmpty(histories)) {
+            inventoryHistoryService.createInventoryHistoryList(histories);
+        }
     }
 
     @Override
@@ -179,6 +213,43 @@ public class WmsInventoryServiceImpl implements WmsInventoryService {
                 .setOrderId(reqDTO.getOrderId()).setOrderNo(reqDTO.getOrderNo()).setOrderType(reqDTO.getOrderType());
     }
 
+    private WmsInventoryHistoryDO buildInventoryHistory(WmsInventoryCheckReqDTO reqDTO,
+                                                       WmsInventoryCheckReqDTO.Item item,
+                                                       BigDecimal beforeQuantity,
+                                                       BigDecimal afterQuantity) {
+        return new WmsInventoryHistoryDO()
+                .setWarehouseId(item.getWarehouseId()).setSkuId(item.getSkuId())
+                .setQuantity(afterQuantity.subtract(beforeQuantity))
+                .setBeforeQuantity(beforeQuantity).setAfterQuantity(afterQuantity)
+                .setPrice(item.getPrice()).setRemark(item.getRemark())
+                .setOrderId(reqDTO.getOrderId()).setOrderNo(reqDTO.getOrderNo()).setOrderType(reqDTO.getOrderType());
+    }
+
+    private WmsInventoryDO getOrCreateCheckInventory(WmsInventoryCheckReqDTO.Item item) {
+        if (item.getInventoryId() == null) {
+            return createCheckInventory(item);
+        }
+        WmsInventoryDO inventory = inventoryMapper.selectByIdForUpdate(item.getInventoryId());
+        if (inventory == null || !isSameInventory(inventory, item)
+                || inventory.getQuantity().compareTo(item.getQuantity()) != 0) {
+            throw exception(CHECK_ORDER_INVENTORY_CHANGED);
+        }
+        return inventory;
+    }
+
+    private WmsInventoryDO createCheckInventory(WmsInventoryCheckReqDTO.Item item) {
+        WmsInventoryDO inventory = new WmsInventoryDO()
+                .setSkuId(item.getSkuId()).setWarehouseId(item.getWarehouseId())
+                .setQuantity(item.getCheckQuantity());
+        try {
+            inventoryMapper.insert(inventory);
+        } catch (DuplicateKeyException ex) {
+            throw exception(CHECK_ORDER_INVENTORY_CHANGED);
+        }
+        inventory.setQuantity(BigDecimal.ZERO);
+        return inventory;
+    }
+
     private static WmsInventoryDO findInventory(List<WmsInventoryDO> inventories, WmsInventoryChangeReqDTO.Item item) {
         return CollUtil.findOne(inventories, inventory -> isSameInventory(inventory, item));
     }
@@ -188,6 +259,11 @@ public class WmsInventoryServiceImpl implements WmsInventoryService {
     }
 
     private static boolean isSameInventory(WmsInventoryDO inventory, WmsInventoryChangeReqDTO.Item item) {
+        return ObjectUtil.equal(inventory.getSkuId(), item.getSkuId())
+                && ObjectUtil.equal(inventory.getWarehouseId(), item.getWarehouseId());
+    }
+
+    private static boolean isSameInventory(WmsInventoryDO inventory, WmsInventoryCheckReqDTO.Item item) {
         return ObjectUtil.equal(inventory.getSkuId(), item.getSkuId())
                 && ObjectUtil.equal(inventory.getWarehouseId(), item.getWarehouseId());
     }

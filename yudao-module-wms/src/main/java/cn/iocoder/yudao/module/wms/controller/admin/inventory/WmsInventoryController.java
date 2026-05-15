@@ -5,6 +5,7 @@ import cn.iocoder.yudao.framework.common.pojo.CommonResult;
 import cn.iocoder.yudao.framework.common.pojo.PageResult;
 import cn.iocoder.yudao.framework.common.util.collection.MapUtils;
 import cn.iocoder.yudao.framework.common.util.object.BeanUtils;
+import cn.iocoder.yudao.module.wms.controller.admin.inventory.vo.WmsInventoryListReqVO;
 import cn.iocoder.yudao.module.wms.controller.admin.inventory.vo.WmsInventoryPageReqVO;
 import cn.iocoder.yudao.module.wms.controller.admin.inventory.vo.WmsInventoryRespVO;
 import cn.iocoder.yudao.module.wms.dal.dataobject.inventory.WmsInventoryDO;
@@ -53,6 +54,14 @@ public class WmsInventoryController {
     public CommonResult<PageResult<WmsInventoryRespVO>> getInventoryPage(@Valid WmsInventoryPageReqVO pageReqVO) {
         PageResult<WmsInventoryDO> pageResult = inventoryService.getInventoryPage(pageReqVO);
         return success(new PageResult<>(buildInventoryRespVOList(pageResult.getList()), pageResult.getTotal()));
+    }
+
+    @GetMapping("/list")
+    @Operation(summary = "获得库存统计列表")
+    @PreAuthorize("@ss.hasPermission('wms:inventory:query')")
+    public CommonResult<List<WmsInventoryRespVO>> getInventoryList(@Valid WmsInventoryListReqVO listReqVO) {
+        List<WmsInventoryDO> list = inventoryService.getInventoryList(listReqVO);
+        return success(buildInventoryRespVOList(list));
     }
 
     // ==================== 拼接 VO ====================
