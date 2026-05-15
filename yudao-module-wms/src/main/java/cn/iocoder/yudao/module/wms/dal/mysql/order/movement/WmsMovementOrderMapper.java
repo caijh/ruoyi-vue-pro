@@ -5,6 +5,7 @@ import cn.iocoder.yudao.framework.mybatis.core.mapper.BaseMapperX;
 import cn.iocoder.yudao.framework.mybatis.core.query.LambdaQueryWrapperX;
 import cn.iocoder.yudao.module.wms.controller.admin.order.movement.vo.order.WmsMovementOrderPageReqVO;
 import cn.iocoder.yudao.module.wms.dal.dataobject.order.movement.WmsMovementOrderDO;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import org.apache.ibatis.annotations.Mapper;
 
 /**
@@ -41,6 +42,12 @@ public interface WmsMovementOrderMapper extends BaseMapperX<WmsMovementOrderDO> 
         return selectCount(new LambdaQueryWrapperX<WmsMovementOrderDO>()
                 .and(query -> query.eq(WmsMovementOrderDO::getSourceWarehouseId, warehouseId)
                         .or().eq(WmsMovementOrderDO::getTargetWarehouseId, warehouseId)));
+    }
+
+    default int updateByIdAndStatus(Long id, Integer status, WmsMovementOrderDO updateObj) {
+        return update(updateObj, new LambdaQueryWrapper<WmsMovementOrderDO>()
+                .eq(WmsMovementOrderDO::getId, id)
+                .eq(WmsMovementOrderDO::getStatus, status));
     }
 
 }

@@ -102,8 +102,10 @@ public class WmsCheckOrderServiceImpl implements WmsCheckOrderService {
         List<WmsCheckOrderDetailDO> details = checkOrderDetailService.validateCheckOrderDetailListExists(id);
 
         // 2. 完成盘库单
-        checkOrderMapper.updateById(new WmsCheckOrderDO().setId(id)
-                .setStatus(WmsOrderStatusEnum.FINISHED.getStatus()));
+        if (checkOrderMapper.updateByIdAndStatus(id, WmsOrderStatusEnum.PREPARE.getStatus(),
+                new WmsCheckOrderDO().setStatus(WmsOrderStatusEnum.FINISHED.getStatus())) == 0) {
+            throw exception(CHECK_ORDER_STATUS_NOT_PREPARE);
+        }
 
         // 3. 盘点库存
         changeInventory(order, details);
@@ -116,8 +118,10 @@ public class WmsCheckOrderServiceImpl implements WmsCheckOrderService {
         validateCheckOrderPrepare(id);
 
         // 2. 作废盘库单
-        checkOrderMapper.updateById(new WmsCheckOrderDO().setId(id)
-                .setStatus(WmsOrderStatusEnum.CANCELED.getStatus()));
+        if (checkOrderMapper.updateByIdAndStatus(id, WmsOrderStatusEnum.PREPARE.getStatus(),
+                new WmsCheckOrderDO().setStatus(WmsOrderStatusEnum.CANCELED.getStatus())) == 0) {
+            throw exception(CHECK_ORDER_STATUS_NOT_PREPARE);
+        }
     }
 
     @Override

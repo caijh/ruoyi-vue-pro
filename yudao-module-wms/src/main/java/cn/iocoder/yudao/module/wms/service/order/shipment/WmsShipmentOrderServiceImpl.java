@@ -105,8 +105,10 @@ public class WmsShipmentOrderServiceImpl implements WmsShipmentOrderService {
         List<WmsShipmentOrderDetailDO> details = shipmentOrderDetailService.validateShipmentOrderDetailListExists(id);
 
         // 2. 完成出库单
-        shipmentOrderMapper.updateById(new WmsShipmentOrderDO().setId(id)
-                .setStatus(WmsOrderStatusEnum.FINISHED.getStatus()));
+        if (shipmentOrderMapper.updateByIdAndStatus(id, WmsOrderStatusEnum.PREPARE.getStatus(),
+                new WmsShipmentOrderDO().setStatus(WmsOrderStatusEnum.FINISHED.getStatus())) == 0) {
+            throw exception(SHIPMENT_ORDER_STATUS_NOT_PREPARE);
+        }
 
         // 3. 扣减库存
         changeInventory(order, details);
@@ -119,8 +121,10 @@ public class WmsShipmentOrderServiceImpl implements WmsShipmentOrderService {
         validateShipmentOrderPrepare(id);
 
         // 2. 作废出库单
-        shipmentOrderMapper.updateById(new WmsShipmentOrderDO().setId(id)
-                .setStatus(WmsOrderStatusEnum.CANCELED.getStatus()));
+        if (shipmentOrderMapper.updateByIdAndStatus(id, WmsOrderStatusEnum.PREPARE.getStatus(),
+                new WmsShipmentOrderDO().setStatus(WmsOrderStatusEnum.CANCELED.getStatus())) == 0) {
+            throw exception(SHIPMENT_ORDER_STATUS_NOT_PREPARE);
+        }
     }
 
     @Override

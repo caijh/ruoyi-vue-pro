@@ -5,6 +5,7 @@ import cn.iocoder.yudao.framework.mybatis.core.mapper.BaseMapperX;
 import cn.iocoder.yudao.framework.mybatis.core.query.LambdaQueryWrapperX;
 import cn.iocoder.yudao.module.wms.controller.admin.order.shipment.vo.order.WmsShipmentOrderPageReqVO;
 import cn.iocoder.yudao.module.wms.dal.dataobject.order.shipment.WmsShipmentOrderDO;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import org.apache.ibatis.annotations.Mapper;
 
 /**
@@ -45,6 +46,12 @@ public interface WmsShipmentOrderMapper extends BaseMapperX<WmsShipmentOrderDO> 
 
     default Long selectCountByWarehouseId(Long warehouseId) {
         return selectCount(WmsShipmentOrderDO::getWarehouseId, warehouseId);
+    }
+
+    default int updateByIdAndStatus(Long id, Integer status, WmsShipmentOrderDO updateObj) {
+        return update(updateObj, new LambdaQueryWrapper<WmsShipmentOrderDO>()
+                .eq(WmsShipmentOrderDO::getId, id)
+                .eq(WmsShipmentOrderDO::getStatus, status));
     }
 
 }

@@ -102,8 +102,10 @@ public class WmsMovementOrderServiceImpl implements WmsMovementOrderService {
         List<WmsMovementOrderDetailDO> details = movementOrderDetailService.validateMovementOrderDetailListExists(id);
 
         // 2. 完成移库单
-        movementOrderMapper.updateById(new WmsMovementOrderDO().setId(id)
-                .setStatus(WmsOrderStatusEnum.FINISHED.getStatus()));
+        if (movementOrderMapper.updateByIdAndStatus(id, WmsOrderStatusEnum.PREPARE.getStatus(),
+                new WmsMovementOrderDO().setStatus(WmsOrderStatusEnum.FINISHED.getStatus())) == 0) {
+            throw exception(MOVEMENT_ORDER_STATUS_NOT_PREPARE);
+        }
 
         // 3. 移动库存
         changeInventory(order, details);
@@ -116,8 +118,10 @@ public class WmsMovementOrderServiceImpl implements WmsMovementOrderService {
         validateMovementOrderPrepare(id);
 
         // 2. 作废移库单
-        movementOrderMapper.updateById(new WmsMovementOrderDO().setId(id)
-                .setStatus(WmsOrderStatusEnum.CANCELED.getStatus()));
+        if (movementOrderMapper.updateByIdAndStatus(id, WmsOrderStatusEnum.PREPARE.getStatus(),
+                new WmsMovementOrderDO().setStatus(WmsOrderStatusEnum.CANCELED.getStatus())) == 0) {
+            throw exception(MOVEMENT_ORDER_STATUS_NOT_PREPARE);
+        }
     }
 
     @Override

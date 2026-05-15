@@ -26,6 +26,7 @@ import java.util.Arrays;
 import static cn.iocoder.yudao.framework.test.core.util.AssertUtils.assertServiceException;
 import static cn.iocoder.yudao.module.wms.enums.ErrorCodeConstants.MOVEMENT_ORDER_DETAIL_REQUIRED;
 import static cn.iocoder.yudao.module.wms.enums.ErrorCodeConstants.MOVEMENT_ORDER_STATUS_NOT_DELETABLE;
+import static cn.iocoder.yudao.module.wms.enums.ErrorCodeConstants.MOVEMENT_ORDER_STATUS_NOT_PREPARE;
 import static cn.iocoder.yudao.module.wms.enums.ErrorCodeConstants.MOVEMENT_ORDER_WAREHOUSE_SAME;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -136,6 +137,22 @@ public class WmsMovementOrderServiceImplTest extends BaseDbUnitTest {
     }
 
     @Test
+    public void testCompleteMovementOrder_duplicateComplete() {
+        // mock 数据
+        WmsMovementOrderDO order = createMovementOrder(100L, 200L);
+        movementOrderMapper.insert(order);
+        movementOrderDetailMapper.insert(createMovementOrderDetail(order.getId(), 300L, 100L, 200L));
+
+        // 调用
+        movementOrderService.completeMovementOrder(order.getId());
+
+        // 调用，并断言：二次完成不能再次写库存
+        assertServiceException(() -> movementOrderService.completeMovementOrder(order.getId()),
+                MOVEMENT_ORDER_STATUS_NOT_PREPARE);
+        verify(inventoryService).changeInventory(any());
+    }
+
+    @Test
     public void testCreateMovementOrder_sameWarehouse() {
         // 准备参数
         WmsMovementOrderSaveReqVO reqVO = createMovementOrderReqVO(100L, 100L);
@@ -159,6 +176,23 @@ public class WmsMovementOrderServiceImplTest extends BaseDbUnitTest {
         assertNotNull(dbOrder);
         assertEquals(WmsOrderStatusEnum.CANCELED.getStatus(), dbOrder.getStatus());
         verify(inventoryService, never()).changeInventory(any());
+    }
+
+    @Test
+    public void testUpdateByIdAndStatus_statusNotMatch() {
+        // mock 数据
+        WmsMovementOrderDO order = createMovementOrder(100L, 200L);
+        movementOrderMapper.insert(order);
+
+        // 调用
+        int updateCount = movementOrderMapper.updateByIdAndStatus(order.getId(),
+                WmsOrderStatusEnum.FINISHED.getStatus(),
+                new WmsMovementOrderDO().setStatus(WmsOrderStatusEnum.CANCELED.getStatus()));
+
+        // 断言
+        assertEquals(0, updateCount);
+        assertEquals(WmsOrderStatusEnum.PREPARE.getStatus(),
+                movementOrderMapper.selectById(order.getId()).getStatus());
     }
 
     @Test

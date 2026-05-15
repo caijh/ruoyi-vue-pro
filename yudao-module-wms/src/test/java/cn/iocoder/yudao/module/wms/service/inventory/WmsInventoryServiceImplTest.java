@@ -320,6 +320,30 @@ public class WmsInventoryServiceImplTest extends BaseDbUnitTest {
     }
 
     @Test
+    public void testGetInventoryPage_onlyPositiveQuantity() {
+        // mock 数据
+        WmsItemDO item = createItem("ITEM-001", "红富士苹果");
+        WmsItemSkuDO sku = createSku(item.getId(), "SKU-001", "10kg 箱装");
+        inventoryMapper.insert(createInventory(sku.getId(), 100L, "0.00"));
+        inventoryMapper.insert(createInventory(sku.getId(), 200L, "0.01"));
+        inventoryMapper.insert(createInventory(sku.getId(), 300L, "1.00"));
+        // 准备参数
+        WmsInventoryPageReqVO reqVO = new WmsInventoryPageReqVO();
+        reqVO.setType(WmsInventoryPageReqVO.TYPE_WAREHOUSE);
+        reqVO.setOnlyPositiveQuantity(true);
+
+        // 调用
+        PageResult<WmsInventoryDO> pageResult = inventoryService.getInventoryPage(reqVO);
+        // 断言
+        assertEquals(2, pageResult.getTotal());
+        assertEquals(2, pageResult.getList().size());
+        assertEquals(200L, pageResult.getList().get(0).getWarehouseId());
+        assertEquals(0, new BigDecimal("0.01").compareTo(pageResult.getList().get(0).getQuantity()));
+        assertEquals(300L, pageResult.getList().get(1).getWarehouseId());
+        assertEquals(0, new BigDecimal("1.00").compareTo(pageResult.getList().get(1).getQuantity()));
+    }
+
+    @Test
     public void testGetInventoryPage_sku() {
         // mock 数据
         WmsItemDO item = createItem("ITEM-001", "红富士苹果");

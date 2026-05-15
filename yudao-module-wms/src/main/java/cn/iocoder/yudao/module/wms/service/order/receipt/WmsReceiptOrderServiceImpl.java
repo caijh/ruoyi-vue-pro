@@ -105,8 +105,10 @@ public class WmsReceiptOrderServiceImpl implements WmsReceiptOrderService {
         List<WmsReceiptOrderDetailDO> details = receiptOrderDetailService.validateReceiptOrderDetailListExists(id);
 
         // 2. 完成入库单
-        receiptOrderMapper.updateById(new WmsReceiptOrderDO().setId(id)
-                .setStatus(WmsOrderStatusEnum.FINISHED.getStatus()));
+        if (receiptOrderMapper.updateByIdAndStatus(id, WmsOrderStatusEnum.PREPARE.getStatus(),
+                new WmsReceiptOrderDO().setStatus(WmsOrderStatusEnum.FINISHED.getStatus())) == 0) {
+            throw exception(RECEIPT_ORDER_STATUS_NOT_PREPARE);
+        }
 
         // 3. 写入库存
         createInventory(order, details);
@@ -119,8 +121,10 @@ public class WmsReceiptOrderServiceImpl implements WmsReceiptOrderService {
         validateReceiptOrderPrepare(id);
 
         // 2. 作废入库单
-        receiptOrderMapper.updateById(new WmsReceiptOrderDO().setId(id)
-                .setStatus(WmsOrderStatusEnum.CANCELED.getStatus()));
+        if (receiptOrderMapper.updateByIdAndStatus(id, WmsOrderStatusEnum.PREPARE.getStatus(),
+                new WmsReceiptOrderDO().setStatus(WmsOrderStatusEnum.CANCELED.getStatus())) == 0) {
+            throw exception(RECEIPT_ORDER_STATUS_NOT_PREPARE);
+        }
     }
 
     @Override

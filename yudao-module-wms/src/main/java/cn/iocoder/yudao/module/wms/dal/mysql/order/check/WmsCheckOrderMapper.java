@@ -5,6 +5,7 @@ import cn.iocoder.yudao.framework.mybatis.core.mapper.BaseMapperX;
 import cn.iocoder.yudao.framework.mybatis.core.query.LambdaQueryWrapperX;
 import cn.iocoder.yudao.module.wms.controller.admin.order.check.vo.order.WmsCheckOrderPageReqVO;
 import cn.iocoder.yudao.module.wms.dal.dataobject.order.check.WmsCheckOrderDO;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import org.apache.ibatis.annotations.Mapper;
 
 /**
@@ -40,6 +41,12 @@ public interface WmsCheckOrderMapper extends BaseMapperX<WmsCheckOrderDO> {
 
     default Long selectCountByWarehouseId(Long warehouseId) {
         return selectCount(WmsCheckOrderDO::getWarehouseId, warehouseId);
+    }
+
+    default int updateByIdAndStatus(Long id, Integer status, WmsCheckOrderDO updateObj) {
+        return update(updateObj, new LambdaQueryWrapper<WmsCheckOrderDO>()
+                .eq(WmsCheckOrderDO::getId, id)
+                .eq(WmsCheckOrderDO::getStatus, status));
     }
 
 }
