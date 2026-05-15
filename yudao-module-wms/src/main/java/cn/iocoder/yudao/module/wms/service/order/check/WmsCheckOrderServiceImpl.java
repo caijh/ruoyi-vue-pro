@@ -3,6 +3,7 @@ package cn.iocoder.yudao.module.wms.service.order.check;
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.ObjectUtil;
 import cn.iocoder.yudao.framework.common.pojo.PageResult;
+import cn.iocoder.yudao.framework.common.util.number.MoneyUtils;
 import cn.iocoder.yudao.framework.common.util.object.BeanUtils;
 import cn.iocoder.yudao.module.wms.controller.admin.order.check.vo.detail.WmsCheckOrderDetailSaveReqVO;
 import cn.iocoder.yudao.module.wms.controller.admin.order.check.vo.order.WmsCheckOrderPageReqVO;
@@ -167,10 +168,10 @@ public class WmsCheckOrderServiceImpl implements WmsCheckOrderService {
                     continue;
                 }
                 if (detail.getQuantity() != null) {
-                    totalPrice = totalPrice.add(detail.getQuantity().multiply(detail.getPrice()));
+                    totalPrice = totalPrice.add(MoneyUtils.priceMultiply(detail.getPrice(), detail.getQuantity()));
                 }
                 if (detail.getCheckQuantity() != null) {
-                    actualPrice = actualPrice.add(detail.getCheckQuantity().multiply(detail.getPrice()));
+                    actualPrice = actualPrice.add(MoneyUtils.priceMultiply(detail.getPrice(), detail.getCheckQuantity()));
                 }
             }
         }

@@ -366,6 +366,7 @@ public class WmsInventoryServiceImplTest extends BaseDbUnitTest {
         assertEquals(0, new BigDecimal("10.00").compareTo(history.getBeforeQuantity()));
         assertEquals(0, new BigDecimal("7.00").compareTo(history.getAfterQuantity()));
         assertEquals(0, new BigDecimal("-3.00").compareTo(history.getQuantity()));
+        assertEquals(0, new BigDecimal("-300.00").compareTo(history.getTotalPrice()));
         assertEquals(reqDTO.getOrderId(), history.getOrderId());
         assertEquals(reqDTO.getOrderNo(), history.getOrderNo());
         assertEquals(reqDTO.getOrderType(), history.getOrderType());
@@ -410,6 +411,7 @@ public class WmsInventoryServiceImplTest extends BaseDbUnitTest {
         assertEquals(0, BigDecimal.ZERO.compareTo(histories.get(0).getBeforeQuantity()));
         assertEquals(0, new BigDecimal("5.00").compareTo(histories.get(0).getAfterQuantity()));
         assertEquals(0, new BigDecimal("5.00").compareTo(histories.get(0).getQuantity()));
+        assertEquals(0, new BigDecimal("500.00").compareTo(histories.get(0).getTotalPrice()));
     }
 
     @Test

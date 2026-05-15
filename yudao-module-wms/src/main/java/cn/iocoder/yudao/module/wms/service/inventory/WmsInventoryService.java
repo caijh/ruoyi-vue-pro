@@ -41,6 +41,14 @@ public interface WmsInventoryService {
     long getInventoryCountBySkuId(Long skuId);
 
     /**
+     * 获得指定仓库的库存数量
+     *
+     * @param warehouseId 仓库编号
+     * @return 库存数量
+     */
+    long getInventoryCountByWarehouseId(Long warehouseId);
+
+    /**
      * 盘点库存
      *
      * @param reqDTO 盘点库存请求

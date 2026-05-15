@@ -49,6 +49,10 @@ public interface WmsInventoryMapper extends BaseMapperX<WmsInventoryDO> {
         return selectCount(WmsInventoryDO::getSkuId, skuId);
     }
 
+    default Long selectCountByWarehouseId(Long warehouseId) {
+        return selectCount(WmsInventoryDO::getWarehouseId, warehouseId);
+    }
+
     default List<WmsInventoryDO> selectList(WmsInventoryListReqVO reqVO) {
         return selectList(new LambdaQueryWrapperX<WmsInventoryDO>()
                 .eq(WmsInventoryDO::getWarehouseId, reqVO.getWarehouseId())

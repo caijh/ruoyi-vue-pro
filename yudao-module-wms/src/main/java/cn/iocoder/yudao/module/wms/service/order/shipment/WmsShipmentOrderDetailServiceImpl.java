@@ -2,6 +2,8 @@ package cn.iocoder.yudao.module.wms.service.order.shipment;
 
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.collection.ListUtil;
+import cn.hutool.core.util.ObjectUtil;
+import cn.iocoder.yudao.framework.common.util.number.MoneyUtils;
 import cn.iocoder.yudao.framework.common.util.object.BeanUtils;
 import cn.iocoder.yudao.module.wms.controller.admin.order.shipment.vo.order.WmsShipmentOrderSaveReqVO;
 import cn.iocoder.yudao.module.wms.dal.dataobject.order.shipment.WmsShipmentOrderDetailDO;
@@ -53,7 +55,7 @@ public class WmsShipmentOrderDetailServiceImpl implements WmsShipmentOrderDetail
         List<WmsShipmentOrderDetailDO> list = buildShipmentOrderDetailList(reqVO);
         List<WmsShipmentOrderDetailDO> newList = CollUtil.isEmpty(list) ? ListUtil.of() : list;
         List<List<WmsShipmentOrderDetailDO>> diffList = diffList(oldList, newList, // id 不同，就认为是不同的记录
-                (oldVal, newVal) -> oldVal.getId().equals(newVal.getId()));
+                (oldVal, newVal) -> ObjectUtil.equal(oldVal.getId(), newVal.getId()));
 
         // 第二步，批量添加、修改、删除
         if (CollUtil.isNotEmpty(diffList.get(0))) {
@@ -123,7 +125,7 @@ public class WmsShipmentOrderDetailServiceImpl implements WmsShipmentOrderDetail
         if (detail.getTotalPrice() != null || detail.getQuantity() == null || detail.getPrice() == null) {
             return;
         }
-        detail.setTotalPrice(detail.getQuantity().multiply(detail.getPrice()));
+        detail.setTotalPrice(MoneyUtils.priceMultiply(detail.getPrice(), detail.getQuantity()));
     }
 
 }

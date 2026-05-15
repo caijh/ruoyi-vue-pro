@@ -10,6 +10,7 @@ import cn.iocoder.yudao.module.wms.controller.admin.md.warehouse.vo.WmsWarehouse
 import cn.iocoder.yudao.module.wms.dal.dataobject.md.warehouse.WmsWarehouseDO;
 import cn.iocoder.yudao.module.wms.dal.mysql.md.warehouse.WmsWarehouseMapper;
 import cn.iocoder.yudao.module.wms.enums.order.WmsOrderTypeEnum;
+import cn.iocoder.yudao.module.wms.service.inventory.WmsInventoryService;
 import cn.iocoder.yudao.module.wms.service.order.check.WmsCheckOrderService;
 import cn.iocoder.yudao.module.wms.service.order.movement.WmsMovementOrderService;
 import cn.iocoder.yudao.module.wms.service.order.receipt.WmsReceiptOrderService;
@@ -37,6 +38,10 @@ public class WmsWarehouseServiceImpl implements WmsWarehouseService {
 
     @Resource
     private WmsWarehouseMapper warehouseMapper;
+
+    @Resource
+    @Lazy // 延迟加载，避免循环依赖
+    private WmsInventoryService inventoryService;
     @Resource
     @Lazy // 延迟加载，避免循环依赖
     private WmsReceiptOrderService receiptOrderService;
@@ -113,6 +118,9 @@ public class WmsWarehouseServiceImpl implements WmsWarehouseService {
     }
 
     private void validateWarehouseUnused(Long id) {
+        if (inventoryService.getInventoryCountByWarehouseId(id) > 0) {
+            throw exception(WAREHOUSE_HAS_INVENTORY);
+        }
         if (receiptOrderService.getReceiptOrderCountByWarehouseId(id) > 0) {
             throw exception(WAREHOUSE_HAS_ORDER, WmsOrderTypeEnum.RECEIPT.getName());
         }

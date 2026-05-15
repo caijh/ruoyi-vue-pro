@@ -3,6 +3,7 @@ package cn.iocoder.yudao.module.wms.service.order.shipment;
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.ObjectUtil;
 import cn.iocoder.yudao.framework.common.pojo.PageResult;
+import cn.iocoder.yudao.framework.common.util.number.MoneyUtils;
 import cn.iocoder.yudao.framework.common.util.object.BeanUtils;
 import cn.iocoder.yudao.module.wms.controller.admin.order.shipment.vo.detail.WmsShipmentOrderDetailSaveReqVO;
 import cn.iocoder.yudao.module.wms.controller.admin.order.shipment.vo.order.WmsShipmentOrderPageReqVO;
@@ -193,7 +194,7 @@ public class WmsShipmentOrderServiceImpl implements WmsShipmentOrderService {
         if (quantity == null || price == null) {
             return null;
         }
-        return quantity.multiply(price);
+        return MoneyUtils.priceMultiply(price, quantity);
     }
 
     private WmsShipmentOrderDO validateShipmentOrderExists(Long id) {

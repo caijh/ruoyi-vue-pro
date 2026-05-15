@@ -5,6 +5,7 @@ import cn.hutool.core.lang.Tuple;
 import cn.hutool.core.util.ObjectUtil;
 import cn.iocoder.yudao.framework.common.exception.ServiceException;
 import cn.iocoder.yudao.framework.common.pojo.PageResult;
+import cn.iocoder.yudao.framework.common.util.number.MoneyUtils;
 import cn.iocoder.yudao.module.wms.controller.admin.inventory.vo.WmsInventoryListReqVO;
 import cn.iocoder.yudao.module.wms.controller.admin.inventory.vo.WmsInventoryPageReqVO;
 import cn.iocoder.yudao.module.wms.dal.dataobject.inventory.WmsInventoryDO;
@@ -68,6 +69,11 @@ public class WmsInventoryServiceImpl implements WmsInventoryService {
     @Override
     public long getInventoryCountBySkuId(Long skuId) {
         return inventoryMapper.selectCountBySkuId(skuId);
+    }
+
+    @Override
+    public long getInventoryCountByWarehouseId(Long warehouseId) {
+        return inventoryMapper.selectCountByWarehouseId(warehouseId);
     }
 
     @Override
@@ -223,12 +229,12 @@ public class WmsInventoryServiceImpl implements WmsInventoryService {
                                                        WmsInventoryCheckReqDTO.Item item,
                                                        BigDecimal beforeQuantity,
                                                        BigDecimal afterQuantity) {
-        return new WmsInventoryHistoryDO()
-                .setWarehouseId(item.getWarehouseId()).setSkuId(item.getSkuId())
-                .setQuantity(afterQuantity.subtract(beforeQuantity))
-                .setBeforeQuantity(beforeQuantity).setAfterQuantity(afterQuantity)
-                .setPrice(item.getPrice()).setRemark(item.getRemark())
-                .setOrderId(reqDTO.getOrderId()).setOrderNo(reqDTO.getOrderNo()).setOrderType(reqDTO.getOrderType());
+        BigDecimal quantity = afterQuantity.subtract(beforeQuantity);
+        return new WmsInventoryHistoryDO().setWarehouseId(item.getWarehouseId()).setSkuId(item.getSkuId())
+                .setQuantity(quantity).setBeforeQuantity(beforeQuantity).setAfterQuantity(afterQuantity)
+                .setPrice(item.getPrice()).setTotalPrice(MoneyUtils.priceMultiply(item.getPrice(), quantity))
+                .setOrderId(reqDTO.getOrderId()).setOrderNo(reqDTO.getOrderNo()).setOrderType(reqDTO.getOrderType())
+                .setRemark(item.getRemark());
     }
 
     private WmsInventoryDO getOrCreateCheckInventory(WmsInventoryCheckReqDTO.Item item) {
