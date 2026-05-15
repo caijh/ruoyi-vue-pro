@@ -72,7 +72,11 @@ public class WmsCheckOrderServiceImpl implements WmsCheckOrderService {
         WmsCheckOrderDO updateObj = BeanUtils.toBean(updateReqVO, WmsCheckOrderDO.class)
                 .setStatus(WmsOrderStatusEnum.PREPARE.getStatus());
         fillCheckOrderTotal(updateObj, updateReqVO);
-        checkOrderMapper.updateById(updateObj);
+        int updateCount = checkOrderMapper.updateByIdAndStatus(updateReqVO.getId(),
+                WmsOrderStatusEnum.PREPARE.getStatus(), updateObj);
+        if (updateCount == 0) {
+            throw exception(CHECK_ORDER_STATUS_NOT_PREPARE);
+        }
         // 2.2 更新盘库单明细
         checkOrderDetailService.updateCheckOrderDetailList(updateReqVO.getId(), updateReqVO);
     }

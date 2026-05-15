@@ -45,6 +45,9 @@ public class WmsMerchantServiceImpl implements WmsMerchantService {
 
     @Override
     public Long createMerchant(WmsMerchantSaveReqVO createReqVO) {
+        validateMerchantSaveData(null, createReqVO);
+
+        // 新增
         WmsMerchantDO merchant = BeanUtils.toBean(createReqVO, WmsMerchantDO.class);
         merchantMapper.insert(merchant);
         return merchant.getId();
@@ -54,10 +57,38 @@ public class WmsMerchantServiceImpl implements WmsMerchantService {
     public void updateMerchant(WmsMerchantSaveReqVO updateReqVO) {
         // 校验存在
         validateMerchantExists(updateReqVO.getId());
+        validateMerchantSaveData(updateReqVO.getId(), updateReqVO);
 
         // 更新
         WmsMerchantDO updateObj = BeanUtils.toBean(updateReqVO, WmsMerchantDO.class);
         merchantMapper.updateById(updateObj);
+    }
+
+    private void validateMerchantSaveData(Long id, WmsMerchantSaveReqVO reqVO) {
+        // 校验 code 唯一
+        validateMerchantCodeUnique(id, reqVO.getCode());
+        // 校验 name 唯一
+        validateMerchantNameUnique(id, reqVO.getName());
+    }
+
+    private void validateMerchantCodeUnique(Long id, String code) {
+        WmsMerchantDO merchant = merchantMapper.selectByCode(code);
+        if (merchant == null) {
+            return;
+        }
+        if (id == null || ObjectUtil.notEqual(merchant.getId(), id)) {
+            throw exception(MERCHANT_CODE_DUPLICATE);
+        }
+    }
+
+    private void validateMerchantNameUnique(Long id, String name) {
+        WmsMerchantDO merchant = merchantMapper.selectByName(name);
+        if (merchant == null) {
+            return;
+        }
+        if (id == null || ObjectUtil.notEqual(merchant.getId(), id)) {
+            throw exception(MERCHANT_NAME_DUPLICATE);
+        }
     }
 
     @Override

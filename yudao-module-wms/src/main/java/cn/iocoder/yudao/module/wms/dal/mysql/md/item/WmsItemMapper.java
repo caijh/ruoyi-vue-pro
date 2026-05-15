@@ -43,6 +43,10 @@ public interface WmsItemMapper extends BaseMapperX<WmsItemDO> {
         return selectOne(WmsItemDO::getName, name);
     }
 
+    default WmsItemDO selectByCode(String code) {
+        return selectOne(WmsItemDO::getCode, code);
+    }
+
     default Long selectCountByCategoryId(Long categoryId) {
         return selectCount(WmsItemDO::getCategoryId, categoryId);
     }

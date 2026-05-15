@@ -35,6 +35,7 @@ public interface ErrorCodeConstants {
     // ========== WMS 基础数据-商品 1-060-104-000 ==========
     ErrorCode ITEM_NOT_EXISTS = new ErrorCode(1_060_104_000, "商品不存在");
     ErrorCode ITEM_NAME_DUPLICATE = new ErrorCode(1_060_104_001, "商品名称重复");
+    ErrorCode ITEM_CODE_DUPLICATE = new ErrorCode(1_060_104_007, "商品编号重复");
     ErrorCode ITEM_SKU_REQUIRED = new ErrorCode(1_060_104_002, "至少包含一个商品规格");
     ErrorCode ITEM_SKU_NAME_DUPLICATE = new ErrorCode(1_060_104_003, "商品规格名称【{}】重复");
     ErrorCode ITEM_SKU_NOT_EXISTS = new ErrorCode(1_060_104_004, "商品规格不存在");
@@ -46,6 +47,8 @@ public interface ErrorCodeConstants {
     ErrorCode MERCHANT_NOT_SUPPLIER = new ErrorCode(1_060_105_001, "往来企业必须是供应商或客户/供应商类型");
     ErrorCode MERCHANT_NOT_CUSTOMER = new ErrorCode(1_060_105_002, "往来企业必须是客户或客户/供应商类型");
     ErrorCode MERCHANT_HAS_ORDER = new ErrorCode(1_060_105_003, "删除失败！往来企业已被{}使用！");
+    ErrorCode MERCHANT_CODE_DUPLICATE = new ErrorCode(1_060_105_004, "往来企业编号重复");
+    ErrorCode MERCHANT_NAME_DUPLICATE = new ErrorCode(1_060_105_005, "往来企业名称重复");
 
     // ========== WMS 入库单 1-060-200-000 ==========
     ErrorCode RECEIPT_ORDER_NOT_EXISTS = new ErrorCode(1_060_200_000, "入库单不存在");

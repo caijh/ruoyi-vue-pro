@@ -73,7 +73,11 @@ public class WmsMovementOrderServiceImpl implements WmsMovementOrderService {
         WmsMovementOrderDO updateObj = BeanUtils.toBean(updateReqVO, WmsMovementOrderDO.class)
                 .setStatus(WmsOrderStatusEnum.PREPARE.getStatus());
         fillMovementOrderTotal(updateObj, updateReqVO);
-        movementOrderMapper.updateById(updateObj);
+        int updateCount = movementOrderMapper.updateByIdAndStatus(updateReqVO.getId(),
+                WmsOrderStatusEnum.PREPARE.getStatus(), updateObj);
+        if (updateCount == 0) {
+            throw exception(MOVEMENT_ORDER_STATUS_NOT_PREPARE);
+        }
         // 2.2 更新移库单明细
         movementOrderDetailService.updateMovementOrderDetailList(updateReqVO.getId(), updateReqVO);
     }

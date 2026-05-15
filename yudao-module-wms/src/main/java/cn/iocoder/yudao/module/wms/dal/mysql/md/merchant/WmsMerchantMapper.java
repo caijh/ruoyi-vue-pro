@@ -36,4 +36,12 @@ public interface WmsMerchantMapper extends BaseMapperX<WmsMerchantDO> {
                 .orderByDesc(WmsMerchantDO::getId));
     }
 
+    default WmsMerchantDO selectByCode(String code) {
+        return selectOne(WmsMerchantDO::getCode, code);
+    }
+
+    default WmsMerchantDO selectByName(String name) {
+        return selectOne(WmsMerchantDO::getName, name);
+    }
+
 }

@@ -76,7 +76,11 @@ public class WmsShipmentOrderServiceImpl implements WmsShipmentOrderService {
         WmsShipmentOrderDO updateObj = BeanUtils.toBean(updateReqVO, WmsShipmentOrderDO.class)
                 .setStatus(WmsOrderStatusEnum.PREPARE.getStatus());
         fillShipmentOrderTotal(updateObj, updateReqVO);
-        shipmentOrderMapper.updateById(updateObj);
+        int updateCount = shipmentOrderMapper.updateByIdAndStatus(updateReqVO.getId(),
+                WmsOrderStatusEnum.PREPARE.getStatus(), updateObj);
+        if (updateCount == 0) {
+            throw exception(SHIPMENT_ORDER_STATUS_NOT_PREPARE);
+        }
         // 2.2 更新出库单明细
         shipmentOrderDetailService.updateShipmentOrderDetailList(updateReqVO.getId(), updateReqVO);
     }

@@ -72,12 +72,24 @@ public class WmsItemServiceImpl implements WmsItemService {
     }
 
     private void validateItemSaveData(WmsItemSaveReqVO reqVO) {
+        // 校验商品编号唯一
+        validateItemCodeUnique(reqVO.getId(), reqVO.getCode());
         // 校验商品名称唯一
         validateItemNameUnique(reqVO.getId(), reqVO.getName());
         // 校验商品分类存在
         validateCategoryExists(reqVO.getCategoryId());
         // 校验商品品牌存在
         validateBrandExists(reqVO.getBrandId());
+    }
+
+    private void validateItemCodeUnique(Long id, String code) {
+        WmsItemDO item = itemMapper.selectByCode(code);
+        if (item == null) {
+            return;
+        }
+        if (id == null || ObjectUtil.notEqual(item.getId(), id)) {
+            throw exception(ITEM_CODE_DUPLICATE);
+        }
     }
 
     private void validateItemNameUnique(Long id, String name) {

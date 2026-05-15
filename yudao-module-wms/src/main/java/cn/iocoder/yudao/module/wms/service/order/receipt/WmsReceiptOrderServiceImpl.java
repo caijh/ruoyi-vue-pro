@@ -76,7 +76,11 @@ public class WmsReceiptOrderServiceImpl implements WmsReceiptOrderService {
         WmsReceiptOrderDO updateObj = BeanUtils.toBean(updateReqVO, WmsReceiptOrderDO.class)
                 .setStatus(WmsOrderStatusEnum.PREPARE.getStatus());
         fillReceiptOrderTotal(updateObj, updateReqVO);
-        receiptOrderMapper.updateById(updateObj);
+        int updateCount = receiptOrderMapper.updateByIdAndStatus(updateReqVO.getId(),
+                WmsOrderStatusEnum.PREPARE.getStatus(), updateObj);
+        if (updateCount == 0) {
+            throw exception(RECEIPT_ORDER_STATUS_NOT_PREPARE);
+        }
         // 2.2 更新入库单明细
         receiptOrderDetailService.updateReceiptOrderDetailList(updateReqVO.getId(), updateReqVO);
     }
