@@ -252,6 +252,7 @@ public class WmsInventoryServiceImpl implements WmsInventoryService {
         } catch (DuplicateKeyException ex) {
             throw exception(CHECK_ORDER_INVENTORY_CHANGED);
         }
+        // 内存中重置为 0，让主循环按 0 -> checkQuantity 生成盘库流水
         inventory.setQuantity(BigDecimal.ZERO);
         return inventory;
     }
