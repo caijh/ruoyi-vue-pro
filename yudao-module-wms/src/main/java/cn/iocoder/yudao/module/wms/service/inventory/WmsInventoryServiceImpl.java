@@ -149,20 +149,6 @@ public class WmsInventoryServiceImpl implements WmsInventoryService {
     }
 
     private List<WmsInventoryDO> createMissingInventoryList(List<WmsInventoryDO> missingInventories) {
-        // 优先批量插入缺失库存行；并发唯一键冲突时，再逐个插入并回查冲突行。
-        List<WmsInventoryDO> newInventories = convertList(missingInventories, missingInventory ->
-                new WmsInventoryDO().setSkuId(missingInventory.getSkuId()).setWarehouseId(missingInventory.getWarehouseId())
-                        .setQuantity(BigDecimal.ZERO));
-        try {
-            inventoryMapper.insertBatch(newInventories);
-            return newInventories;
-        } catch (DuplicateKeyException ex) {
-            // 并发事务可能已经补齐部分库存行，降级为逐个插入并回查唯一键冲突的行。
-            log.warn("[createMissingInventoryList][missingInventories({}) 批量插入库存行冲突，降级为逐个插入]",
-                    missingInventories, ex);
-        }
-
-        // 批量插入失败后逐条补齐；单条唯一键冲突时，回查并使用并发事务创建的库存行。
         List<WmsInventoryDO> createdInventories = new ArrayList<>(missingInventories.size());
         for (WmsInventoryDO missingInventory : missingInventories) {
             WmsInventoryDO inventory = new WmsInventoryDO().setSkuId(missingInventory.getSkuId())
@@ -173,7 +159,7 @@ public class WmsInventoryServiceImpl implements WmsInventoryService {
             } catch (DuplicateKeyException ex) {
                 inventory = inventoryMapper.selectBySkuIdAndWarehouseId(
                         missingInventory.getSkuId(), missingInventory.getWarehouseId());
-                log.warn("[createMissingInventoryList][missingInventory({}) 插入库存行冲突，回查已有库存行]", missingInventory, ex);
+                log.warn("[createMissingInventoryList][missingInventory({}) 插入库存行冲突，回查已有库存行]", missingInventory);
                 if (inventory == null) {
                     throw ex;
                 }

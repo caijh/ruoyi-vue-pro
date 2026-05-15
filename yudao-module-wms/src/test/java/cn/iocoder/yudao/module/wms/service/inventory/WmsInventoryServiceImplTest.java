@@ -25,10 +25,16 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 
 import static cn.iocoder.yudao.framework.test.core.util.AssertUtils.assertServiceException;
 import static cn.iocoder.yudao.module.wms.enums.ErrorCodeConstants.INVENTORY_QUANTITY_NOT_ENOUGH;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.Mockito.when;
@@ -217,6 +223,48 @@ public class WmsInventoryServiceImplTest extends BaseDbUnitTest {
         assertEquals(100L, histories.get(2).getWarehouseId());
         assertEquals(0, new BigDecimal("5.00").compareTo(histories.get(2).getBeforeQuantity()));
         assertEquals(0, new BigDecimal("3.00").compareTo(histories.get(2).getAfterQuantity()));
+    }
+
+    @Test
+    public void testChangeInventory_concurrentCreateSameInventoryOnlyOneBalance() throws Exception {
+        // mock 数据
+        WmsItemDO item = createItem("ITEM-001", "红富士苹果");
+        WmsItemSkuDO sku = createSku(item.getId(), "SKU-001", "10kg 箱装");
+        int threadCount = 4;
+        CountDownLatch readyLatch = new CountDownLatch(threadCount);
+        CountDownLatch startLatch = new CountDownLatch(1);
+        ExecutorService executorService = Executors.newFixedThreadPool(threadCount);
+        List<Future<?>> futures = new ArrayList<>(threadCount);
+        for (int i = 0; i < threadCount; i++) {
+            futures.add(executorService.submit(() -> {
+                readyLatch.countDown();
+                try {
+                    startLatch.await();
+                } catch (InterruptedException ex) {
+                    Thread.currentThread().interrupt();
+                    throw new IllegalStateException(ex);
+                }
+                inventoryService.changeInventory(createChangeReq(sku.getId(), 100L, "1.00"));
+            }));
+        }
+
+        try {
+            // 调用
+            assertTrue(readyLatch.await(5, TimeUnit.SECONDS));
+            startLatch.countDown();
+            for (Future<?> future : futures) {
+                future.get(10, TimeUnit.SECONDS);
+            }
+        } finally {
+            executorService.shutdownNow();
+        }
+
+        // 断言：并发补行后仍只有一条库存余额，数量累计正确
+        List<WmsInventoryDO> inventories = inventoryMapper.selectListByKeys(Collections.singletonList(
+                new WmsInventoryDO().setSkuId(sku.getId()).setWarehouseId(100L)));
+        assertEquals(1, inventories.size());
+        assertEquals(0, new BigDecimal("4.00").compareTo(inventories.get(0).getQuantity()));
+        assertEquals(threadCount, inventoryHistoryMapper.selectCount());
     }
 
     @Test
