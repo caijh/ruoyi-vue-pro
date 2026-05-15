@@ -12,6 +12,7 @@ import cn.iocoder.yudao.module.wms.dal.dataobject.md.item.WmsItemDO;
 import cn.iocoder.yudao.module.wms.dal.dataobject.md.item.WmsItemSkuDO;
 import org.apache.ibatis.annotations.Mapper;
 
+import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -36,6 +37,9 @@ public interface WmsInventoryMapper extends BaseMapperX<WmsInventoryDO> {
                 .likeIfPresent(WmsItemSkuDO::getName, reqVO.getSkuName())
                 .eqIfPresent(WmsInventoryDO::getWarehouseId, reqVO.getWarehouseId())
                 .geIfPresent(WmsInventoryDO::getQuantity, reqVO.getMinQuantity());
+        if (Boolean.TRUE.equals(reqVO.getOnlyPositiveQuantity())) {
+            query.gt(WmsInventoryDO::getQuantity, BigDecimal.ZERO);
+        }
         appendDimensionOrder(query, reqVO.getType());
         return selectJoinPage(reqVO, WmsInventoryDO.class, query);
     }

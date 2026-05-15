@@ -48,4 +48,7 @@ public class WmsInventoryPageReqVO extends PageParam {
     @Schema(description = "最小库存数量", example = "0.01")
     private BigDecimal minQuantity;
 
+    @Schema(description = "是否只查询正库存", example = "true")
+    private Boolean onlyPositiveQuantity;
+
 }
