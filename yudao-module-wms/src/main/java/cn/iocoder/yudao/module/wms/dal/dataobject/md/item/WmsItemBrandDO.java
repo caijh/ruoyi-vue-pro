@@ -27,6 +27,10 @@ public class WmsItemBrandDO extends BaseDO {
     @TableId
     private Long id;
     /**
+     * 品牌编号
+     */
+    private String code;
+    /**
      * 品牌名称
      */
     private String name;

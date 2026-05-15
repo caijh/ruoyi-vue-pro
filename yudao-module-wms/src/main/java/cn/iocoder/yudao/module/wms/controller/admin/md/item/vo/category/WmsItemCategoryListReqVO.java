@@ -12,6 +12,9 @@ public class WmsItemCategoryListReqVO {
     @Schema(description = "父级编号", example = "1")
     private Long parentId;
 
+    @Schema(description = "分类编号", example = "C00000001")
+    private String code;
+
     @Schema(description = "分类名称", example = "原料")
     private String name;
 

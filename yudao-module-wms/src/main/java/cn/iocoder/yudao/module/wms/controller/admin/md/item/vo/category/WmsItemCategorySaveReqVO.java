@@ -19,6 +19,11 @@ public class WmsItemCategorySaveReqVO {
     @NotNull(message = "父级编号不能为空")
     private Long parentId;
 
+    @Schema(description = "分类编号", requiredMode = Schema.RequiredMode.REQUIRED, example = "C00000001")
+    @NotEmpty(message = "分类编号不能为空")
+    @Size(max = 20, message = "分类编号长度不能超过 20 个字符")
+    private String code;
+
     @Schema(description = "分类名称", requiredMode = Schema.RequiredMode.REQUIRED, example = "原料")
     @NotEmpty(message = "分类名称不能为空")
     @Size(max = 30, message = "分类名称长度不能超过 30 个字符")

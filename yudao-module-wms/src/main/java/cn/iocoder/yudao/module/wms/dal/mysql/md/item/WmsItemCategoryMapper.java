@@ -20,6 +20,7 @@ public interface WmsItemCategoryMapper extends BaseMapperX<WmsItemCategoryDO> {
     default List<WmsItemCategoryDO> selectList(WmsItemCategoryListReqVO reqVO) {
         return selectList(new LambdaQueryWrapperX<WmsItemCategoryDO>()
                 .eqIfPresent(WmsItemCategoryDO::getParentId, reqVO.getParentId())
+                .likeIfPresent(WmsItemCategoryDO::getCode, reqVO.getCode())
                 .likeIfPresent(WmsItemCategoryDO::getName, reqVO.getName())
                 .eqIfPresent(WmsItemCategoryDO::getStatus, reqVO.getStatus())
                 .orderByAsc(WmsItemCategoryDO::getSort)
@@ -28,6 +29,10 @@ public interface WmsItemCategoryMapper extends BaseMapperX<WmsItemCategoryDO> {
 
     default WmsItemCategoryDO selectByParentIdAndName(Long parentId, String name) {
         return selectOne(WmsItemCategoryDO::getParentId, parentId, WmsItemCategoryDO::getName, name);
+    }
+
+    default WmsItemCategoryDO selectByCode(String code) {
+        return selectOne(WmsItemCategoryDO::getCode, code);
     }
 
     default List<WmsItemCategoryDO> selectListByParentIds(Collection<Long> parentIds) {

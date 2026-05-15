@@ -16,6 +16,10 @@ public class WmsItemBrandRespVO {
     @ExcelProperty("编号")
     private Long id;
 
+    @Schema(description = "品牌编号", requiredMode = Schema.RequiredMode.REQUIRED, example = "B00000001")
+    @ExcelProperty("品牌编号")
+    private String code;
+
     @Schema(description = "品牌名称", requiredMode = Schema.RequiredMode.REQUIRED, example = "华为")
     @ExcelProperty("品牌名称")
     private String name;

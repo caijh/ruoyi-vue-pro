@@ -12,6 +12,9 @@ import lombok.ToString;
 @ToString(callSuper = true)
 public class WmsItemBrandPageReqVO extends PageParam {
 
+    @Schema(description = "品牌编号", example = "B00000001")
+    private String code;
+
     @Schema(description = "品牌名称", example = "华为")
     private String name;
 

@@ -17,8 +17,13 @@ public interface WmsItemBrandMapper extends BaseMapperX<WmsItemBrandDO> {
 
     default PageResult<WmsItemBrandDO> selectPage(WmsItemBrandPageReqVO reqVO) {
         return selectPage(reqVO, new LambdaQueryWrapperX<WmsItemBrandDO>()
+                .likeIfPresent(WmsItemBrandDO::getCode, reqVO.getCode())
                 .likeIfPresent(WmsItemBrandDO::getName, reqVO.getName())
                 .orderByDesc(WmsItemBrandDO::getId));
+    }
+
+    default WmsItemBrandDO selectByCode(String code) {
+        return selectOne(WmsItemBrandDO::getCode, code);
     }
 
 }

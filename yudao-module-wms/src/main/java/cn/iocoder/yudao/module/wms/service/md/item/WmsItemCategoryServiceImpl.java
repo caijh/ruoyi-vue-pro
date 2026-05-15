@@ -60,8 +60,23 @@ public class WmsItemCategoryServiceImpl implements WmsItemCategoryService {
     }
 
     private void validateCategorySaveData(WmsItemCategorySaveReqVO reqVO) {
+        validateCategoryCodeUnique(reqVO.getId(), reqVO.getCode());
         validateCategoryNameUnique(reqVO.getId(), reqVO.getParentId(), reqVO.getName());
         validateParentCategory(reqVO.getId(), reqVO.getParentId());
+    }
+
+    private void validateCategoryCodeUnique(Long id, String code) {
+        WmsItemCategoryDO category = categoryMapper.selectByCode(code);
+        if (category == null) {
+            return;
+        }
+        // 如果 id 为空，说明新增；和数据库已有 code 重复
+        if (id == null) {
+            throw exception(ITEM_CATEGORY_CODE_DUPLICATE);
+        }
+        if (ObjectUtil.notEqual(category.getId(), id)) {
+            throw exception(ITEM_CATEGORY_CODE_DUPLICATE);
+        }
     }
 
     private void validateCategoryNameUnique(Long id, Long parentId, String name) {

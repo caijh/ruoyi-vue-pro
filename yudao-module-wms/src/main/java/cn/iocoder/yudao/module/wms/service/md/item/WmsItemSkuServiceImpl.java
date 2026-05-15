@@ -2,7 +2,6 @@ package cn.iocoder.yudao.module.wms.service.md.item;
 
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.collection.ListUtil;
-import cn.hutool.core.util.StrUtil;
 import cn.iocoder.yudao.framework.common.util.object.BeanUtils;
 import cn.iocoder.yudao.module.wms.controller.admin.md.item.vo.sku.WmsItemSkuSaveReqVO;
 import cn.iocoder.yudao.module.wms.dal.dataobject.md.item.WmsItemSkuDO;
@@ -13,7 +12,6 @@ import cn.iocoder.yudao.module.wms.service.order.check.WmsCheckOrderDetailServic
 import cn.iocoder.yudao.module.wms.service.order.movement.WmsMovementOrderDetailService;
 import cn.iocoder.yudao.module.wms.service.order.receipt.WmsReceiptOrderDetailService;
 import cn.iocoder.yudao.module.wms.service.order.shipment.WmsShipmentOrderDetailService;
-import cn.iocoder.yudao.module.wms.util.WmsUtils;
 import jakarta.annotation.Resource;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
@@ -64,7 +62,6 @@ public class WmsItemSkuServiceImpl implements WmsItemSkuService {
         if (CollUtil.isNotEmpty(convertList(list, WmsItemSkuDO::getId))) {
             throw exception(ITEM_SKU_NOT_EXISTS);
         }
-        fillEmptyBarCode(list);
         itemSkuMapper.insertBatch(list);
     }
 
@@ -92,12 +89,10 @@ public class WmsItemSkuServiceImpl implements WmsItemSkuService {
                 throw exception(ITEM_SKU_NOT_EXISTS);
             }
             diffList.get(0).forEach(sku -> sku.setItemId(itemId));
-            fillEmptyBarCode(diffList.get(0));
             itemSkuMapper.insertBatch(diffList.get(0));
         }
         if (CollUtil.isNotEmpty(diffList.get(1))) {
             diffList.get(1).forEach(sku -> sku.setItemId(itemId));
-            fillEmptyBarCode(diffList.get(1));
             itemSkuMapper.updateBatch(diffList.get(1));
         }
     }
@@ -183,19 +178,6 @@ public class WmsItemSkuServiceImpl implements WmsItemSkuService {
         if (checkOrderDetailService.getCheckOrderDetailCountBySkuId(sku.getId()) > 0) {
             throw exception(ITEM_SKU_HAS_ORDER, sku.getName(), WmsOrderTypeEnum.CHECK.getName());
         }
-    }
-
-    /**
-     * 填充空的条形码
-     *
-     * @param skus 商品 SKU 列表
-     */
-    private void fillEmptyBarCode(List<WmsItemSkuDO> skus) {
-        skus.forEach(sku -> {
-            if (StrUtil.isBlank(sku.getBarCode())) {
-                sku.setBarCode(WmsUtils.generateBarCode());
-            }
-        });
     }
 
 }

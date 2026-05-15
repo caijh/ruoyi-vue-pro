@@ -39,6 +39,10 @@ public class WmsItemCategoryDO extends BaseDO {
      */
     private Long parentId;
     /**
+     * 分类编号
+     */
+    private String code;
+    /**
      * 分类名称
      */
     private String name;

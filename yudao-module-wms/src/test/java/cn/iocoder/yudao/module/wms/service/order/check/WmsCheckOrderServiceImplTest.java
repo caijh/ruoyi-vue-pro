@@ -10,7 +10,7 @@ import cn.iocoder.yudao.module.wms.dal.mysql.order.check.WmsCheckOrderMapper;
 import cn.iocoder.yudao.module.wms.enums.order.WmsOrderTypeEnum;
 import cn.iocoder.yudao.module.wms.enums.order.WmsOrderStatusEnum;
 import cn.iocoder.yudao.module.wms.service.inventory.WmsInventoryService;
-import cn.iocoder.yudao.module.wms.service.inventory.dto.WmsInventoryChangeReqDTO;
+import cn.iocoder.yudao.module.wms.service.inventory.dto.WmsInventoryCheckReqDTO;
 import cn.iocoder.yudao.module.wms.service.md.item.WmsItemSkuService;
 import cn.iocoder.yudao.module.wms.service.md.warehouse.WmsWarehouseService;
 import jakarta.annotation.Resource;
@@ -25,13 +25,16 @@ import java.util.Arrays;
 import java.util.List;
 
 import static cn.iocoder.yudao.framework.test.core.util.AssertUtils.assertServiceException;
+import static cn.iocoder.yudao.framework.common.exception.util.ServiceExceptionUtil.exception;
 import static cn.iocoder.yudao.module.wms.enums.ErrorCodeConstants.CHECK_ORDER_DETAIL_REQUIRED;
+import static cn.iocoder.yudao.module.wms.enums.ErrorCodeConstants.CHECK_ORDER_INVENTORY_CHANGED;
 import static cn.iocoder.yudao.module.wms.enums.ErrorCodeConstants.CHECK_ORDER_STATUS_NOT_DELETABLE;
 import static cn.iocoder.yudao.module.wms.enums.ErrorCodeConstants.CHECK_ORDER_STATUS_NOT_PREPARE;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 
@@ -118,17 +121,19 @@ public class WmsCheckOrderServiceImplTest extends BaseDbUnitTest {
         WmsCheckOrderDO dbOrder = checkOrderMapper.selectById(order.getId());
         assertNotNull(dbOrder);
         assertEquals(WmsOrderStatusEnum.FINISHED.getStatus(), dbOrder.getStatus());
-        // 断言：库存变更
-        ArgumentCaptor<WmsInventoryChangeReqDTO> captor = ArgumentCaptor.forClass(WmsInventoryChangeReqDTO.class);
-        verify(inventoryService).changeInventory(captor.capture());
-        WmsInventoryChangeReqDTO inventoryReqDTO = captor.getValue();
+        // 断言：库存盘点
+        ArgumentCaptor<WmsInventoryCheckReqDTO> captor = ArgumentCaptor.forClass(WmsInventoryCheckReqDTO.class);
+        verify(inventoryService).checkInventory(captor.capture());
+        WmsInventoryCheckReqDTO inventoryReqDTO = captor.getValue();
         assertEquals(order.getId(), inventoryReqDTO.getOrderId());
         assertEquals(order.getNo(), inventoryReqDTO.getOrderNo());
         assertEquals(WmsOrderTypeEnum.CHECK.getType(), inventoryReqDTO.getOrderType());
         assertEquals(1, inventoryReqDTO.getItems().size());
         assertEquals(skuId, inventoryReqDTO.getItems().get(0).getSkuId());
         assertEquals(warehouseId, inventoryReqDTO.getItems().get(0).getWarehouseId());
-        assertEquals(0, new BigDecimal("-3.00").compareTo(inventoryReqDTO.getItems().get(0).getQuantity()));
+        assertEquals(300L, inventoryReqDTO.getItems().get(0).getInventoryId());
+        assertEquals(0, new BigDecimal("10.00").compareTo(inventoryReqDTO.getItems().get(0).getQuantity()));
+        assertEquals(0, new BigDecimal("7.00").compareTo(inventoryReqDTO.getItems().get(0).getCheckQuantity()));
         assertEquals(0, new BigDecimal("30.00").compareTo(inventoryReqDTO.getItems().get(0).getPrice()));
     }
 
@@ -147,7 +152,49 @@ public class WmsCheckOrderServiceImplTest extends BaseDbUnitTest {
         WmsCheckOrderDO dbOrder = checkOrderMapper.selectById(order.getId());
         assertNotNull(dbOrder);
         assertEquals(WmsOrderStatusEnum.FINISHED.getStatus(), dbOrder.getStatus());
-        verify(inventoryService, never()).changeInventory(any());
+        verify(inventoryService).checkInventory(any());
+    }
+
+    @Test
+    public void testCompleteCheckOrder_newInventoryCurrentMissing() {
+        // mock 数据
+        Long warehouseId = 100L;
+        Long skuId = 200L;
+        WmsCheckOrderDO order = createCheckOrder(warehouseId);
+        checkOrderMapper.insert(order);
+        checkOrderDetailMapper.insert(createNewInventoryCheckOrderDetail(order.getId(), skuId, warehouseId,
+                "0.00", "5.00"));
+        // 调用
+        checkOrderService.completeCheckOrder(order.getId());
+
+        // 断言
+        ArgumentCaptor<WmsInventoryCheckReqDTO> captor = ArgumentCaptor.forClass(WmsInventoryCheckReqDTO.class);
+        verify(inventoryService).checkInventory(captor.capture());
+        WmsInventoryCheckReqDTO inventoryReqDTO = captor.getValue();
+        assertEquals(1, inventoryReqDTO.getItems().size());
+        assertEquals(skuId, inventoryReqDTO.getItems().get(0).getSkuId());
+        assertEquals(warehouseId, inventoryReqDTO.getItems().get(0).getWarehouseId());
+        assertNull(inventoryReqDTO.getItems().get(0).getInventoryId());
+        assertEquals(0, new BigDecimal("0.00").compareTo(inventoryReqDTO.getItems().get(0).getQuantity()));
+        assertEquals(0, new BigDecimal("5.00").compareTo(inventoryReqDTO.getItems().get(0).getCheckQuantity()));
+    }
+
+    @Test
+    public void testCompleteCheckOrder_checkInventoryChanged() {
+        // mock 数据
+        Long warehouseId = 100L;
+        Long skuId = 200L;
+        WmsCheckOrderDO order = createCheckOrder(warehouseId);
+        checkOrderMapper.insert(order);
+        checkOrderDetailMapper.insert(createNewInventoryCheckOrderDetail(order.getId(), skuId, warehouseId,
+                "0.00", "5.00"));
+        doThrow(exception(CHECK_ORDER_INVENTORY_CHANGED)).when(inventoryService).checkInventory(any());
+
+        // 调用，并断言
+        assertServiceException(() -> checkOrderService.completeCheckOrder(order.getId()),
+                CHECK_ORDER_INVENTORY_CHANGED);
+        assertEquals(WmsOrderStatusEnum.PREPARE.getStatus(),
+                checkOrderMapper.selectById(order.getId()).getStatus());
     }
 
     @Test
@@ -159,7 +206,7 @@ public class WmsCheckOrderServiceImplTest extends BaseDbUnitTest {
         // 调用，并断言
         assertServiceException(() -> checkOrderService.completeCheckOrder(order.getId()),
                 CHECK_ORDER_DETAIL_REQUIRED);
-        verify(inventoryService, never()).changeInventory(any());
+        verify(inventoryService, never()).checkInventory(any());
     }
 
     @Test
@@ -176,7 +223,7 @@ public class WmsCheckOrderServiceImplTest extends BaseDbUnitTest {
         // 调用，并断言：二次完成不能再次写库存
         assertServiceException(() -> checkOrderService.completeCheckOrder(order.getId()),
                 CHECK_ORDER_STATUS_NOT_PREPARE);
-        verify(inventoryService).changeInventory(any());
+        verify(inventoryService).checkInventory(any());
     }
 
     @Test
@@ -192,7 +239,7 @@ public class WmsCheckOrderServiceImplTest extends BaseDbUnitTest {
         WmsCheckOrderDO dbOrder = checkOrderMapper.selectById(order.getId());
         assertNotNull(dbOrder);
         assertEquals(WmsOrderStatusEnum.CANCELED.getStatus(), dbOrder.getStatus());
-        verify(inventoryService, never()).changeInventory(any());
+        verify(inventoryService, never()).checkInventory(any());
     }
 
     @Test
@@ -257,6 +304,18 @@ public class WmsCheckOrderServiceImplTest extends BaseDbUnitTest {
                 .skuId(skuId)
                 .warehouseId(warehouseId)
                 .inventoryId(300L)
+                .quantity(new BigDecimal(quantity))
+                .checkQuantity(new BigDecimal(checkQuantity))
+                .price(new BigDecimal("30.00"))
+                .build();
+    }
+
+    private static WmsCheckOrderDetailDO createNewInventoryCheckOrderDetail(Long orderId, Long skuId, Long warehouseId,
+                                                                           String quantity, String checkQuantity) {
+        return WmsCheckOrderDetailDO.builder()
+                .orderId(orderId)
+                .skuId(skuId)
+                .warehouseId(warehouseId)
                 .quantity(new BigDecimal(quantity))
                 .checkQuantity(new BigDecimal(checkQuantity))
                 .price(new BigDecimal("30.00"))

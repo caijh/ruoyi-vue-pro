@@ -1,6 +1,7 @@
 package cn.iocoder.yudao.module.wms.service.md.item;
 
 import cn.hutool.core.collection.CollUtil;
+import cn.hutool.core.util.ObjectUtil;
 import cn.iocoder.yudao.framework.common.pojo.PageResult;
 import cn.iocoder.yudao.framework.common.util.object.BeanUtils;
 import cn.iocoder.yudao.module.wms.controller.admin.md.item.vo.brand.WmsItemBrandPageReqVO;
@@ -16,6 +17,7 @@ import java.util.Collections;
 import java.util.List;
 
 import static cn.iocoder.yudao.framework.common.exception.util.ServiceExceptionUtil.exception;
+import static cn.iocoder.yudao.module.wms.enums.ErrorCodeConstants.ITEM_BRAND_CODE_DUPLICATE;
 import static cn.iocoder.yudao.module.wms.enums.ErrorCodeConstants.ITEM_BRAND_HAS_ITEM;
 import static cn.iocoder.yudao.module.wms.enums.ErrorCodeConstants.ITEM_BRAND_NOT_EXISTS;
 
@@ -35,6 +37,9 @@ public class WmsItemBrandServiceImpl implements WmsItemBrandService {
 
     @Override
     public Long createItemBrand(WmsItemBrandSaveReqVO createReqVO) {
+        // 校验编号唯一
+        validateBrandCodeUnique(null, createReqVO.getCode());
+
         WmsItemBrandDO brand = BeanUtils.toBean(createReqVO, WmsItemBrandDO.class);
         brandMapper.insert(brand);
         return brand.getId();
@@ -44,10 +49,26 @@ public class WmsItemBrandServiceImpl implements WmsItemBrandService {
     public void updateItemBrand(WmsItemBrandSaveReqVO updateReqVO) {
         // 校验存在
         validateItemBrandExists(updateReqVO.getId());
+        // 校验编号唯一
+        validateBrandCodeUnique(updateReqVO.getId(), updateReqVO.getCode());
 
         // 更新
         WmsItemBrandDO updateObj = BeanUtils.toBean(updateReqVO, WmsItemBrandDO.class);
         brandMapper.updateById(updateObj);
+    }
+
+    private void validateBrandCodeUnique(Long id, String code) {
+        WmsItemBrandDO brand = brandMapper.selectByCode(code);
+        if (brand == null) {
+            return;
+        }
+        // 如果 id 为空，说明新增；和数据库已有 code 重复
+        if (id == null) {
+            throw exception(ITEM_BRAND_CODE_DUPLICATE);
+        }
+        if (ObjectUtil.notEqual(brand.getId(), id)) {
+            throw exception(ITEM_BRAND_CODE_DUPLICATE);
+        }
     }
 
     @Override

@@ -10,3 +10,7 @@ DELETE FROM "wms_inventory_history";
 DELETE FROM "wms_inventory";
 DELETE FROM "wms_item_sku";
 DELETE FROM "wms_item";
+DELETE FROM "wms_item_category";
+DELETE FROM "wms_item_brand";
+DELETE FROM "wms_warehouse";
+DELETE FROM "wms_merchant";

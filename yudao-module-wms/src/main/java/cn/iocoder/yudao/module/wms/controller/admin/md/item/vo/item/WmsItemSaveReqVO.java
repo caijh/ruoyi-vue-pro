@@ -18,7 +18,8 @@ public class WmsItemSaveReqVO {
     @Schema(description = "编号", example = "1024")
     private Long id;
 
-    @Schema(description = "商品编号", example = "ITEM001")
+    @Schema(description = "商品编号", requiredMode = Schema.RequiredMode.REQUIRED, example = "ITEM001")
+    @NotBlank(message = "商品编号不能为空")
     @Size(max = 20, message = "商品编号长度不能超过 20 个字符")
     private String code;
 
