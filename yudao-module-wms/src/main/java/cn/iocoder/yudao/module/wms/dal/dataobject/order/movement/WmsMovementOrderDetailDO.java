@@ -63,7 +63,7 @@ public class WmsMovementOrderDetailDO extends BaseDO {
      */
     private Long targetWarehouseId;
 
-    // ========= 汇总金额字段 =========
+    // ========= 数量金额字段 =========
 
     /**
      * 移库数量
@@ -73,5 +73,9 @@ public class WmsMovementOrderDetailDO extends BaseDO {
      * 单价
      */
     private BigDecimal price;
+    /**
+     * 行金额（数量 * 单价）
+     */
+    private BigDecimal totalPrice;
 
 }

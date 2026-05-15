@@ -176,12 +176,24 @@ public class WmsShipmentOrderServiceImpl implements WmsShipmentOrderService {
                 if (detail.getQuantity() != null) {
                     totalQuantity = totalQuantity.add(detail.getQuantity());
                 }
-                if (detail.getQuantity() != null && detail.getPrice() != null) {
-                    totalPrice = totalPrice.add(detail.getQuantity().multiply(detail.getPrice()));
+                BigDecimal detailTotalPrice = getDetailTotalPrice(detail.getQuantity(), detail.getPrice(),
+                        detail.getTotalPrice());
+                if (detailTotalPrice != null) {
+                    totalPrice = totalPrice.add(detailTotalPrice);
                 }
             }
         }
         order.setTotalQuantity(totalQuantity).setTotalPrice(totalPrice);
+    }
+
+    private static BigDecimal getDetailTotalPrice(BigDecimal quantity, BigDecimal price, BigDecimal totalPrice) {
+        if (totalPrice != null) {
+            return totalPrice;
+        }
+        if (quantity == null || price == null) {
+            return null;
+        }
+        return quantity.multiply(price);
     }
 
     private WmsShipmentOrderDO validateShipmentOrderExists(Long id) {
@@ -215,10 +227,16 @@ public class WmsShipmentOrderServiceImpl implements WmsShipmentOrderService {
     private void changeInventory(WmsShipmentOrderDO order, List<WmsShipmentOrderDetailDO> details) {
         List<WmsInventoryChangeReqDTO.Item> items = convertList(details,
                 detail -> BeanUtils.toBean(detail, WmsInventoryChangeReqDTO.Item.class)
-                        .setQuantity(detail.getQuantity().multiply(BigDecimal.valueOf(-1L))));
+                        .setQuantity(detail.getQuantity().negate())
+                        .setTotalPrice(negate(getDetailTotalPrice(detail.getQuantity(), detail.getPrice(),
+                                detail.getTotalPrice()))));
         inventoryService.changeInventory(new WmsInventoryChangeReqDTO()
                 .setOrderId(order.getId()).setOrderNo(order.getNo())
                 .setOrderType(WmsOrderTypeEnum.SHIPMENT.getType()).setItems(items));
+    }
+
+    private static BigDecimal negate(BigDecimal value) {
+        return value == null ? null : value.negate();
     }
 
 }

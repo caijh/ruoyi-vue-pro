@@ -22,6 +22,7 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Arrays;
+import java.util.List;
 
 import static cn.iocoder.yudao.framework.test.core.util.AssertUtils.assertServiceException;
 import static cn.iocoder.yudao.module.wms.enums.ErrorCodeConstants.MOVEMENT_ORDER_DETAIL_REQUIRED;
@@ -57,8 +58,8 @@ public class WmsMovementOrderServiceImplTest extends BaseDbUnitTest {
     public void testCreateMovementOrder_calculateTotal() {
         // mock 数据
         WmsMovementOrderSaveReqVO reqVO = createMovementOrderReqVO(null, 100L, 200L,
-                createMovementOrderDetailReqVO(null, 3001L, "1.50", "10.00"),
-                createMovementOrderDetailReqVO(null, 3002L, "2.50", "20.00"));
+                createMovementOrderDetailReqVO(null, 3001L, "1.50", "10.00", "16.00"),
+                createMovementOrderDetailReqVO(null, 3002L, "2.50", "20.00", "51.00"));
 
         // 调用
         Long orderId = movementOrderService.createMovementOrder(reqVO);
@@ -67,8 +68,10 @@ public class WmsMovementOrderServiceImplTest extends BaseDbUnitTest {
         WmsMovementOrderDO dbOrder = movementOrderMapper.selectById(orderId);
         assertNotNull(dbOrder);
         assertEquals(0, new BigDecimal("4.00").compareTo(dbOrder.getTotalQuantity()));
-        assertEquals(0, new BigDecimal("65.00").compareTo(dbOrder.getTotalPrice()));
-        assertEquals(2, movementOrderDetailMapper.selectListByOrderId(orderId).size());
+        assertEquals(0, new BigDecimal("67.00").compareTo(dbOrder.getTotalPrice()));
+        List<WmsMovementOrderDetailDO> details = movementOrderDetailMapper.selectListByOrderId(orderId);
+        assertEquals(2, details.size());
+        assertEquals(0, new BigDecimal("16.00").compareTo(details.get(0).getTotalPrice()));
     }
 
     @Test
@@ -77,7 +80,7 @@ public class WmsMovementOrderServiceImplTest extends BaseDbUnitTest {
         WmsMovementOrderDO order = createMovementOrder(100L, 200L);
         movementOrderMapper.insert(order);
         WmsMovementOrderSaveReqVO reqVO = createMovementOrderReqVO(order.getId(), 100L, 200L,
-                createMovementOrderDetailReqVO(null, 3001L, "3.00", "30.00"));
+                createMovementOrderDetailReqVO(null, 3001L, "3.00", "30.00", "88.00"));
 
         // 调用
         movementOrderService.updateMovementOrder(reqVO);
@@ -86,8 +89,10 @@ public class WmsMovementOrderServiceImplTest extends BaseDbUnitTest {
         WmsMovementOrderDO dbOrder = movementOrderMapper.selectById(order.getId());
         assertNotNull(dbOrder);
         assertEquals(0, new BigDecimal("3.00").compareTo(dbOrder.getTotalQuantity()));
-        assertEquals(0, new BigDecimal("90.00").compareTo(dbOrder.getTotalPrice()));
-        assertEquals(1, movementOrderDetailMapper.selectListByOrderId(order.getId()).size());
+        assertEquals(0, new BigDecimal("88.00").compareTo(dbOrder.getTotalPrice()));
+        List<WmsMovementOrderDetailDO> details = movementOrderDetailMapper.selectListByOrderId(order.getId());
+        assertEquals(1, details.size());
+        assertEquals(0, new BigDecimal("88.00").compareTo(details.get(0).getTotalPrice()));
     }
 
     @Test
@@ -119,9 +124,11 @@ public class WmsMovementOrderServiceImplTest extends BaseDbUnitTest {
         assertEquals(skuId, inventoryReqDTO.getItems().get(0).getSkuId());
         assertEquals(sourceWarehouseId, inventoryReqDTO.getItems().get(0).getWarehouseId());
         assertEquals(0, new BigDecimal("-2.00").compareTo(inventoryReqDTO.getItems().get(0).getQuantity()));
+        assertEquals(0, new BigDecimal("-40.00").compareTo(inventoryReqDTO.getItems().get(0).getTotalPrice()));
         assertEquals(skuId, inventoryReqDTO.getItems().get(1).getSkuId());
         assertEquals(targetWarehouseId, inventoryReqDTO.getItems().get(1).getWarehouseId());
         assertEquals(0, new BigDecimal("2.00").compareTo(inventoryReqDTO.getItems().get(1).getQuantity()));
+        assertEquals(0, new BigDecimal("40.00").compareTo(inventoryReqDTO.getItems().get(1).getTotalPrice()));
     }
 
     @Test
@@ -241,6 +248,7 @@ public class WmsMovementOrderServiceImplTest extends BaseDbUnitTest {
                 .targetWarehouseId(targetWarehouseId)
                 .quantity(new BigDecimal("2.00"))
                 .price(new BigDecimal("20.00"))
+                .totalPrice(new BigDecimal("40.00"))
                 .build();
     }
 
@@ -263,11 +271,20 @@ public class WmsMovementOrderServiceImplTest extends BaseDbUnitTest {
 
     private static WmsMovementOrderDetailSaveReqVO createMovementOrderDetailReqVO(Long id, Long skuId,
                                                                                   String quantity, String price) {
+        return createMovementOrderDetailReqVO(id, skuId, quantity, price, null);
+    }
+
+    private static WmsMovementOrderDetailSaveReqVO createMovementOrderDetailReqVO(Long id, Long skuId,
+                                                                                  String quantity, String price,
+                                                                                  String totalPrice) {
         WmsMovementOrderDetailSaveReqVO reqVO = new WmsMovementOrderDetailSaveReqVO();
         reqVO.setId(id);
         reqVO.setSkuId(skuId);
         reqVO.setQuantity(new BigDecimal(quantity));
         reqVO.setPrice(new BigDecimal(price));
+        if (totalPrice != null) {
+            reqVO.setTotalPrice(new BigDecimal(totalPrice));
+        }
         return reqVO;
     }
 

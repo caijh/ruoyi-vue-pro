@@ -62,15 +62,15 @@ public class WmsCheckOrderDO extends BaseDO {
     // ========= 汇总金额字段 =========
 
     /**
-     * 盈亏数量
+     * 盈亏数量（实盘数量 - 账面数量）
      */
     private BigDecimal totalQuantity;
     /**
-     * 总金额（账面金额）
+     * 总金额（账面数量 * 单价）
      */
     private BigDecimal totalPrice;
     /**
-     * 实际金额
+     * 实际金额（实盘数量 * 单价）
      */
     private BigDecimal actualPrice;
 

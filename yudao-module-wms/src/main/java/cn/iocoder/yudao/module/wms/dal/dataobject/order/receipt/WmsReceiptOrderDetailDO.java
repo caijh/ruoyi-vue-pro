@@ -64,5 +64,9 @@ public class WmsReceiptOrderDetailDO extends BaseDO {
      * 单价
      */
     private BigDecimal price;
+    /**
+     * 行金额（数量 * 单价）
+     */
+    private BigDecimal totalPrice;
 
 }

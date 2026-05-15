@@ -169,12 +169,24 @@ public class WmsMovementOrderServiceImpl implements WmsMovementOrderService {
                 if (detail.getQuantity() != null) {
                     totalQuantity = totalQuantity.add(detail.getQuantity());
                 }
-                if (detail.getQuantity() != null && detail.getPrice() != null) {
-                    totalPrice = totalPrice.add(detail.getQuantity().multiply(detail.getPrice()));
+                BigDecimal detailTotalPrice = getDetailTotalPrice(detail.getQuantity(), detail.getPrice(),
+                        detail.getTotalPrice());
+                if (detailTotalPrice != null) {
+                    totalPrice = totalPrice.add(detailTotalPrice);
                 }
             }
         }
         order.setTotalQuantity(totalQuantity).setTotalPrice(totalPrice);
+    }
+
+    private static BigDecimal getDetailTotalPrice(BigDecimal quantity, BigDecimal price, BigDecimal totalPrice) {
+        if (totalPrice != null) {
+            return totalPrice;
+        }
+        if (quantity == null || price == null) {
+            return null;
+        }
+        return quantity.multiply(price);
     }
 
     private WmsMovementOrderDO validateMovementOrderExists(Long id) {
@@ -208,14 +220,22 @@ public class WmsMovementOrderServiceImpl implements WmsMovementOrderService {
     private void changeInventory(WmsMovementOrderDO order, List<WmsMovementOrderDetailDO> details) {
         List<WmsInventoryChangeReqDTO.Item> items = new ArrayList<>(details.size() * 2);
         for (WmsMovementOrderDetailDO detail : details) {
+            BigDecimal detailTotalPrice = getDetailTotalPrice(detail.getQuantity(), detail.getPrice(),
+                    detail.getTotalPrice());
             items.add(BeanUtils.toBean(detail, WmsInventoryChangeReqDTO.Item.class)
-                    .setWarehouseId(detail.getSourceWarehouseId()).setQuantity(detail.getQuantity().negate()));
+                    .setWarehouseId(detail.getSourceWarehouseId()).setQuantity(detail.getQuantity().negate())
+                    .setTotalPrice(negate(detailTotalPrice)));
             items.add(BeanUtils.toBean(detail, WmsInventoryChangeReqDTO.Item.class)
-                    .setWarehouseId(detail.getTargetWarehouseId()).setQuantity(detail.getQuantity()));
+                    .setWarehouseId(detail.getTargetWarehouseId()).setQuantity(detail.getQuantity())
+                    .setTotalPrice(detailTotalPrice));
         }
         inventoryService.changeInventory(new WmsInventoryChangeReqDTO()
                 .setOrderId(order.getId()).setOrderNo(order.getNo())
                 .setOrderType(WmsOrderTypeEnum.MOVEMENT.getType()).setItems(items));
+    }
+
+    private static BigDecimal negate(BigDecimal value) {
+        return value == null ? null : value.negate();
     }
 
 }

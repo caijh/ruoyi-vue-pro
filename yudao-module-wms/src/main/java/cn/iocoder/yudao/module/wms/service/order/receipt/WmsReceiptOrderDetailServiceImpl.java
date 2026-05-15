@@ -112,8 +112,18 @@ public class WmsReceiptOrderDetailServiceImpl implements WmsReceiptOrderDetailSe
             // 校验 SKU 存在
             itemSkuService.validateItemSkuExists(detail.getSkuId());
             // 构建对象
-            return BeanUtils.toBean(detail, WmsReceiptOrderDetailDO.class).setWarehouseId(reqVO.getWarehouseId());
+            WmsReceiptOrderDetailDO detailDO = BeanUtils.toBean(detail, WmsReceiptOrderDetailDO.class)
+                    .setWarehouseId(reqVO.getWarehouseId());
+            fillDetailTotalPrice(detailDO);
+            return detailDO;
         });
+    }
+
+    private static void fillDetailTotalPrice(WmsReceiptOrderDetailDO detail) {
+        if (detail.getTotalPrice() != null || detail.getQuantity() == null || detail.getPrice() == null) {
+            return;
+        }
+        detail.setTotalPrice(detail.getQuantity().multiply(detail.getPrice()));
     }
 
 }

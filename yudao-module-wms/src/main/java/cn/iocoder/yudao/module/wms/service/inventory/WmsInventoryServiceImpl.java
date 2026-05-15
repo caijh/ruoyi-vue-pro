@@ -215,7 +215,7 @@ public class WmsInventoryServiceImpl implements WmsInventoryService {
         return new WmsInventoryHistoryDO()
                 .setWarehouseId(item.getWarehouseId()).setSkuId(item.getSkuId())
                 .setQuantity(item.getQuantity()).setBeforeQuantity(result.get(0)).setAfterQuantity(result.get(1))
-                .setPrice(item.getPrice()).setRemark(item.getRemark())
+                .setPrice(item.getPrice()).setTotalPrice(item.getTotalPrice()).setRemark(item.getRemark())
                 .setOrderId(reqDTO.getOrderId()).setOrderNo(reqDTO.getOrderNo()).setOrderType(reqDTO.getOrderType());
     }
 

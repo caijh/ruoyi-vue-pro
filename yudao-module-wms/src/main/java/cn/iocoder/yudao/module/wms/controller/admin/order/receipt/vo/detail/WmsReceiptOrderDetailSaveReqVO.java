@@ -27,4 +27,8 @@ public class WmsReceiptOrderDetailSaveReqVO {
     @DecimalMin(value = "0", message = "单价不能小于 0")
     private BigDecimal price;
 
+    @Schema(description = "行金额", example = "1500.00")
+    @DecimalMin(value = "0", message = "行金额不能小于 0")
+    private BigDecimal totalPrice;
+
 }

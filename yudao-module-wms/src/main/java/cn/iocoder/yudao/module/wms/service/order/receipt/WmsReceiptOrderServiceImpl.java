@@ -176,12 +176,24 @@ public class WmsReceiptOrderServiceImpl implements WmsReceiptOrderService {
                 if (detail.getQuantity() != null) {
                     totalQuantity = totalQuantity.add(detail.getQuantity());
                 }
-                if (detail.getQuantity() != null && detail.getPrice() != null) {
-                    totalPrice = totalPrice.add(detail.getQuantity().multiply(detail.getPrice()));
+                BigDecimal detailTotalPrice = getDetailTotalPrice(detail.getQuantity(), detail.getPrice(),
+                        detail.getTotalPrice());
+                if (detailTotalPrice != null) {
+                    totalPrice = totalPrice.add(detailTotalPrice);
                 }
             }
         }
         order.setTotalQuantity(totalQuantity).setTotalPrice(totalPrice);
+    }
+
+    private static BigDecimal getDetailTotalPrice(BigDecimal quantity, BigDecimal price, BigDecimal totalPrice) {
+        if (totalPrice != null) {
+            return totalPrice;
+        }
+        if (quantity == null || price == null) {
+            return null;
+        }
+        return quantity.multiply(price);
     }
 
     private WmsReceiptOrderDO validateReceiptOrderExists(Long id) {
@@ -216,7 +228,9 @@ public class WmsReceiptOrderServiceImpl implements WmsReceiptOrderService {
      */
     private void createInventory(WmsReceiptOrderDO order, List<WmsReceiptOrderDetailDO> details) {
         List<WmsInventoryChangeReqDTO.Item> items = convertList(details,
-                detail -> BeanUtils.toBean(detail, WmsInventoryChangeReqDTO.Item.class));
+                detail -> BeanUtils.toBean(detail, WmsInventoryChangeReqDTO.Item.class)
+                        .setTotalPrice(getDetailTotalPrice(detail.getQuantity(), detail.getPrice(),
+                                detail.getTotalPrice())));
         inventoryService.changeInventory(new WmsInventoryChangeReqDTO()
                 .setOrderId(order.getId()).setOrderNo(order.getNo())
                 .setOrderType(WmsOrderTypeEnum.RECEIPT.getType()).setItems(items));

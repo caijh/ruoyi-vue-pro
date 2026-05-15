@@ -112,8 +112,18 @@ public class WmsShipmentOrderDetailServiceImpl implements WmsShipmentOrderDetail
             // 校验 SKU 存在
             itemSkuService.validateItemSkuExists(detail.getSkuId());
             // 构建对象
-            return BeanUtils.toBean(detail, WmsShipmentOrderDetailDO.class).setWarehouseId(reqVO.getWarehouseId());
+            WmsShipmentOrderDetailDO detailDO = BeanUtils.toBean(detail, WmsShipmentOrderDetailDO.class)
+                    .setWarehouseId(reqVO.getWarehouseId());
+            fillDetailTotalPrice(detailDO);
+            return detailDO;
         });
+    }
+
+    private static void fillDetailTotalPrice(WmsShipmentOrderDetailDO detail) {
+        if (detail.getTotalPrice() != null || detail.getQuantity() == null || detail.getPrice() == null) {
+            return;
+        }
+        detail.setTotalPrice(detail.getQuantity().multiply(detail.getPrice()));
     }
 
 }

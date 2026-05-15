@@ -55,6 +55,9 @@ public class WmsMovementOrderDetailRespVO {
     @Schema(description = "单价", example = "100.00")
     private BigDecimal price;
 
+    @Schema(description = "行金额", example = "1000.00")
+    private BigDecimal totalPrice;
+
     @Schema(description = "创建时间", requiredMode = Schema.RequiredMode.REQUIRED)
     private LocalDateTime createTime;
 

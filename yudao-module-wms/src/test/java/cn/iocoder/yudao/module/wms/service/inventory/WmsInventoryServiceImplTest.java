@@ -83,6 +83,7 @@ public class WmsInventoryServiceImplTest extends BaseDbUnitTest {
         assertEquals(100L, history.getWarehouseId());
         assertEquals(0, BigDecimal.ZERO.compareTo(history.getBeforeQuantity()));
         assertEquals(0, new BigDecimal("5.00").compareTo(history.getAfterQuantity()));
+        assertEquals(0, new BigDecimal("500.00").compareTo(history.getTotalPrice()));
         assertEquals(reqDTO.getOrderId(), history.getOrderId());
         assertEquals(reqDTO.getOrderNo(), history.getOrderNo());
         assertEquals(reqDTO.getOrderType(), history.getOrderType());
@@ -110,6 +111,7 @@ public class WmsInventoryServiceImplTest extends BaseDbUnitTest {
         assertEquals(0, new BigDecimal("2.00").compareTo(history.getBeforeQuantity()));
         assertEquals(0, new BigDecimal("5.00").compareTo(history.getAfterQuantity()));
         assertEquals(0, new BigDecimal("3.00").compareTo(history.getQuantity()));
+        assertEquals(0, new BigDecimal("300.00").compareTo(history.getTotalPrice()));
     }
 
     @Test
@@ -124,6 +126,7 @@ public class WmsInventoryServiceImplTest extends BaseDbUnitTest {
                 .setWarehouseId(100L)
                 .setQuantity(new BigDecimal("7.00"))
                 .setPrice(new BigDecimal("140.00"))
+                .setTotalPrice(new BigDecimal("980.00"))
                 .setRemark("测试入库 2"));
         reqDTO.setItems(items);
 
@@ -141,9 +144,11 @@ public class WmsInventoryServiceImplTest extends BaseDbUnitTest {
         assertEquals(0, BigDecimal.ZERO.compareTo(histories.get(0).getBeforeQuantity()));
         assertEquals(0, new BigDecimal("5.00").compareTo(histories.get(0).getAfterQuantity()));
         assertEquals(0, new BigDecimal("5.00").compareTo(histories.get(0).getQuantity()));
+        assertEquals(0, new BigDecimal("500.00").compareTo(histories.get(0).getTotalPrice()));
         assertEquals(0, new BigDecimal("5.00").compareTo(histories.get(1).getBeforeQuantity()));
         assertEquals(0, new BigDecimal("12.00").compareTo(histories.get(1).getAfterQuantity()));
         assertEquals(0, new BigDecimal("7.00").compareTo(histories.get(1).getQuantity()));
+        assertEquals(0, new BigDecimal("980.00").compareTo(histories.get(1).getTotalPrice()));
     }
 
     @Test
@@ -159,6 +164,7 @@ public class WmsInventoryServiceImplTest extends BaseDbUnitTest {
                 .setWarehouseId(100L)
                 .setQuantity(new BigDecimal("4.00"))
                 .setPrice(new BigDecimal("80.00"))
+                .setTotalPrice(new BigDecimal("320.00"))
                 .setRemark("测试入库 2"));
         reqDTO.setItems(items);
 
@@ -176,9 +182,11 @@ public class WmsInventoryServiceImplTest extends BaseDbUnitTest {
         assertEquals(0, new BigDecimal("2.00").compareTo(histories.get(0).getBeforeQuantity()));
         assertEquals(0, new BigDecimal("5.00").compareTo(histories.get(0).getAfterQuantity()));
         assertEquals(0, new BigDecimal("3.00").compareTo(histories.get(0).getQuantity()));
+        assertEquals(0, new BigDecimal("300.00").compareTo(histories.get(0).getTotalPrice()));
         assertEquals(0, new BigDecimal("5.00").compareTo(histories.get(1).getBeforeQuantity()));
         assertEquals(0, new BigDecimal("9.00").compareTo(histories.get(1).getAfterQuantity()));
         assertEquals(0, new BigDecimal("4.00").compareTo(histories.get(1).getQuantity()));
+        assertEquals(0, new BigDecimal("320.00").compareTo(histories.get(1).getTotalPrice()));
     }
 
     @Test
@@ -193,12 +201,14 @@ public class WmsInventoryServiceImplTest extends BaseDbUnitTest {
                 .setWarehouseId(200L)
                 .setQuantity(new BigDecimal("3.00"))
                 .setPrice(new BigDecimal("60.00"))
+                .setTotalPrice(new BigDecimal("180.00"))
                 .setRemark("测试入库 2"));
         items.add(new WmsInventoryChangeReqDTO.Item()
                 .setSkuId(sku.getId())
                 .setWarehouseId(100L)
                 .setQuantity(new BigDecimal("-2.00"))
                 .setPrice(new BigDecimal("40.00"))
+                .setTotalPrice(new BigDecimal("-80.00"))
                 .setRemark("测试出库"));
         reqDTO.setItems(items);
 
@@ -219,12 +229,15 @@ public class WmsInventoryServiceImplTest extends BaseDbUnitTest {
         assertEquals(100L, histories.get(0).getWarehouseId());
         assertEquals(0, BigDecimal.ZERO.compareTo(histories.get(0).getBeforeQuantity()));
         assertEquals(0, new BigDecimal("5.00").compareTo(histories.get(0).getAfterQuantity()));
+        assertEquals(0, new BigDecimal("500.00").compareTo(histories.get(0).getTotalPrice()));
         assertEquals(200L, histories.get(1).getWarehouseId());
         assertEquals(0, BigDecimal.ZERO.compareTo(histories.get(1).getBeforeQuantity()));
         assertEquals(0, new BigDecimal("3.00").compareTo(histories.get(1).getAfterQuantity()));
+        assertEquals(0, new BigDecimal("180.00").compareTo(histories.get(1).getTotalPrice()));
         assertEquals(100L, histories.get(2).getWarehouseId());
         assertEquals(0, new BigDecimal("5.00").compareTo(histories.get(2).getBeforeQuantity()));
         assertEquals(0, new BigDecimal("3.00").compareTo(histories.get(2).getAfterQuantity()));
+        assertEquals(0, new BigDecimal("-80.00").compareTo(histories.get(2).getTotalPrice()));
     }
 
     @Test
@@ -314,6 +327,7 @@ public class WmsInventoryServiceImplTest extends BaseDbUnitTest {
                 .setWarehouseId(200L)
                 .setQuantity(new BigDecimal("-1.00"))
                 .setPrice(new BigDecimal("20.00"))
+                .setTotalPrice(new BigDecimal("-20.00"))
                 .setRemark("测试出库"));
         reqDTO.setItems(items);
         mockItemSkuAndItem(item, sku);
@@ -593,6 +607,7 @@ public class WmsInventoryServiceImplTest extends BaseDbUnitTest {
                         .setWarehouseId(warehouseId)
                         .setQuantity(new BigDecimal(quantity))
                         .setPrice(new BigDecimal("100.00"))
+                        .setTotalPrice(new BigDecimal(quantity).multiply(new BigDecimal("100.00")))
                         .setRemark("测试入库")));
     }
 

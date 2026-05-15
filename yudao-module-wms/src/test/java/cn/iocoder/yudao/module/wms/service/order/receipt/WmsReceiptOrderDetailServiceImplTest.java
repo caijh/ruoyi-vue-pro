@@ -50,6 +50,8 @@ public class WmsReceiptOrderDetailServiceImplTest extends BaseDbUnitTest {
         assertEquals(2, details.size());
         assertEquals(orderId, details.get(0).getOrderId());
         assertEquals(orderId, details.get(1).getOrderId());
+        assertEquals(0, new BigDecimal("100.00").compareTo(details.get(0).getTotalPrice()));
+        assertEquals(0, new BigDecimal("200.00").compareTo(details.get(1).getTotalPrice()));
     }
 
     @Test
@@ -89,6 +91,7 @@ public class WmsReceiptOrderDetailServiceImplTest extends BaseDbUnitTest {
         assertEquals(orderId, dbUpdateDetail.getOrderId());
         assertEquals(2001L, dbUpdateDetail.getSkuId());
         assertEquals(0, new BigDecimal("11.00").compareTo(dbUpdateDetail.getQuantity()));
+        assertEquals(0, new BigDecimal("1100.00").compareTo(dbUpdateDetail.getTotalPrice()));
         // 断言：新增
         List<WmsReceiptOrderDetailDO> details = receiptOrderDetailMapper.selectListByOrderId(orderId);
         assertEquals(2, details.size());
@@ -98,6 +101,7 @@ public class WmsReceiptOrderDetailServiceImplTest extends BaseDbUnitTest {
         assertNotNull(dbCreateDetail);
         assertEquals(orderId, dbCreateDetail.getOrderId());
         assertEquals(0, new BigDecimal("22.00").compareTo(dbCreateDetail.getQuantity()));
+        assertEquals(0, new BigDecimal("2200.00").compareTo(dbCreateDetail.getTotalPrice()));
         // 断言：删除
         assertNull(receiptOrderDetailMapper.selectById(detail02.getId()));
     }
@@ -127,6 +131,7 @@ public class WmsReceiptOrderDetailServiceImplTest extends BaseDbUnitTest {
         reqVO.setSkuId(skuId);
         reqVO.setQuantity(new BigDecimal(quantity));
         reqVO.setPrice(new BigDecimal("100.00"));
+        reqVO.setTotalPrice(new BigDecimal(quantity).multiply(new BigDecimal("100.00")));
         return reqVO;
     }
 
@@ -137,6 +142,7 @@ public class WmsReceiptOrderDetailServiceImplTest extends BaseDbUnitTest {
                 .warehouseId(100L)
                 .quantity(new BigDecimal(quantity))
                 .price(new BigDecimal("100.00"))
+                .totalPrice(new BigDecimal(quantity).multiply(new BigDecimal("100.00")))
                 .build();
     }
 

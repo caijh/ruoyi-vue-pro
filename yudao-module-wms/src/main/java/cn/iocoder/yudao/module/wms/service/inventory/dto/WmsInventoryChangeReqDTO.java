@@ -60,6 +60,10 @@ public class WmsInventoryChangeReqDTO {
          */
         private BigDecimal price;
         /**
+         * 库存变化金额
+         */
+        private BigDecimal totalPrice;
+        /**
          * 备注
          */
         private String remark;

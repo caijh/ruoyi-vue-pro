@@ -67,7 +67,7 @@ public class WmsCheckOrderDetailDO extends BaseDO {
      */
     private LocalDateTime receiptTime;
 
-    // ========= 汇总金额字段 =========
+    // ========= 数量金额字段 =========
 
     /**
      * 账面数量
