@@ -6,6 +6,7 @@ import cn.iocoder.yudao.framework.common.pojo.PageParam;
 import cn.iocoder.yudao.framework.common.pojo.PageResult;
 import cn.iocoder.yudao.framework.common.util.object.BeanUtils;
 import cn.iocoder.yudao.framework.excel.core.util.ExcelUtils;
+import cn.iocoder.yudao.module.wms.controller.admin.md.merchant.vo.WmsMerchantListReqVO;
 import cn.iocoder.yudao.module.wms.controller.admin.md.merchant.vo.WmsMerchantPageReqVO;
 import cn.iocoder.yudao.module.wms.controller.admin.md.merchant.vo.WmsMerchantRespVO;
 import cn.iocoder.yudao.module.wms.controller.admin.md.merchant.vo.WmsMerchantSaveReqVO;
@@ -80,8 +81,8 @@ public class WmsMerchantController {
     @GetMapping("/simple-list")
     @Operation(summary = "获得往来企业精简列表", description = "主要用于前端下拉")
     @PreAuthorize("@ss.hasPermission('wms:merchant:query')")
-    public CommonResult<List<WmsMerchantRespVO>> getMerchantSimpleList(@Valid WmsMerchantPageReqVO pageReqVO) {
-        List<WmsMerchantDO> list = merchantService.getMerchantList(pageReqVO);
+    public CommonResult<List<WmsMerchantRespVO>> getMerchantSimpleList(@Valid WmsMerchantListReqVO listReqVO) {
+        List<WmsMerchantDO> list = merchantService.getMerchantList(listReqVO);
         return success(BeanUtils.toBean(list, WmsMerchantRespVO.class));
     }
 

@@ -1,6 +1,7 @@
 package cn.iocoder.yudao.module.wms.service.md.item;
 
 import cn.iocoder.yudao.framework.common.pojo.PageResult;
+import cn.iocoder.yudao.module.wms.controller.admin.md.item.vo.item.WmsItemListReqVO;
 import cn.iocoder.yudao.module.wms.controller.admin.md.item.vo.item.WmsItemPageReqVO;
 import cn.iocoder.yudao.module.wms.controller.admin.md.item.vo.item.WmsItemSaveReqVO;
 import cn.iocoder.yudao.module.wms.dal.dataobject.md.item.WmsItemDO;
@@ -68,10 +69,10 @@ public interface WmsItemService {
     /**
      * 获得商品列表
      *
-     * @param pageReqVO 查询条件
+     * @param listReqVO 查询条件
      * @return 商品列表
      */
-    List<WmsItemDO> getItemList(WmsItemPageReqVO pageReqVO);
+    List<WmsItemDO> getItemList(WmsItemListReqVO listReqVO);
 
     /**
      * 按编号集合获得商品列表

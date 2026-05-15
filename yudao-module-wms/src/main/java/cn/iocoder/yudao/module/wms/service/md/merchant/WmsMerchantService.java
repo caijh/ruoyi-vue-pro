@@ -1,6 +1,7 @@
 package cn.iocoder.yudao.module.wms.service.md.merchant;
 
 import cn.iocoder.yudao.framework.common.pojo.PageResult;
+import cn.iocoder.yudao.module.wms.controller.admin.md.merchant.vo.WmsMerchantListReqVO;
 import cn.iocoder.yudao.module.wms.controller.admin.md.merchant.vo.WmsMerchantPageReqVO;
 import cn.iocoder.yudao.module.wms.controller.admin.md.merchant.vo.WmsMerchantSaveReqVO;
 import cn.iocoder.yudao.module.wms.dal.dataobject.md.merchant.WmsMerchantDO;
@@ -86,10 +87,10 @@ public interface WmsMerchantService {
     /**
      * 获得往来企业列表
      *
-     * @param pageReqVO 查询条件
+     * @param listReqVO 查询条件
      * @return 往来企业列表
      */
-    List<WmsMerchantDO> getMerchantList(WmsMerchantPageReqVO pageReqVO);
+    List<WmsMerchantDO> getMerchantList(WmsMerchantListReqVO listReqVO);
 
     /**
      * 按编号集合获得往来企业列表

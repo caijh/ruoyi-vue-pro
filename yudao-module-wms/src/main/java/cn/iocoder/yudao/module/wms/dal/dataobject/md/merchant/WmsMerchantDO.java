@@ -38,8 +38,6 @@ public class WmsMerchantDO extends BaseDO {
     /**
      * 往来企业类型
      *
-     * DONE @AI：枚举类
-     *
      * 枚举 {@link WmsMerchantTypeEnum}
      */
     private Integer type;

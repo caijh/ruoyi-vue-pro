@@ -8,6 +8,7 @@ import cn.iocoder.yudao.framework.common.pojo.PageResult;
 import cn.iocoder.yudao.framework.common.util.collection.MapUtils;
 import cn.iocoder.yudao.framework.common.util.object.BeanUtils;
 import cn.iocoder.yudao.framework.excel.core.util.ExcelUtils;
+import cn.iocoder.yudao.module.wms.controller.admin.md.item.vo.item.WmsItemListReqVO;
 import cn.iocoder.yudao.module.wms.controller.admin.md.item.vo.item.WmsItemPageReqVO;
 import cn.iocoder.yudao.module.wms.controller.admin.md.item.vo.item.WmsItemRespVO;
 import cn.iocoder.yudao.module.wms.controller.admin.md.item.vo.item.WmsItemSaveReqVO;
@@ -98,8 +99,8 @@ public class WmsItemController {
     @GetMapping("/simple-list")
     @Operation(summary = "获得商品精简列表")
     @PreAuthorize("@ss.hasPermission('wms:item:query')")
-    public CommonResult<List<WmsItemRespVO>> getItemSimpleList(@Valid WmsItemPageReqVO pageReqVO) {
-        List<WmsItemDO> list = itemService.getItemList(pageReqVO);
+    public CommonResult<List<WmsItemRespVO>> getItemSimpleList(@Valid WmsItemListReqVO listReqVO) {
+        List<WmsItemDO> list = itemService.getItemList(listReqVO);
         return success(buildItemRespVOList(list));
     }
 

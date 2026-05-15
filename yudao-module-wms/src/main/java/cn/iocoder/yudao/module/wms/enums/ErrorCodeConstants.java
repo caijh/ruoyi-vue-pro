@@ -30,6 +30,7 @@ public interface ErrorCodeConstants {
     ErrorCode ITEM_BRAND_NOT_EXISTS = new ErrorCode(1_060_103_000, "商品品牌不存在");
     ErrorCode ITEM_BRAND_HAS_ITEM = new ErrorCode(1_060_103_001, "删除失败！品牌已被商品使用！");
     ErrorCode ITEM_BRAND_CODE_DUPLICATE = new ErrorCode(1_060_103_002, "商品品牌编号重复");
+    ErrorCode ITEM_BRAND_NAME_DUPLICATE = new ErrorCode(1_060_103_003, "商品品牌名称重复");
 
     // ========== WMS 基础数据-商品 1-060-104-000 ==========
     ErrorCode ITEM_NOT_EXISTS = new ErrorCode(1_060_104_000, "商品不存在");

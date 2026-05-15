@@ -19,6 +19,7 @@ import java.util.List;
 import static cn.iocoder.yudao.framework.common.exception.util.ServiceExceptionUtil.exception;
 import static cn.iocoder.yudao.module.wms.enums.ErrorCodeConstants.ITEM_BRAND_CODE_DUPLICATE;
 import static cn.iocoder.yudao.module.wms.enums.ErrorCodeConstants.ITEM_BRAND_HAS_ITEM;
+import static cn.iocoder.yudao.module.wms.enums.ErrorCodeConstants.ITEM_BRAND_NAME_DUPLICATE;
 import static cn.iocoder.yudao.module.wms.enums.ErrorCodeConstants.ITEM_BRAND_NOT_EXISTS;
 
 /**
@@ -37,9 +38,9 @@ public class WmsItemBrandServiceImpl implements WmsItemBrandService {
 
     @Override
     public Long createItemBrand(WmsItemBrandSaveReqVO createReqVO) {
-        // 校验编号唯一
-        validateBrandCodeUnique(null, createReqVO.getCode());
+        validateBrandSaveData(null, createReqVO);
 
+        // 新增
         WmsItemBrandDO brand = BeanUtils.toBean(createReqVO, WmsItemBrandDO.class);
         brandMapper.insert(brand);
         return brand.getId();
@@ -49,12 +50,16 @@ public class WmsItemBrandServiceImpl implements WmsItemBrandService {
     public void updateItemBrand(WmsItemBrandSaveReqVO updateReqVO) {
         // 校验存在
         validateItemBrandExists(updateReqVO.getId());
-        // 校验编号唯一
-        validateBrandCodeUnique(updateReqVO.getId(), updateReqVO.getCode());
+        validateBrandSaveData(updateReqVO.getId(), updateReqVO);
 
         // 更新
         WmsItemBrandDO updateObj = BeanUtils.toBean(updateReqVO, WmsItemBrandDO.class);
         brandMapper.updateById(updateObj);
+    }
+
+    private void validateBrandSaveData(Long id, WmsItemBrandSaveReqVO reqVO) {
+        validateBrandCodeUnique(id, reqVO.getCode());
+        validateBrandNameUnique(id, reqVO.getName());
     }
 
     private void validateBrandCodeUnique(Long id, String code) {
@@ -68,6 +73,19 @@ public class WmsItemBrandServiceImpl implements WmsItemBrandService {
         }
         if (ObjectUtil.notEqual(brand.getId(), id)) {
             throw exception(ITEM_BRAND_CODE_DUPLICATE);
+        }
+    }
+
+    private void validateBrandNameUnique(Long id, String name) {
+        WmsItemBrandDO brand = brandMapper.selectByName(name);
+        if (brand == null) {
+            return;
+        }
+        if (id == null) {
+            throw exception(ITEM_BRAND_NAME_DUPLICATE);
+        }
+        if (ObjectUtil.notEqual(brand.getId(), id)) {
+            throw exception(ITEM_BRAND_NAME_DUPLICATE);
         }
     }
 

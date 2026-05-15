@@ -3,6 +3,7 @@ package cn.iocoder.yudao.module.wms.dal.mysql.md.item;
 import cn.iocoder.yudao.framework.common.pojo.PageResult;
 import cn.iocoder.yudao.framework.mybatis.core.mapper.BaseMapperX;
 import cn.iocoder.yudao.framework.mybatis.core.query.LambdaQueryWrapperX;
+import cn.iocoder.yudao.module.wms.controller.admin.md.item.vo.item.WmsItemListReqVO;
 import cn.iocoder.yudao.module.wms.controller.admin.md.item.vo.item.WmsItemPageReqVO;
 import cn.iocoder.yudao.module.wms.dal.dataobject.md.item.WmsItemDO;
 import org.apache.ibatis.annotations.Mapper;
@@ -28,7 +29,7 @@ public interface WmsItemMapper extends BaseMapperX<WmsItemDO> {
                 .orderByDesc(WmsItemDO::getId));
     }
 
-    default List<WmsItemDO> selectList(WmsItemPageReqVO reqVO, Collection<Long> categoryIds) {
+    default List<WmsItemDO> selectList(WmsItemListReqVO reqVO, Collection<Long> categoryIds) {
         return selectList(new LambdaQueryWrapperX<WmsItemDO>()
                 .likeIfPresent(WmsItemDO::getCode, reqVO.getCode())
                 .likeIfPresent(WmsItemDO::getName, reqVO.getName())

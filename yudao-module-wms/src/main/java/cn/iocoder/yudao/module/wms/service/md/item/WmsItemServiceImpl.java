@@ -4,6 +4,7 @@ import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.ObjectUtil;
 import cn.iocoder.yudao.framework.common.pojo.PageResult;
 import cn.iocoder.yudao.framework.common.util.object.BeanUtils;
+import cn.iocoder.yudao.module.wms.controller.admin.md.item.vo.item.WmsItemListReqVO;
 import cn.iocoder.yudao.module.wms.controller.admin.md.item.vo.item.WmsItemPageReqVO;
 import cn.iocoder.yudao.module.wms.controller.admin.md.item.vo.item.WmsItemSaveReqVO;
 import cn.iocoder.yudao.module.wms.dal.dataobject.md.item.WmsItemDO;
@@ -132,9 +133,9 @@ public class WmsItemServiceImpl implements WmsItemService {
     }
 
     @Override
-    public List<WmsItemDO> getItemList(WmsItemPageReqVO pageReqVO) {
-        return itemMapper.selectList(pageReqVO,
-                categoryService.getSelfAndChildItemCategoryIdList(pageReqVO.getCategoryId()));
+    public List<WmsItemDO> getItemList(WmsItemListReqVO listReqVO) {
+        return itemMapper.selectList(listReqVO,
+                categoryService.getSelfAndChildItemCategoryIdList(listReqVO.getCategoryId()));
     }
 
     @Override

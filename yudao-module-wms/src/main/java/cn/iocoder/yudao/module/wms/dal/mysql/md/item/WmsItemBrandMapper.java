@@ -26,4 +26,8 @@ public interface WmsItemBrandMapper extends BaseMapperX<WmsItemBrandDO> {
         return selectOne(WmsItemBrandDO::getCode, code);
     }
 
+    default WmsItemBrandDO selectByName(String name) {
+        return selectOne(WmsItemBrandDO::getName, name);
+    }
+
 }

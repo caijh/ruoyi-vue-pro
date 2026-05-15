@@ -10,6 +10,7 @@ import cn.iocoder.yudao.module.wms.controller.admin.home.vo.WmsHomeOrderTrendRes
 import cn.iocoder.yudao.module.wms.dal.mysql.home.WmsHomeStatisticsMapper;
 import cn.iocoder.yudao.module.wms.enums.order.WmsOrderStatusEnum;
 import cn.iocoder.yudao.module.wms.enums.order.WmsOrderTypeEnum;
+import cn.iocoder.yudao.module.wms.service.md.warehouse.WmsWarehouseService;
 import jakarta.annotation.Resource;
 import org.springframework.stereotype.Service;
 
@@ -37,10 +38,15 @@ public class WmsHomeStatisticsServiceImpl implements WmsHomeStatisticsService {
 
     @Resource
     private WmsHomeStatisticsMapper homeStatisticsMapper;
+    @Resource
+    private WmsWarehouseService warehouseService;
 
     @Override
     public List<WmsHomeOrderSummaryRespVO> getOrderSummary(Long warehouseId) {
+        validateWarehouseIfPresent(warehouseId);
+        // 查询单据数量
         List<Map<String, Object>> stats = homeStatisticsMapper.selectOrderCountGroupByTypeAndStatus(warehouseId);
+        // 按照单据类型 + 单据状态分组
         return convertList(WmsOrderTypeEnum.values(), orderTypeEnum -> {
             List<WmsHomeOrderStatusRespVO> statuses = convertList(WmsOrderStatusEnum.values(), statusEnum ->
                     new WmsHomeOrderStatusRespVO().setStatus(statusEnum.getStatus())
@@ -52,6 +58,7 @@ public class WmsHomeStatisticsServiceImpl implements WmsHomeStatisticsService {
 
     @Override
     public List<WmsHomeOrderTrendRespVO> getOrderTrend(Integer days, Long warehouseId) {
+        validateWarehouseIfPresent(warehouseId);
         // 统计区间为 [今天 - days + 1, 明天)，保证最近 days 天包含今天。
         LocalDate endDate = LocalDate.now().plusDays(1);
         LocalDate startDate = endDate.minusDays(days);
@@ -80,6 +87,7 @@ public class WmsHomeStatisticsServiceImpl implements WmsHomeStatisticsService {
 
     @Override
     public WmsHomeInventorySummaryRespVO getInventorySummary(Long warehouseId, Integer goodsLimit, Integer warehouseLimit) {
+        validateWarehouseIfPresent(warehouseId);
         BigDecimal totalQuantity = ObjectUtil.defaultIfNull(homeStatisticsMapper.selectInventoryTotalQuantity(warehouseId), BigDecimal.ZERO);
         List<Map<String, Object>> itemRows = homeStatisticsMapper.selectInventoryItemRank(warehouseId, goodsLimit);
         List<Map<String, Object>> warehouseRows = homeStatisticsMapper.selectInventoryWarehouseRank(warehouseId, warehouseLimit);
@@ -89,6 +97,15 @@ public class WmsHomeStatisticsServiceImpl implements WmsHomeStatisticsService {
     }
 
     // ==================== 工具方法 ====================
+
+    /**
+     * 仓库编号非空时，校验仓库是否存在，避免前端误传任意 id 直接落到 SQL。
+     */
+    private void validateWarehouseIfPresent(Long warehouseId) {
+        if (warehouseId != null) {
+            warehouseService.validateWarehouseExists(warehouseId);
+        }
+    }
 
     private long getOrderCount(List<Map<String, Object>> stats, Integer orderType, Integer status) {
         for (Map<String, Object> stat : stats) {

@@ -5,6 +5,7 @@ import cn.hutool.core.collection.ListUtil;
 import cn.hutool.core.util.ObjectUtil;
 import cn.iocoder.yudao.framework.common.pojo.PageResult;
 import cn.iocoder.yudao.framework.common.util.object.BeanUtils;
+import cn.iocoder.yudao.module.wms.controller.admin.md.merchant.vo.WmsMerchantListReqVO;
 import cn.iocoder.yudao.module.wms.controller.admin.md.merchant.vo.WmsMerchantPageReqVO;
 import cn.iocoder.yudao.module.wms.controller.admin.md.merchant.vo.WmsMerchantSaveReqVO;
 import cn.iocoder.yudao.module.wms.dal.dataobject.md.merchant.WmsMerchantDO;
@@ -119,8 +120,8 @@ public class WmsMerchantServiceImpl implements WmsMerchantService {
     }
 
     @Override
-    public List<WmsMerchantDO> getMerchantList(WmsMerchantPageReqVO pageReqVO) {
-        return merchantMapper.selectList(pageReqVO);
+    public List<WmsMerchantDO> getMerchantList(WmsMerchantListReqVO listReqVO) {
+        return merchantMapper.selectList(listReqVO);
     }
 
     @Override
