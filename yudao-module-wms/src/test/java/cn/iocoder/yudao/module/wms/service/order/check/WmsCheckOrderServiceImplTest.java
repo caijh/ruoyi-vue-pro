@@ -7,36 +7,29 @@ import cn.iocoder.yudao.module.wms.dal.dataobject.order.check.WmsCheckOrderDO;
 import cn.iocoder.yudao.module.wms.dal.dataobject.order.check.WmsCheckOrderDetailDO;
 import cn.iocoder.yudao.module.wms.dal.mysql.order.check.WmsCheckOrderDetailMapper;
 import cn.iocoder.yudao.module.wms.dal.mysql.order.check.WmsCheckOrderMapper;
-import cn.iocoder.yudao.module.wms.enums.order.WmsOrderTypeEnum;
 import cn.iocoder.yudao.module.wms.enums.order.WmsOrderStatusEnum;
+import cn.iocoder.yudao.module.wms.enums.order.WmsOrderTypeEnum;
 import cn.iocoder.yudao.module.wms.service.inventory.WmsInventoryService;
 import cn.iocoder.yudao.module.wms.service.inventory.dto.WmsInventoryCheckReqDTO;
 import cn.iocoder.yudao.module.wms.service.md.item.WmsItemSkuService;
 import cn.iocoder.yudao.module.wms.service.md.warehouse.WmsWarehouseService;
-import jakarta.annotation.Resource;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
-import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
+import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 
-import static cn.iocoder.yudao.framework.test.core.util.AssertUtils.assertServiceException;
 import static cn.iocoder.yudao.framework.common.exception.util.ServiceExceptionUtil.exception;
-import static cn.iocoder.yudao.module.wms.enums.ErrorCodeConstants.CHECK_ORDER_DETAIL_REQUIRED;
-import static cn.iocoder.yudao.module.wms.enums.ErrorCodeConstants.CHECK_ORDER_INVENTORY_CHANGED;
-import static cn.iocoder.yudao.module.wms.enums.ErrorCodeConstants.CHECK_ORDER_STATUS_NOT_DELETABLE;
-import static cn.iocoder.yudao.module.wms.enums.ErrorCodeConstants.CHECK_ORDER_STATUS_NOT_PREPARE;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
+import static cn.iocoder.yudao.framework.test.core.util.AssertUtils.assertServiceException;
+import static cn.iocoder.yudao.module.wms.enums.ErrorCodeConstants.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 
 @Import({WmsCheckOrderServiceImpl.class, WmsCheckOrderDetailServiceImpl.class})
 public class WmsCheckOrderServiceImplTest extends BaseDbUnitTest {
@@ -49,11 +42,11 @@ public class WmsCheckOrderServiceImplTest extends BaseDbUnitTest {
     @Resource
     private WmsCheckOrderDetailMapper checkOrderDetailMapper;
 
-    @MockitoBean
+    @MockBean
     private WmsWarehouseService warehouseService;
-    @MockitoBean
+    @MockBean
     private WmsItemSkuService itemSkuService;
-    @MockitoBean
+    @MockBean
     private WmsInventoryService inventoryService;
 
     @Test
